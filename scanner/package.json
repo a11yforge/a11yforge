@@ -1,0 +1,22 @@
+{
+  "name": "scanner",
+  "version": "1.0.0",
+  "description": "Stateless Service für den regelbasierten WCAG-Scan. Geplant mit Node, Playwright und axe-core.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@axe-core/playwright": "^4.11.3",
+    "playwright": "^1.59.1"
+  }
+}
