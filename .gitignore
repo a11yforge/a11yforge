@@ -7,6 +7,7 @@ Thumbs.db
 .vscode/
 *.iml
 *.swp
+.claude/
 
 # Env / Secrets
 .env
@@ -33,3 +34,10 @@ pnpm-debug.log*
 # Coverage / Test artifacts
 coverage/
 .nyc_output/
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+playwright/.auth/
