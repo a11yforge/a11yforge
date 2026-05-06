@@ -1,30 +1,24 @@
-import { AxeBuilder } from "@axe-core/playwright";
-import { chromium } from "playwright";
-
-const TIMEOUT = 20_000;
-
-async function scan(url: string) {
-  const browser = await chromium.launch();
-  try {
-    const context = await browser.newContext();
-    const page = await context.newPage();
-    await page.goto(url, { timeout: TIMEOUT });
-    const results = await new AxeBuilder({ page }).analyze();
-    return results;
-  } finally {
-    await browser.close();
-  }
-}
+import { scan } from "./scan";
 
 async function main() {
-  try {
-    const results = await scan("https://example.com");
-    console.log(JSON.stringify(results.violations, null, 2));
-  } catch (error) {
-    console.error("Scan failed:", error);
+  const urlArr = [
+    "https://orf.at",
+    "https://www.w3.org/WAI/demos/bad/before/home.html",
+    "https://example.com",
+    "https://this-domain-does-not-exist-12345.xyz",
+    "https://httpstat.us/500",
+  ];
+
+  for (const url of urlArr) {
+    try {
+      const results = await scan(url);
+      console.log(`-----------------------${url}-----------------------`);
+      console.log(JSON.stringify(results.violations, null, 2));
+    } catch (error) {
+      console.error(`Scan failed: ${url}`, error);
+    }
   }
 }
-
 if (require.main === module) {
   main();
 }
