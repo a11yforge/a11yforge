@@ -1,0 +1,33 @@
+{
+  "name": "a11yforge",
+  "version": "1.0.0",
+  "description": "Hybrid Accessibility Remediation Tool. Regelbasierte und LLM-gestützte\r WCAG-Konformitätsprüfung mit halbautomatischer Behebung.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nva138/a11yforge.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/nva138/a11yforge/issues"
+  },
+  "homepage": "https://github.com/nva138/a11yforge#readme",
+  "dependencies": {
+    "axe-core": "^4.11.4",
+    "playwright": "^1.59.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}

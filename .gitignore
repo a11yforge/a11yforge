@@ -13,6 +13,7 @@ Thumbs.db
 .env
 .env.local
 *.local
+*.env.*
 
 # Java / Gradle / Maven
 target/
@@ -20,6 +21,13 @@ build/
 .gradle/
 out/
 *.class
+*.jar
+*.war
+hs_err_pid*
+
+# Spring Boot
+application-local.properties
+application-local.yml
 
 # Node
 node_modules/
@@ -34,6 +42,8 @@ pnpm-debug.log*
 # Coverage / Test artifacts
 coverage/
 .nyc_output/
+surefire-reports/
+jacoco.exec
 
 # Playwright
 test-results/
@@ -41,3 +51,13 @@ playwright-report/
 blob-report/
 playwright/.cache/
 playwright/.auth/
+
+# Docker
+postgres_data/
+
+# Vue / Vite
+.vite/
+*.local.js
+
+# macOS extended attrs
+__MACOSX/
