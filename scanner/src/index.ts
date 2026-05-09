@@ -2,11 +2,7 @@ import { scan } from "./scan";
 
 async function main() {
   const urlArr = [
-    "https://orf.at",
-    "https://www.w3.org/WAI/demos/bad/before/home.html",
-    "https://example.com",
-    "https://this-domain-does-not-exist-12345.xyz",
-    "https://httpstat.us/500",
+    "file:///C:/Users/1_Phil/2_Wissen/5_Coden/Projekte/private-projects/coriolisGalerie/index.html"
   ];
 
   for (const url of urlArr) {
@@ -22,3 +18,4 @@ async function main() {
 if (require.main === module) {
   main();
 }
+
