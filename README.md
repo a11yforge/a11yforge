@@ -1,2 +1,2 @@
 ## User Managment
-Feature implemented
+Bug implemented
