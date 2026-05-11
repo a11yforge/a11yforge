@@ -10,7 +10,8 @@ export async function scan(url: string) {
     const page = await context.newPage();
     await page.goto(url, { timeout: TIMEOUT });
     const results = await new AxeBuilder({ page })
-      .withRules(["image-alt"])
+      //.withRules(["image-alt"])
+      .withRules(["color-contrast"])
       .analyze();
     const renderedHtml = await page.content();
     return { results, renderedHtml };
