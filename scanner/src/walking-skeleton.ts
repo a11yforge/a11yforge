@@ -1,9 +1,11 @@
 import { scan } from "./scan";
-import { verify } from "./verify";
+import { pathToFileURL } from "node:url";
+import path from "node:path";
 
 async function main() {
-  const url =
-    "file:///Users/maxmayer/dev/a11yforge/scanner/src/tests/missing-alt.html";
+  const url = pathToFileURL(
+    path.resolve(__dirname, "tests/missing-alt.html"),
+  ).href;
 
   const { results } = await scan(url);
 
