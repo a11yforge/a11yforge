@@ -1,4 +1,4 @@
-package at.codersbay.a11yforge;
+package at.a11yforge;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

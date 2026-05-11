@@ -1,4 +1,4 @@
-package at.codersbay.a11yforge;
+package at.a11yforge;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

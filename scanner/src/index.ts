@@ -1,7 +1,9 @@
 import { scan } from "./scan";
+import { pathToFileURL } from "node:url";
+import path from "node:path";
 
 async function main() {
-  const urlArr = ["https://www.orf.at", "https://www.barrierefrei.at"];
+  const urlArr = ["https://www.krone.at", "https://www.heute.at"];
 
   for (const url of urlArr) {
     try {
@@ -16,4 +18,3 @@ async function main() {
 if (require.main === module) {
   main();
 }
-
