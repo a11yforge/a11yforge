@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@axe-core/playwright": "^4.11.3",
+    "axe-core": "^4.11.4",
     "playwright": "^1.59.1"
   }
 }
