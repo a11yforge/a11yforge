@@ -25,7 +25,7 @@ public class Review {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "decision", nullable = false, length = 20)
-    private ReviewDecision decision;
+    private ReviewDecision reviewDecision;
 
     @Column(name = "comment", columnDefinition = "TEXT")
     private String comment;
@@ -35,10 +35,10 @@ public class Review {
 
     protected Review() {}
 
-    public Review(FixProposal fixProposal, User user, ReviewDecision decision) {
+    public Review(FixProposal fixProposal, User user, ReviewDecision reviewDecision) {
         this.fixProposal = fixProposal;
         this.user = user;
-        this.decision = decision;
+        this.reviewDecision = reviewDecision;
         this.decidedAt = Instant.now();
     }
 
@@ -54,13 +54,14 @@ public class Review {
         return user;
     }
 
-    public ReviewDecision getDecision() {
-        return decision;
+    public ReviewDecision getReviewDecision() {
+        return reviewDecision;
     }
 
     public String getComment() {
         return comment;
     }
+
 
     public void setComment(String comment) {
         this.comment = comment;
