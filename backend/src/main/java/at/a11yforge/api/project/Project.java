@@ -88,4 +88,8 @@ public class Project {
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }
+
+    public void setCrawlMaxPages(Integer crawlMaxPages) {
+        this.crawlMaxPages = crawlMaxPages;
+    }
 }

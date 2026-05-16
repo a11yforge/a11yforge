@@ -1,4 +1,4 @@
-package at.a11yforge.api.user.exception;
+package at.a11yforge.api.user;
 
 public class UserAlreadyExistsException extends RuntimeException {
 
