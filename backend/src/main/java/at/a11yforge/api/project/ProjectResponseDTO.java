@@ -1,4 +1,13 @@
 package at.a11yforge.api.project;
 
-public record ProjectResponseDTO() {
+import java.time.Instant;
+
+public record ProjectResponseDTO(
+        Long id,
+        String name,
+        String baseUrl,
+        Integer crawlMaxPages,
+        Instant createdAt,
+        Instant updatedAt
+) {
 }
