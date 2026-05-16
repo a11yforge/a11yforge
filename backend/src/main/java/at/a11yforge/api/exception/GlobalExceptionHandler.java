@@ -3,7 +3,7 @@ package at.a11yforge.api.exception;
 
 import at.a11yforge.api.project.DuplicateProjectNameException;
 import at.a11yforge.api.project.ProjectNotFoundException;
-import at.a11yforge.api.user.exception.UserNotFoundException;
+import at.a11yforge.api.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
