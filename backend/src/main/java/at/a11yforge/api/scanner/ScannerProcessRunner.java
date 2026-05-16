@@ -1,5 +1,7 @@
 package at.a11yforge.api.scanner;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +14,7 @@ public class ScannerProcessRunner {
 
     private final String cliPath;
     private final int timeoutSeconds;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public ScannerProcessRunner(
             @Value("${scanner.cli.path}") String cliPath,
@@ -19,6 +22,7 @@ public class ScannerProcessRunner {
     ) {
         this.cliPath = cliPath;
         this.timeoutSeconds = timeoutSeconds;
+        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public PageScanResultDto run(String url, List<String> rules) {
@@ -29,7 +33,7 @@ public class ScannerProcessRunner {
         try {
             Process process = pb.start();
             String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            return null;
+            return objectMapper.readValue(output, PageScanResultDto.class);
         } catch (IOException e) {
             throw new ScannerExecutionException("Scanner fehlgeschlagen", e);
         }
