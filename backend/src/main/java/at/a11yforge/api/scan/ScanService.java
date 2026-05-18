@@ -1,10 +1,15 @@
 package at.a11yforge.api.scan;
 
 import at.a11yforge.api.page.PageRepository;
+import at.a11yforge.api.project.Project;
+import at.a11yforge.api.project.ProjectNotFoundException;
 import at.a11yforge.api.project.ProjectRepository;
+import at.a11yforge.api.scanner.PageScanResultDto;
 import at.a11yforge.api.scanner.ScannerProcessRunner;
 import at.a11yforge.api.violation.ViolationRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ScanService {
@@ -22,5 +27,16 @@ public class ScanService {
         this.violationRepository = violationRepository;
         this.projectRepository = projectRepository;
         this.scanner = scanner;
+    }
+
+    public ScanResponseDTO createAndRunScan(Long projectId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException(projectId));
+        Scan scan = scanRepository.save(new Scan(project));
+
+
+        List<String> rules = List.of("image-alt", "color-contrast", "label", "html-has-lang", "heading-order");
+        PageScanResultDto result = scanner.run(project.getBaseUrl(), rules);
+
+            return null;
     }
 }
