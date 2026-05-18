@@ -8,6 +8,7 @@ import at.a11yforge.api.scanner.PageScanResultDto;
 import at.a11yforge.api.scanner.ScannerProcessRunner;
 import at.a11yforge.api.violation.ViolationRepository;
 import org.springframework.stereotype.Service;
+import at.a11yforge.api.page.Page;
 
 import java.util.List;
 
@@ -37,6 +38,10 @@ public class ScanService {
         List<String> rules = List.of("image-alt", "color-contrast", "label", "html-has-lang", "heading-order");
         PageScanResultDto result = scanner.run(project.getBaseUrl(), rules);
 
+        Page page = new Page(scan, result.finalUrl());
+        page.setHttpStatus(result.httpStatus());
+        page.setRenderedHtml(result.renderedHtml());
+        page = pageRepository.save(page);
             return null;
     }
 }
