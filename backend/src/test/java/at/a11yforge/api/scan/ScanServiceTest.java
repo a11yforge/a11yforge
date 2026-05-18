@@ -8,10 +8,13 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
+@ActiveProfiles("local")
 @Transactional
 class ScanServiceTest {
 
@@ -28,7 +31,15 @@ class ScanServiceTest {
                 user, "Test", "file:///Users/maxmayer/dev/a11yforge/scanner/src/tests/missing-alt.html"));
 
         ScanResponseDTO result = scanService.createAndRunScan(project.getId());
+        Long scanId = result.id();
+        ScanDetailDTO detail = scanService.getScan(scanId);
+
+
+
 
         assertThat(result.status()).isEqualTo("COMPLETED");
+        assertThat(detail.violations()).hasSize(3);
+
+        assertThat(detail.violations().get(0).ruleId()).isEqualTo("image-alt");
     }
 }
