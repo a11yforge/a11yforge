@@ -1,5 +1,6 @@
 package at.a11yforge.api.scan;
 
+import at.a11yforge.api.page.Page;
 import at.a11yforge.api.page.PageRepository;
 import at.a11yforge.api.project.Project;
 import at.a11yforge.api.project.ProjectNotFoundException;
@@ -10,9 +11,9 @@ import at.a11yforge.api.scanner.ViolationDto;
 import at.a11yforge.api.violation.Impact;
 import at.a11yforge.api.violation.Violation;
 import at.a11yforge.api.violation.ViolationRepository;
+import at.a11yforge.api.violation.ViolationResponseDTO;
 import at.a11yforge.api.violation.ViolationSource;
 import org.springframework.stereotype.Service;
-import at.a11yforge.api.page.Page;
 
 import java.time.Instant;
 import java.util.List;
@@ -26,8 +27,11 @@ public class ScanService {
     private final ProjectRepository projectRepository;
     private final ScannerProcessRunner scanner;
 
-    public ScanService(ScanRepository scanRepository, PageRepository pageRepository, ViolationRepository violationRepository, ProjectRepository projectRepository, ScannerProcessRunner scanner) {
-
+    public ScanService(ScanRepository scanRepository,
+                       PageRepository pageRepository,
+                       ViolationRepository violationRepository,
+                       ProjectRepository projectRepository,
+                       ScannerProcessRunner scanner) {
         this.scanRepository = scanRepository;
         this.pageRepository = pageRepository;
         this.violationRepository = violationRepository;
@@ -36,9 +40,9 @@ public class ScanService {
     }
 
     public ScanResponseDTO createAndRunScan(Long projectId) {
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException(projectId));
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException(projectId));
         Scan scan = scanRepository.save(new Scan(project));
-
 
         List<String> rules = List.of("image-alt", "color-contrast", "label", "html-has-lang", "heading-order");
         PageScanResultDto result = scanner.run(project.getBaseUrl(), rules);
@@ -65,13 +69,38 @@ public class ScanService {
         scan.setCompletedAt(Instant.now());
         scan = scanRepository.save(scan);
 
-
         return new ScanResponseDTO(
                 scan.getId(),
                 scan.getProject().getId(),
                 scan.getStatus().name(),
                 scan.getStartedAt(),
                 scan.getCompletedAt()
+        );
+    }
+
+    public ScanDetailDTO getScan(Long scanId) {
+        Scan scan = scanRepository.findById(scanId)
+                .orElseThrow(() -> new ScanNotFoundException(scanId));
+
+        List<ViolationResponseDTO> violations = violationRepository.findByPage_Scan_Id(scanId).stream()
+                .map(v -> new ViolationResponseDTO(
+                        v.getId(),
+                        v.getPage().getId(),
+                        v.getRuleId(),
+                        v.getSource(),
+                        v.getImpact(),
+                        v.getHtmlSnippet(),
+                        v.getTargetSelector(),
+                        v.getDescription()))
+                .toList();
+
+        return new ScanDetailDTO(
+                scan.getId(),
+                scan.getProject().getId(),
+                scan.getStatus().name(),
+                scan.getStartedAt(),
+                scan.getCompletedAt(),
+                violations
         );
     }
 }
