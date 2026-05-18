@@ -1,26 +1,24 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
-import { login } from '@/api/auth'
+import { useAuthStore } from '@/stores/auth'
 
-const email = ref('')
+const authStore = useAuthStore()
+
+const identifier = ref('')
 const password = ref('')
 const errorMsg = ref('')
 const loading = ref(false)
-const router = useRouter()
 
 async function handleLogin() {
   errorMsg.value = ''
   loading.value = true
   try {
-    const result = await login({ email: email.value, password: password.value })
-    localStorage.setItem('a11yforge_token', result.token)
-    router.push('/projects')
+    await authStore.login({ identifier: identifier.value, password: password.value })
   } catch {
-    errorMsg.value = 'Login fehlgeschlagen'
+    errorMsg.value = 'Login fehlgeschlagen. Bitte überprüfe deine Eingaben.'
   } finally {
     loading.value = false
   }
@@ -33,10 +31,14 @@ async function handleLogin() {
       <h1 class="text-2xl font-bold mb-6">A11yForge — Login</h1>
 
       <form @submit.prevent="handleLogin" class="flex flex-col gap-4">
-        <InputText v-model="email" placeholder="Email" type="email" />
+        <InputText v-model="identifier" placeholder="Email oder Username" />
         <Password v-model="password" placeholder="Passwort" :feedback="false" toggleMask />
         <Button type="submit" label="Login" :loading="loading" />
         <p v-if="errorMsg" class="text-red-500 text-sm">{{ errorMsg }}</p>
+        <p class="text-sm text-center">
+          Noch kein Konto?
+          <router-link to="/register" class="text-blue-400 hover:underline">Registrieren</router-link>
+        </p>
       </form>
     </div>
   </div>
