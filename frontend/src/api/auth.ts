@@ -1,15 +1,27 @@
 import client from './client'
 
-interface LoginRequest {
-  email: string
+export interface LoginRequestDTO {
+  identifier: string
   password: string
 }
 
-interface LoginResponse {
-  token: string
+export interface RegisterRequestDTO {
+  email: string
+  password: string
+  userName: string
 }
 
-export async function login(loginInfo: LoginRequest): Promise<LoginResponse> {
-  const response = await client.post<LoginResponse>('/auth/login', loginInfo)
+export interface LoginResponseDTO {
+  token: string
+  email: string
+  userName: string
+}
+
+export async function login(request: LoginRequestDTO): Promise<LoginResponseDTO> {
+  const response = await client.post<LoginResponseDTO>('/auth/login', request)
   return response.data
+}
+
+export async function register(request: RegisterRequestDTO): Promise<void> {
+  await client.post('/auth/register', request)
 }
