@@ -6,10 +6,15 @@ import at.a11yforge.api.project.ProjectNotFoundException;
 import at.a11yforge.api.project.ProjectRepository;
 import at.a11yforge.api.scanner.PageScanResultDto;
 import at.a11yforge.api.scanner.ScannerProcessRunner;
+import at.a11yforge.api.scanner.ViolationDto;
+import at.a11yforge.api.violation.Impact;
+import at.a11yforge.api.violation.Violation;
 import at.a11yforge.api.violation.ViolationRepository;
+import at.a11yforge.api.violation.ViolationSource;
 import org.springframework.stereotype.Service;
 import at.a11yforge.api.page.Page;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -42,6 +47,31 @@ public class ScanService {
         page.setHttpStatus(result.httpStatus());
         page.setRenderedHtml(result.renderedHtml());
         page = pageRepository.save(page);
-            return null;
+
+        for (ViolationDto v : result.violations()) {
+            Violation violation = new Violation(
+                    page,
+                    v.ruleId(),
+                    ViolationSource.valueOf(v.source().toUpperCase()),
+                    Impact.valueOf(v.impact().toUpperCase())
+            );
+            violation.setHtmlSnippet(v.htmlSnippet());
+            violation.setDescription(v.description());
+            violation.setTargetSelector(v.domPath());
+            violationRepository.save(violation);
+        }
+
+        scan.setStatus(ScanStatus.COMPLETED);
+        scan.setCompletedAt(Instant.now());
+        scan = scanRepository.save(scan);
+
+
+        return new ScanResponseDTO(
+                scan.getId(),
+                scan.getProject().getId(),
+                scan.getStatus().name(),
+                scan.getStartedAt(),
+                scan.getCompletedAt()
+        );
     }
 }
