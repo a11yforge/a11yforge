@@ -58,7 +58,7 @@ public class UserService implements UserDetailsService {
         return jwtUtil.generateToken(user.getEmail());
     }
 
-    private User findByIdentifier(String identifier) {
+    public User findByIdentifier(String identifier) {
         if (identifier.contains("@")) {
             return userRepository.findByEmail(identifier)
                     .orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));

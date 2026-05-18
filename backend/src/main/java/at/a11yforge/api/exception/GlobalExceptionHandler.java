@@ -3,6 +3,8 @@ package at.a11yforge.api.exception;
 
 import at.a11yforge.api.project.DuplicateProjectNameException;
 import at.a11yforge.api.project.ProjectNotFoundException;
+import at.a11yforge.api.user.InvalidCredentialsException;
+import at.a11yforge.api.user.UserAlreadyExistsException;
 import at.a11yforge.api.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -52,6 +54,22 @@ public class GlobalExceptionHandler {
                 error -> fieldErrors.put(error.getField(), error.getDefaultMessage()));
         problem.setProperty("fieldErrors", fieldErrors);
 
+        return problem;
+    }
+
+    // HTTP 409 Conflict
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ProblemDetail handleUserAlreadyExists(UserAlreadyExistsException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("User already exists");
+        return problem;
+    }
+
+    // HTTP 401 Unauthorized
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ProblemDetail handleInvalidCredentials(InvalidCredentialsException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        problem.setTitle("Invalid credentials");
         return problem;
     }
 
