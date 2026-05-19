@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import java.util.concurrent.TimeUnit;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -32,11 +33,20 @@ public class ScannerProcessRunner {
          pb.redirectErrorStream(true);
         try {
             Process process = pb.start();
+            boolean finished = process.waitFor(timeoutSeconds, TimeUnit.SECONDS);
+            if (!finished) {
+
+                process.destroyForcibly();
+                throw new ScannerExecutionException("TIMEOUT" + timeoutSeconds + "s");}
+            else {
             String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            return objectMapper.readValue(output, PageScanResultDto.class);
+            return objectMapper.readValue(output, PageScanResultDto.class);}
         } catch (IOException e) {
             throw new ScannerExecutionException("Scanner fehlgeschlagen", e);
-        }
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new ScannerExecutionException("Scanner-Prozess unterbrochen", e);
 
+}
 }
 }
