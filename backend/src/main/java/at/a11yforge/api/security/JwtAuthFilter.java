@@ -1,5 +1,6 @@
 package at.a11yforge.api.security;
 
+import at.a11yforge.api.user.User;
 import at.a11yforge.api.user.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -7,13 +8,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Optional;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -50,13 +49,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String email = jwtUtil.extractEmail(token);
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            boolean userExists = userRepository.existsByEmail(email);
+            Optional<User> userOpt = userRepository.findByEmail(email);
 
-            if (userExists) {
-                UserDetails userDetails = User.withUsername(email)
-                        .password("")
-                        .authorities(List.of())
-                        .build();
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                CustomUserDetails userDetails = new CustomUserDetails(user.getId(), user.getEmail());
 
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
