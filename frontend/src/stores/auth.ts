@@ -17,7 +17,7 @@ export const useAuthStore = defineStore('auth', () => {
     email.value = response.email
     userName.value = response.userName
     localStorage.setItem('a11yforge_token', response.token)
-    await router.push('/projects')
+    await router.push('/home')
   }
 
   async function register(request: RegisterRequestDTO): Promise<void> {
