@@ -14,6 +14,7 @@ import at.a11yforge.api.violation.ViolationRepository;
 import at.a11yforge.api.violation.ViolationResponseDTO;
 import at.a11yforge.api.violation.ViolationSource;
 import org.springframework.stereotype.Service;
+import at.a11yforge.api.scanner.ScannerExecutionException;
 
 import java.time.Instant;
 import java.util.List;
@@ -39,46 +40,58 @@ public class ScanService {
         this.scanner = scanner;
     }
 
-    public ScanResponseDTO createAndRunScan(Long projectId) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectNotFoundException(projectId));
-        Scan scan = scanRepository.save(new Scan(project));
+  public ScanResponseDTO createAndRunScan(Long projectId) {
+    Project project =
+        projectRepository
+            .findById(projectId)
+            .orElseThrow(() -> new ProjectNotFoundException(projectId));
+    Scan scan = scanRepository.save(new Scan(project));
 
-        List<String> rules = List.of("image-alt", "color-contrast", "label", "html-has-lang", "heading-order");
-        PageScanResultDto result = scanner.run(project.getBaseUrl(), rules);
+    try {
 
-        Page page = new Page(scan, result.finalUrl());
-        page.setHttpStatus(result.httpStatus());
-        page.setRenderedHtml(result.renderedHtml());
-        page = pageRepository.save(page);
+      List<String> rules =
+          List.of("image-alt", "color-contrast", "label", "html-has-lang", "heading-order");
+      PageScanResultDto result = scanner.run(project.getBaseUrl(), rules);
 
-        for (ViolationDto v : result.violations()) {
-            Violation violation = new Violation(
-                    page,
-                    v.ruleId(),
-                    ViolationSource.valueOf(v.source().toUpperCase()),
-                    Impact.valueOf(v.impact().toUpperCase())
-            );
-            violation.setHtmlSnippet(v.htmlSnippet());
-            violation.setDescription(v.description());
-            violation.setTargetSelector(v.domPath());
-            violationRepository.save(violation);
-        }
+      Page page = new Page(scan, result.finalUrl());
+      page.setHttpStatus(result.httpStatus());
+      page.setRenderedHtml(result.renderedHtml());
+      page = pageRepository.save(page);
 
-        scan.setStatus(ScanStatus.COMPLETED);
+      for (ViolationDto v : result.violations()) {
+        Violation violation =
+            new Violation(
+                page,
+                v.ruleId(),
+                ViolationSource.valueOf(v.source().toUpperCase()),
+                Impact.valueOf(v.impact().toUpperCase()));
+        violation.setHtmlSnippet(v.htmlSnippet());
+        violation.setDescription(v.description());
+        violation.setTargetSelector(v.domPath());
+        violationRepository.save(violation);
+      }
+
+      scan.setStatus(ScanStatus.COMPLETED);
+      scan.setCompletedAt(Instant.now());
+      scan = scanRepository.save(scan);
+
+      return new ScanResponseDTO(
+          scan.getId(),
+          scan.getProject().getId(),
+          scan.getStatus().name(),
+          scan.getStartedAt(),
+          scan.getCompletedAt());
+
+    } catch (ScannerExecutionException e) {
+        scan.setStatus(ScanStatus.FAILED);
+        scan.setErrorMessage(e.getMessage());
         scan.setCompletedAt(Instant.now());
-        scan = scanRepository.save(scan);
-
-        return new ScanResponseDTO(
-                scan.getId(),
-                scan.getProject().getId(),
-                scan.getStatus().name(),
-                scan.getStartedAt(),
-                scan.getCompletedAt()
-        );
+        scanRepository.save(scan);
+        throw e;
     }
+  }
 
-    public ScanDetailDTO getScan(Long scanId) {
+  public ScanDetailDTO getScan(Long scanId) {
         Scan scan = scanRepository.findById(scanId)
                 .orElseThrow(() -> new ScanNotFoundException(scanId));
 
