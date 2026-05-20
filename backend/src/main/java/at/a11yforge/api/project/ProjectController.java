@@ -1,15 +1,15 @@
 package at.a11yforge.api.project;
 
+import at.a11yforge.api.security.CustomUserDetails;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,42 +30,41 @@ public class ProjectController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProjectResponseDTO createProject(
-            @RequestHeader("X-User-Id") Long userId,
+            @AuthenticationPrincipal CustomUserDetails principal,
             @Valid @RequestBody ProjectRequestDTO request) {
-        return projectService.createProject(userId, request);
+        return projectService.createProject(principal.getId(), request);
     }
 
     // HTTP 200 OK
     @GetMapping
     public List<ProjectResponseDTO> getProjects(
-            @RequestHeader("X-User-Id") Long userId) {
-        return projectService.getProjectsForUser(userId);
+            @AuthenticationPrincipal CustomUserDetails principal) {
+        return projectService.getProjectsForUser(principal.getId());
     }
 
     // HTTP 200 OK
     @GetMapping("/{projectId}")
     public ProjectResponseDTO getProject(
-            @RequestHeader("X-User-Id") Long userId,
+            @AuthenticationPrincipal CustomUserDetails principal,
             @PathVariable Long projectId) {
-        return projectService.getProjectByIdForUser(userId, projectId);
+        return projectService.getProjectByIdForUser(principal.getId(), projectId);
     }
 
     // HTTP 200 OK
     @PutMapping("/{projectId}")
     public ProjectResponseDTO updateProject(
-            @RequestHeader("X-User-Id") Long userId,
+            @AuthenticationPrincipal CustomUserDetails principal,
             @PathVariable Long projectId,
             @Valid @RequestBody ProjectRequestDTO request) {
-        return projectService.updateProject(userId, projectId, request);
+        return projectService.updateProject(principal.getId(), projectId, request);
     }
 
     // HTTP 204 No Content
     @DeleteMapping("/{projectId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProject(
-            @RequestHeader("X-User-Id") Long userId,
+            @AuthenticationPrincipal CustomUserDetails principal,
             @PathVariable Long projectId) {
-        projectService.deleteProject(userId, projectId);
+        projectService.deleteProject(principal.getId(), projectId);
     }
 }
-
