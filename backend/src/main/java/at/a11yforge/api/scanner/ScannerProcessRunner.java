@@ -40,6 +40,8 @@ public class ScannerProcessRunner {
                 throw new ScannerExecutionException("TIMEOUT" + timeoutSeconds + "s");}
             else {
             String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            int exitCode = process.exitValue();
+            if (exitCode != 0) {throw new ScannerExecutionException("Scanner exit " + exitCode + ": " + output);}
             return objectMapper.readValue(output, PageScanResultDto.class);}
         } catch (IOException e) {
             throw new ScannerExecutionException("Scanner fehlgeschlagen", e);
