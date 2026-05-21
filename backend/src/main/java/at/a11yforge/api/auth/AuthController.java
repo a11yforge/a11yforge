@@ -29,4 +29,9 @@ public class AuthController {
         User user = userService.findByIdentifier(request.identifier());
         return ResponseEntity.ok(new LoginResponseDTO(token, user.getEmail(), user.getUserName()));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        return ResponseEntity.noContent().build();
+    }
 }
