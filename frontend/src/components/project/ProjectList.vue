@@ -14,6 +14,7 @@ defineProps<{
 const emit = defineEmits<{
   edit: [project: ProjectResponseDTO]
   delete: [project: ProjectResponseDTO]
+  scan: [project: ProjectResponseDTO]
 }>()
 </script>
 
@@ -39,6 +40,7 @@ const emit = defineEmits<{
         :compact="compact"
         @edit="emit('edit', $event)"
         @delete="emit('delete', $event)"
+        @scan="emit('scan', $event)"
       />
     </div>
   </div>

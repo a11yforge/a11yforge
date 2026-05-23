@@ -8,6 +8,10 @@ import { useProjectsStore } from '@/stores/projects'
 import ProjectList from '@/components/project/ProjectList.vue'
 import ProjectFormDialog from '@/components/project/ProjectFormDialog.vue'
 import type { ProjectRequestDTO, ProjectResponseDTO } from '@/api/projects'
+import { startScan } from '@/api/scan'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const projectsStore = useProjectsStore()
 const { projects, loading, error } = storeToRefs(projectsStore)
@@ -128,6 +132,20 @@ async function handleDelete(project: ProjectResponseDTO) {
     })
   }
 }
+
+async function handleScan(project: ProjectResponseDTO) {
+  try {
+    const scan = await startScan(project.id)
+    router.push('/scans/' + scan.id)
+  } catch {
+    toast.add({
+      severity: 'error',
+      summary: 'Fehler',
+      detail: 'Scan konnte nicht gestartet werden.',
+      life: 4000,
+    })
+  }
+}
 </script>
 
 <template>
@@ -144,6 +162,7 @@ async function handleDelete(project: ProjectResponseDTO) {
       empty-message="Du hast noch keine Projekte angelegt. Lege dein erstes Projekt an."
       @edit="openEditDialog"
       @delete="confirmDelete"
+      @scan="handleScan"
     />
 
     <ProjectFormDialog
@@ -154,4 +173,3 @@ async function handleDelete(project: ProjectResponseDTO) {
     />
   </div>
 </template>
-
