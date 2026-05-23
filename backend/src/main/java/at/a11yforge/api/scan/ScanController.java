@@ -14,7 +14,7 @@ public class ScanController {
 
 
     @PostMapping
-    public ScanResponseDTO startScan(@RequestBody ScanCreateDTO dto) {
+    public ScanResponseDTO startScan(@RequestBody ScanResponseDTO dto) {
         return scanService.createAndRunScan(dto.projectId());
     }
 
