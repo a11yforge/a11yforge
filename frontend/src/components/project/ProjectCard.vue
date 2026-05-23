@@ -50,8 +50,8 @@ const displayUrl = computed(() => {
       <div class="flex flex-col gap-2 text-sm">
         <div>
           <span class="text-gray-400">URL:</span>
-
-          :href="project.baseUrl"<a
+          <a
+            :href="project.baseUrl"
             target="_blank"
             rel="noopener noreferrer"
             class="ml-2 text-blue-400 hover:underline truncate inline-block max-w-full align-bottom"
