@@ -25,3 +25,7 @@ export async function login(request: LoginRequestDTO): Promise<LoginResponseDTO>
 export async function register(request: RegisterRequestDTO): Promise<void> {
   await client.post('/auth/register', request)
 }
+
+export async function logout(): Promise<void> {
+  await client.post('/auth/logout')
+}

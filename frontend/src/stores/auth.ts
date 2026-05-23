@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { login as apiLogin, register as apiRegister } from '@/api/auth'
+import { login as apiLogin, register as apiRegister, logout as apiLogout } from '@/api/auth'
 import type { LoginRequestDTO, RegisterRequestDTO } from '@/api/auth'
+import { useProjectsStore } from '@/stores/projects'
 import router from '@/router'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -25,11 +26,23 @@ export const useAuthStore = defineStore('auth', () => {
     await router.push('/login')
   }
 
-  function logout(): void {
+  async function logout(): Promise<void> {
+    try {
+      await apiLogout()
+    } catch {
+      // Backend-Call ist best effort — Logout muss immer durchgehen,
+      // auch wenn das Backend nicht erreichbar ist oder das Token bereits
+      // abgelaufen ist (in welchem Fall der 401-Interceptor sowieso greift).
+    }
+
     token.value = null
     email.value = null
     userName.value = null
     localStorage.removeItem('a11yforge_token')
+
+    const projectsStore = useProjectsStore()
+    projectsStore.reset()
+
     router.push('/login')
   }
 
