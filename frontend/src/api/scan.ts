@@ -20,7 +20,20 @@ export interface ScanDetailDTO {
   violations: ViolationDTO[]
 }
 
+export interface ScanResponseDTO {
+  id: number
+  projectId: number
+  status: string
+  startedAt: string
+  completedAt: string | null
+}
+
 export async function getScan(id: number): Promise<ScanDetailDTO> {
   const scan = await client.get<ScanDetailDTO>(`/scan/` + id)
+  return scan.data
+}
+
+export async function startScan(projectId: number): Promise<ScanResponseDTO> {
+  const scan = await client.post<ScanResponseDTO>('/scan', { projectId })
   return scan.data
 }
