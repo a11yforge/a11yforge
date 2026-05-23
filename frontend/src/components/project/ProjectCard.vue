@@ -50,7 +50,7 @@ const displayUrl = computed(() => {
         <div>
           <span class="text-gray-400">URL:</span>
           
-            :href="project.baseUrl"
+            :href="project.baseUrl"<a
             target="_blank"
             rel="noopener noreferrer"
             class="ml-2 text-blue-400 hover:underline truncate inline-block max-w-full align-bottom"
