@@ -1,0 +1,480 @@
+{
+  "info": {
+    "_postman_id": "afca3a8d-9276-41fd-9b69-baface6fd9ac",
+    "name": "A11yForge",
+    "description": "StartFragmentBackend-Tests für A11yForge — JWT-Auth, Projects-CRUDEndFragment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53050603",
+    "_collection_link": "https://go.postman.co/collection/53050603-afca3a8d-9276-41fd-9b69-baface6fd9ac?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 Created\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is empty\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.equal(\"\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"test4@example.com\",\r\n    \"password\": \"TestPassword123!\",\r\n    \"userName\": \"testuser4\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains token, email, and userName\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.have.property(\"token\");\r",
+                  "    pm.expect(json).to.have.property(\"email\");\r",
+                  "    pm.expect(json).to.have.property(\"userName\");\r",
+                  "    pm.expect(json.token).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Token saved to environment\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.environment.set(\"jwtToken\", json.token);\r",
+                  "    pm.expect(pm.environment.get(\"jwtToken\")).to.equal(json.token);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"identifier\": \"{{testIdentifier}}\",\r\n    \"password\": \"{{testPassword}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204 No Content\", function () {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is empty\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.equal(\"\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.environment.unset(\"jwtToken\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Projects",
+      "item": [
+        {
+          "name": "Create Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 Created\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains project fields\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"name\");\r",
+                  "    pm.expect(json).to.have.property(\"baseUrl\");\r",
+                  "    pm.expect(json).to.have.property(\"crawlMaxPages\");\r",
+                  "    pm.expect(json).to.have.property(\"createdAt\");\r",
+                  "    pm.expect(json).to.have.property(\"updatedAt\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response values match request\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json.name).to.equal(\"A11yForge Test Project\");\r",
+                  "    pm.expect(json.baseUrl).to.equal(\"https://example.com\");\r",
+                  "    pm.expect(json.crawlMaxPages).to.equal(50);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Project ID saved to environment\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.environment.set(\"createdProjectId\", json.id);\r",
+                  "    pm.expect(pm.environment.get(\"createdProjectId\")).to.equal(String(json.id));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"A11yForge Test Project\",\r\n    \"baseUrl\": \"https://example.com\",\r\n    \"crawlMaxPages\": 50\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/projects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Projects",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is a JSON array\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Array contains at least one project\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json.length).to.be.at.least(1);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each project has expected fields\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    json.forEach(project => {\r",
+                  "        pm.expect(project).to.have.property(\"id\");\r",
+                  "        pm.expect(project).to.have.property(\"name\");\r",
+                  "        pm.expect(project).to.have.property(\"baseUrl\");\r",
+                  "        pm.expect(project).to.have.property(\"crawlMaxPages\");\r",
+                  "        pm.expect(project).to.have.property(\"createdAt\");\r",
+                  "        pm.expect(project).to.have.property(\"updatedAt\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/projects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is a single project object\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"name\");\r",
+                  "    pm.expect(json).to.have.property(\"baseUrl\");\r",
+                  "    pm.expect(json).to.have.property(\"crawlMaxPages\");\r",
+                  "    pm.expect(json).to.have.property(\"createdAt\");\r",
+                  "    pm.expect(json).to.have.property(\"updatedAt\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Returned project ID matches requested ID\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    const expectedId = pm.environment.get(\"createdProjectId\");\r",
+                  "    pm.expect(String(json.id)).to.equal(expectedId);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{createdProjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{createdProjectId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Updated values are reflected in response\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json.name).to.equal(\"A11yForge Test Project (Updated)\");\r",
+                  "    pm.expect(json.baseUrl).to.equal(\"https://example.org\");\r",
+                  "    pm.expect(json.crawlMaxPages).to.equal(25);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Project ID is unchanged\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    const expectedId = pm.environment.get(\"createdProjectId\");\r",
+                  "    pm.expect(String(json.id)).to.equal(expectedId);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"updatedAt is newer than createdAt\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    const created = new Date(json.createdAt).getTime();\r",
+                  "    const updated = new Date(json.updatedAt).getTime();\r",
+                  "    pm.expect(updated).to.be.at.least(created);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"A11yForge Test Project (Updated)\",\r\n    \"baseUrl\": \"https://example.org\",\r\n    \"crawlMaxPages\": 25\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{createdProjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{createdProjectId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204 No Content\", function () {\r",
+                  "    pm.response.to.have.status(204);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is empty\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.equal(\"\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.environment.unset(\"createdProjectId\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{createdProjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{createdProjectId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwtToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}

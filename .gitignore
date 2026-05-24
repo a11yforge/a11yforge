@@ -61,3 +61,6 @@ postgres_data/
 
 # macOS extended attrs
 __MACOSX/
+
+# Postman
+docs/postman/*.postman_environment.json
