@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface ViolationRepository extends JpaRepository<Violation, Long> {
 
-    //Sollte noch mit findAllByPageScanIdAndPageScanProjectUserId ersetzt werden
+    // TODO: Replace with findAllByPageScanIdAndPageScanProjectUserId (Owner-Check fehlt)
     List<Violation> findByPage_Scan_Id(Long scanId);
 
     List<Violation> findAllByPageScanIdAndPageScanProjectUserId(Long scanId, Long userId);
