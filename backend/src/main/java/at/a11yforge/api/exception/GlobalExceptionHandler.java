@@ -11,6 +11,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import at.a11yforge.api.page.PageNotFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,14 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleUserNotFound(UserNotFoundException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setTitle("User not found");
+        return problem;
+    }
+
+    // HTTP 404 Not Found
+    @ExceptionHandler(PageNotFoundException.class)
+    public ProblemDetail handlePageNotFound(PageNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setTitle("Page not found");
         return problem;
     }
 
