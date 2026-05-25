@@ -441,6 +441,244 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Pages",
+      "item": [
+        {
+          "name": "Get Pages by Scan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each page has expected properties\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    json.forEach(function (page) {\r",
+                  "        pm.expect(page).to.have.property(\"id\");\r",
+                  "        pm.expect(page).to.have.property(\"scanId\");\r",
+                  "        pm.expect(page).to.have.property(\"url\");\r",
+                  "        pm.expect(page).to.have.property(\"httpStatus\");\r",
+                  "        pm.expect(page).to.have.property(\"scanStatus\");\r",
+                  "        pm.expect(page).to.have.property(\"fetchedAt\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each page matches requested scanId\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    const requestedScanId = pm.request.url.query.get(\"scanId\");\r",
+                  "    json.forEach(function (page) {\r",
+                  "        pm.expect(String(page.scanId)).to.equal(requestedScanId);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pages?scanId=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pages"
+              ],
+              "query": [
+                {
+                  "key": "scanId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Page by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is a single page object\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"scanId\");\r",
+                  "    pm.expect(json).to.have.property(\"url\");\r",
+                  "    pm.expect(json).to.have.property(\"httpStatus\");\r",
+                  "    pm.expect(json).to.have.property(\"scanStatus\");\r",
+                  "    pm.expect(json).to.have.property(\"fetchedAt\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Returned page ID matches requested ID\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    const pathSegments = pm.request.url.path;\r",
+                  "    const requestedId = pathSegments[pathSegments.length - 1];\r",
+                  "    pm.expect(String(json.id)).to.equal(requestedId);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pages/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Violations",
+      "item": [
+        {
+          "name": "Get Violations by Scan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each violation has expected properties\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    json.forEach(function (violation) {\r",
+                  "        pm.expect(violation).to.have.property(\"id\");\r",
+                  "        pm.expect(violation).to.have.property(\"pageId\");\r",
+                  "        pm.expect(violation).to.have.property(\"ruleId\");\r",
+                  "        pm.expect(violation).to.have.property(\"source\");\r",
+                  "        pm.expect(violation).to.have.property(\"impact\");\r",
+                  "        pm.expect(violation).to.have.property(\"htmlSnippet\");\r",
+                  "        pm.expect(violation).to.have.property(\"targetSelector\");\r",
+                  "        pm.expect(violation).to.have.property(\"description\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/violations?scanId=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "violations"
+              ],
+              "query": [
+                {
+                  "key": "scanId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Violation by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is a single violation object\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"pageId\");\r",
+                  "    pm.expect(json).to.have.property(\"ruleId\");\r",
+                  "    pm.expect(json).to.have.property(\"source\");\r",
+                  "    pm.expect(json).to.have.property(\"impact\");\r",
+                  "    pm.expect(json).to.have.property(\"htmlSnippet\");\r",
+                  "    pm.expect(json).to.have.property(\"targetSelector\");\r",
+                  "    pm.expect(json).to.have.property(\"description\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Returned violation ID matches requested ID\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    const pathSegments = pm.request.url.path;\r",
+                  "    const requestedId = pathSegments[pathSegments.length - 1];\r",
+                  "    pm.expect(String(json.id)).to.equal(requestedId);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/violations/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "violations",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "auth": {

@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import at.a11yforge.api.page.PageNotFoundException;
+import at.a11yforge.api.violation.ViolationNotFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +41,14 @@ public class GlobalExceptionHandler {
     public ProblemDetail handlePageNotFound(PageNotFoundException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setTitle("Page not found");
+        return problem;
+    }
+
+    // HTTP 404 Not Found
+    @ExceptionHandler(ViolationNotFoundException.class)
+    public ProblemDetail handleViolationNotFound(ViolationNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setTitle("Violation not found");
         return problem;
     }
 
