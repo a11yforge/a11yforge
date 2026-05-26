@@ -679,6 +679,129 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "FixProposals",
+      "item": [
+        {
+          "name": "Get FixProposals by Violation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each fix proposal has expected properties\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    json.forEach(function (fixProposal) {\r",
+                  "        pm.expect(fixProposal).to.have.property(\"id\");\r",
+                  "        pm.expect(fixProposal).to.have.property(\"violationId\");\r",
+                  "        pm.expect(fixProposal).to.have.property(\"status\");\r",
+                  "        pm.expect(fixProposal).to.have.property(\"generatedHtml\");\r",
+                  "        pm.expect(fixProposal).to.have.property(\"llmProvider\");\r",
+                  "        pm.expect(fixProposal).to.have.property(\"llmModel\");\r",
+                  "        pm.expect(fixProposal).to.have.property(\"promptVersion\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each fix proposal matches requested violationId\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    const requestedViolationId = pm.request.url.query.get(\"violationId\");\r",
+                  "    json.forEach(function (fixProposal) {\r",
+                  "        pm.expect(String(fixProposal.violationId)).to.equal(requestedViolationId);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/fix-proposals?violationId=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "fix-proposals"
+              ],
+              "query": [
+                {
+                  "key": "violationId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get FixProposal by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is a single fix proposal object\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"violationId\");\r",
+                  "    pm.expect(json).to.have.property(\"status\");\r",
+                  "    pm.expect(json).to.have.property(\"generatedHtml\");\r",
+                  "    pm.expect(json).to.have.property(\"llmProvider\");\r",
+                  "    pm.expect(json).to.have.property(\"llmModel\");\r",
+                  "    pm.expect(json).to.have.property(\"promptVersion\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Returned fix proposal ID matches requested ID\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    const pathSegments = pm.request.url.path;\r",
+                  "    const requestedId = pathSegments[pathSegments.length - 1];\r",
+                  "    pm.expect(String(json.id)).to.equal(requestedId);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/fix-proposals/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "fix-proposals",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "auth": {
