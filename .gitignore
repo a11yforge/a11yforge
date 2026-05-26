@@ -64,3 +64,6 @@ __MACOSX/
 
 # Postman
 docs/postman/*.postman_environment.json
+
+# Local project context
+PROJECT_CONTEXT.md
