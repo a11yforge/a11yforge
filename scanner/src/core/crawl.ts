@@ -5,6 +5,16 @@ import { axeResultsToViolationDtos } from "../mapping/axe";
 
 const TIMEOUT = 50_000;
 
+function normalize(u: string): string {
+  const url = new URL(u);
+  url.hash = "";
+  if (url.pathname.endsWith("/") && url.pathname !== "/") {
+    url.pathname = url.pathname.slice(0, -1);
+  }
+
+  return url.href;
+}
+
 export async function crawl(
   baseUrl: string,
   rules: string[],
@@ -14,14 +24,12 @@ export async function crawl(
 
   try {
     const results: PageScanResult[] = [];
-    const queue: string[] = [baseUrl];
-    const visited = new Set<string>();
+    const queue: string[] = [normalize(baseUrl)];
+    const visited = new Set<string>([normalize(baseUrl)]);
     const context = await browser.newContext();
 
     while (queue.length > 0 && results.length < maxPages) {
       const url = queue.shift()!;
-      if (visited.has(url)) continue;
-      visited.add(url);
 
       const page = await context.newPage();
       const start = Date.now();
@@ -54,10 +62,9 @@ export async function crawl(
       const origin = new URL(baseUrl).origin;
 
       for (const link of links) {
-        const linkUrl = new URL(link);
-        linkUrl.hash = "";
-        const clean = linkUrl.href;
-        if (linkUrl.origin === origin && !visited.has(clean)) {
+        const clean = normalize(link);
+        if (new URL(clean).origin === origin && !visited.has(clean)) {
+          visited.add(clean);
           queue.push(clean);
         }
       }
