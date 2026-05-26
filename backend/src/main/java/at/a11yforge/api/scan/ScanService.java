@@ -51,25 +51,28 @@ public class ScanService {
 
       List<String> rules =
           List.of("image-alt", "color-contrast", "label", "html-has-lang", "heading-order");
-      PageScanResultDto result = scanner.run(project.getBaseUrl(), rules);
+      List<PageScanResultDto> results = scanner.run(project.getBaseUrl(), rules, project.getCrawlMaxPages());
 
-      Page page = new Page(scan, result.finalUrl());
-      page.setHttpStatus(result.httpStatus());
-      page.setRenderedHtml(result.renderedHtml());
-      page = pageRepository.save(page);
+        for (PageScanResultDto result : results) {
+            Page page = new Page(scan, result.finalUrl());
+            page.setHttpStatus(result.httpStatus());
+            page.setRenderedHtml(result.renderedHtml());
+            page = pageRepository.save(page);
 
-      for (ViolationDto v : result.violations()) {
-        Violation violation =
-            new Violation(
-                page,
-                v.ruleId(),
-                ViolationSource.valueOf(v.source().toUpperCase()),
-                Impact.valueOf(v.impact().toUpperCase()));
-        violation.setHtmlSnippet(v.htmlSnippet());
-        violation.setDescription(v.description());
-        violation.setTargetSelector(v.domPath());
-        violationRepository.save(violation);
-      }
+            for (ViolationDto v : result.violations()) {
+                Violation violation =
+                        new Violation(
+                                page,
+                                v.ruleId(),
+                                ViolationSource.valueOf(v.source().toUpperCase()),
+                                Impact.valueOf(v.impact().toUpperCase()));
+                violation.setHtmlSnippet(v.htmlSnippet());
+                violation.setDescription(v.description());
+                violation.setTargetSelector(v.domPath());
+                violationRepository.save(violation);
+            }
+        }
+        
 
       scan.setStatus(ScanStatus.COMPLETED);
       scan.setCompletedAt(Instant.now());
