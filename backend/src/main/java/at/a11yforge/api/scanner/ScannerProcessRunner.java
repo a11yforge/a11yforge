@@ -29,10 +29,10 @@ public class ScannerProcessRunner {
         this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public PageScanResultDto run(String url, List<String> rules) {
+    public List<PageScanResultDto> run(String url, List<String> rules, int maxPages) {
         File tempFile = null;
         try {
-            List<String> command = List.of("node", cliPath, url, String.join(",", rules));
+            List<String> command = List.of("node", cliPath, url, String.join(",", rules), String.valueOf(maxPages));
             ProcessBuilder pb = new ProcessBuilder(command);
             tempFile = File.createTempFile("scanner-output", ".json");
             pb.redirectErrorStream(true);
@@ -49,7 +49,8 @@ public class ScannerProcessRunner {
                 if (exitCode != 0) {
                     throw new ScannerExecutionException("Scanner exit " + exitCode + ": " + output);
                 }
-                return objectMapper.readValue(output, PageScanResultDto.class);
+                PageScanResultDto[] resultsArray = objectMapper.readValue(output, PageScanResultDto[].class);
+                return List.of(resultsArray);
             }
         } catch (IOException e) {
             throw new ScannerExecutionException("Scanner fehlgeschlagen", e);
