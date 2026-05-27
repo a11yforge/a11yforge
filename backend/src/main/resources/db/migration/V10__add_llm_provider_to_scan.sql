@@ -1,0 +1,2 @@
+ALTER TABLE scan
+    ADD COLUMN llm_provider VARCHAR(20) NOT NULL DEFAULT 'NONE';
