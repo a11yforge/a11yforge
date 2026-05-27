@@ -68,7 +68,7 @@ public class ScanService {
                                 Impact.valueOf(v.impact().toUpperCase()));
                 violation.setHtmlSnippet(v.htmlSnippet());
                 violation.setDescription(v.description());
-                violation.setTargetSelector(v.domPath());
+                violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
                 violationRepository.save(violation);
             }
         }
