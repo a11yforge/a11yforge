@@ -71,6 +71,20 @@ public class ScanService {
                 violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
                 violationRepository.save(violation);
             }
+
+            for (ViolationDto v : result.incomplete()) {
+                Violation violation =
+                        new Violation(
+                                page,
+                                v.ruleId(),
+                                ViolationSource.valueOf(v.source().toUpperCase()),
+                                Impact.valueOf(v.impact().toUpperCase()));
+                violation.setHtmlSnippet(v.htmlSnippet());
+                violation.setDescription(v.description());
+                violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
+                violationRepository.save(violation);
+
+            }
         }
         
 
