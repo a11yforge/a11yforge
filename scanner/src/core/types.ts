@@ -34,4 +34,5 @@ export interface PageScanResult {
   ruleSet: string[];
   renderedHtml: string;
   violations: ViolationDto[];
+  incomplete: ViolationDto[];
 }

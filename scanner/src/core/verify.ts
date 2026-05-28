@@ -26,8 +26,8 @@ export async function verify(
   rules: string[],
   targetViolation: ViolationDto,
 ): Promise<VerifyResult> {
-  const patchedHtml = originalHtml.replace(oldSnippet, newSnippet);
-  if (patchedHtml === originalHtml) {
+  const targetSelector = targetViolation.target[0];
+  if (!targetSelector) {
     return { status: "discarded", reason: "malformed_patch" };
   }
 
@@ -35,7 +35,19 @@ export async function verify(
   try {
     const context = await browser.newContext();
     const page = await context.newPage();
-    await page.setContent(patchedHtml);
+    await page.setContent(originalHtml);
+
+    try {
+      await page.locator(targetSelector).evaluate(
+        (el, html) => {
+          el.outerHTML = html;
+        },
+        newSnippet,
+        { timeout: 3000 },
+      );
+    } catch {
+      return { status: "discarded", reason: "malformed_patch" };
+    }
     const results = await new AxeBuilder({ page }).withRules(rules).analyze();
     const newViolations = axeResultsToViolationDtos(results, "axe_violation");
 

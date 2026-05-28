@@ -14,5 +14,6 @@ public record PageScanResultDto(
         String pageTitle,
         List<String> ruleSet,
         String renderedHtml,
-        List<ViolationDto> violations
+        List<ViolationDto> violations,
+        List<ViolationDto> incomplete
 ) {}

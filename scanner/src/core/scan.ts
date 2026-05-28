@@ -32,6 +32,7 @@ export async function scan(
       ruleSet: rules,
       renderedHtml,
       violations: axeResultsToViolationDtos(results, "axe_violation"),
+      incomplete: axeResultsToViolationDtos(results, "axe_incomplete"),
     };
   } finally {
     await browser.close();

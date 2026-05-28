@@ -8,7 +8,7 @@ class ScannerProcessRunnerTest {
     @Test
     void scanReturnsResult() {
         ScannerProcessRunner runner = new ScannerProcessRunner("../scanner/dist/cli.js", 120);
-        PageScanResultDto result = runner.run("https://example.com", List.of("image-alt"));
+        List<PageScanResultDto> result = runner.run("https://example.com", List.of("image-alt"), 1);
         System.out.println(result);
     }
 }

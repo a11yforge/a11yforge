@@ -54,6 +54,7 @@ export async function crawl(
         ruleSet: rules,
         renderedHtml,
         violations: axeResultsToViolationDtos(axeResults, "axe_violation"),
+        incomplete: axeResultsToViolationDtos(axeResults, "axe_incomplete"),
       });
 
       const links = await page.$$eval("a[href]", (anchors) =>
