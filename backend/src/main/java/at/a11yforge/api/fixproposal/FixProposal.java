@@ -20,31 +20,27 @@ public class FixProposal {
     @Column(name = "status", nullable = false, length = 30)
     private FixProposalStatus status;
 
-    @Column(name = "generated_html", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "generated_html", columnDefinition = "TEXT")
     private String generatedHtml;
 
     @Column(name = "llm_provider", length = 50, nullable = false)
     private String llmProvider;
 
-    @Column(name = "llm_model", length = 100, nullable = false)
+    @Column(name = "llm_model", length = 100)
     private String llmModel;
 
-    @Column(name = "prompt_version", length = 20, nullable = false)
+    @Column(name = "prompt_version", length = 20)
     private String promptVersion;
 
     protected FixProposal() {}
 
-    public FixProposal(Violation violation, String generatedHtml,
-                       String llmProvider, String llmModel, String promptVersion) {
+    public FixProposal(Violation violation, String llmProvider) {
         this.violation = violation;
-        this.generatedHtml = generatedHtml;
         this.llmProvider = llmProvider;
-        this.llmModel = llmModel;
-        this.promptVersion = promptVersion;
         this.status = FixProposalStatus.PENDING;
-}
+    }
 
-public Long getId() {
+    public Long getId() {
         return id;
 }
 
@@ -54,10 +50,6 @@ public Long getId() {
 
     public FixProposalStatus getStatus() {
         return status;
-    }
-
-    public void setStatus(FixProposalStatus status) {
-        this.status = status;
     }
 
     public String getGeneratedHtml() {
@@ -76,6 +68,20 @@ public Long getId() {
         return promptVersion;
     }
 
+    public void setStatus(FixProposalStatus status) {
+        this.status = status;
+    }
 
+    public void setGeneratedHtml(String generatedHtml) {
+        this.generatedHtml = generatedHtml;
+    }
+
+    public void setLlmModel(String llmModel) {
+        this.llmModel = llmModel;
+    }
+
+    public void setPromptVersion(String promptVersion) {
+        this.promptVersion = promptVersion;
+    }
 
 }
