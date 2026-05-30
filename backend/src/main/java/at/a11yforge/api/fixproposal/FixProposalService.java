@@ -8,13 +8,10 @@ import at.a11yforge.api.verifier.VerifierProcessRunner;
 import at.a11yforge.api.verifier.VerifyRequestDTO;
 import at.a11yforge.api.verifier.VerifyResultDTO;
 import at.a11yforge.api.violation.Violation;
-import at.a11yforge.api.violation.ViolationSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
-import java.util.List;
 
 @Service
 public class FixProposalService {
@@ -93,9 +90,9 @@ public class FixProposalService {
         fixProposal.setLlmModel(response.llmModel());
         fixProposal.setPromptVersion(response.promptVersion());
 
+
         return fixProposalRepository.save(fixProposal);
-
-
     }
+
 
 }
