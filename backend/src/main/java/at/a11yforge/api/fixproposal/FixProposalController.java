@@ -7,6 +7,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -15,9 +20,12 @@ import java.util.List;
 public class FixProposalController {
 
     private final FixProposalService fixProposalService;
+    private final FixGenerationService fixGenerationService;
 
-    public FixProposalController(FixProposalService fixProposalService) {
+    public FixProposalController(FixProposalService fixProposalService,
+                                 FixGenerationService fixGenerationService) {
         this.fixProposalService = fixProposalService;
+        this.fixGenerationService = fixGenerationService;
     }
 
     // HTTP 200 OK
@@ -34,5 +42,17 @@ public class FixProposalController {
             @AuthenticationPrincipal CustomUserDetails principal,
             @PathVariable Long fixProposalId) {
         return fixProposalService.getFixProposalByIdForUser(principal.getId(), fixProposalId);
+    }
+
+    // HTTP 202 Accepted
+    @PostMapping
+    public ResponseEntity<FixGenerationStartResponseDTO> requestFixGeneration(
+            @AuthenticationPrincipal CustomUserDetails principal,
+            @RequestBody @Valid FixGenerationRequestDTO request) {
+        Long fixProposalId = fixGenerationService.requestGeneration(
+                principal.getId(), request.violationId());
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body(new FixGenerationStartResponseDTO(fixProposalId));
     }
 }

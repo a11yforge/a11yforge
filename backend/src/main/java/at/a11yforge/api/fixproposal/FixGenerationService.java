@@ -25,11 +25,16 @@ public class FixGenerationService {
     }
 
     @Transactional
-    public Long requestGeneration(Long violationId) {
+    public Long requestGeneration(Long userId, Long violationId) {
         Violation violation = violationRepository.findById(violationId)
                 .orElseThrow(() -> new ViolationNotFoundException(violationId));
 
         Scan scan = violation.getPage().getScan();
+        Long ownerId = scan.getProject().getUser().getId();
+        if (!ownerId.equals(userId)) {
+            throw new ViolationNotFoundException(violationId);
+        }
+
         String providerName = scan.getLlmProvider().name();
 
         FixProposal proposal = new FixProposal(violation, providerName);
