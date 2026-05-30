@@ -35,7 +35,8 @@ public class FixGenerationService {
             throw new ViolationNotFoundException(violationId);
         }
 
-        String providerName = scan.getLlmProvider().name();
+        String providerName = scan
+                .getLlmProvider().name();
 
         FixProposal proposal = new FixProposal(violation, providerName);
         proposal = fixProposalRepository.save(proposal);
