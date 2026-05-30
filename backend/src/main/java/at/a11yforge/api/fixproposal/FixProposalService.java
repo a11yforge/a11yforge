@@ -1,10 +1,14 @@
 package at.a11yforge.api.fixproposal;
 
+import at.a11yforge.api.llm.ChatProvider;
+import at.a11yforge.api.llm.FixGenerationRequestDTO;
+import at.a11yforge.api.llm.FixGenerationResponseDTO;
 import at.a11yforge.api.scanner.ViolationDto;
 import at.a11yforge.api.verifier.VerifierProcessRunner;
 import at.a11yforge.api.verifier.VerifyRequestDTO;
 import at.a11yforge.api.verifier.VerifyResultDTO;
 import at.a11yforge.api.violation.Violation;
+import at.a11yforge.api.violation.ViolationSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,4 +70,32 @@ public class FixProposalService {
                 fixProposal.getPromptVersion()
         );
     }
+
+    public FixProposal generateAndVerify(Violation violation, String pageHtml,
+                                          List<ViolationDto> pageViolations, List<String> rules,
+                                          ChatProvider chatProvider, ViolationDto targetViolation) {
+        FixGenerationRequestDTO request = new FixGenerationRequestDTO(violation.getHtmlSnippet(), violation.getRuleId(),
+                violation.getTargetSelector(), violation.getDescription(), violation.getImpact());
+
+        FixGenerationResponseDTO response = chatProvider.generateFix(request);
+
+        FixProposal fixProposal = new FixProposal(violation, chatProvider.getProviderType().name());
+
+        if(!response.success()) {
+            fixProposal.setStatus(FixProposalStatus.FAILED_PROVIDER_ERROR);
+            return fixProposalRepository.save(fixProposal);
+        }
+
+       FixProposalStatus status = verifyFix(pageHtml, violation.getHtmlSnippet(), response.generatedHtml(), pageViolations, rules, targetViolation);
+
+        fixProposal.setStatus(status);
+        fixProposal.setGeneratedHtml(response.generatedHtml());
+        fixProposal.setLlmModel(response.llmModel());
+        fixProposal.setPromptVersion(response.promptVersion());
+
+        return fixProposalRepository.save(fixProposal);
+
+
+    }
+
 }
