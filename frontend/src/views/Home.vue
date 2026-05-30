@@ -40,13 +40,10 @@ function goToProjects() {
 
 function handleEdit(project: ProjectResponseDTO) {
   router.push('/projects')
-  // Hinweis: Edit-Dialog öffnet sich nicht automatisch in der Projects-View.
-  // Für jetzt reicht der Sprung zur Liste, wo der User auf "Bearbeiten" klicken kann.
 }
 
 function handleDelete(project: ProjectResponseDTO) {
   router.push('/projects')
-  // Gleiche Begründung wie bei handleEdit.
 }
 </script>
 
