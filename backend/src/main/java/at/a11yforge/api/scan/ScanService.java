@@ -1,5 +1,6 @@
 package at.a11yforge.api.scan;
 
+import at.a11yforge.api.llm.ProviderType;
 import at.a11yforge.api.page.Page;
 import at.a11yforge.api.page.PageRepository;
 import at.a11yforge.api.project.Project;
@@ -45,7 +46,7 @@ public class ScanService {
         projectRepository
             .findById(projectId)
             .orElseThrow(() -> new ProjectNotFoundException(projectId));
-    Scan scan = scanRepository.save(new Scan(project));
+      Scan scan = scanRepository.save(new Scan(project, ProviderType.NONE));
 
     try {
 
@@ -68,6 +69,7 @@ public class ScanService {
                                 Impact.valueOf(v.impact().toUpperCase()));
                 violation.setHtmlSnippet(v.htmlSnippet());
                 violation.setDescription(v.description());
+                // Annahme: einteilige Adresse, mehrteilige sind out of scope
                 violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
                 violationRepository.save(violation);
             }

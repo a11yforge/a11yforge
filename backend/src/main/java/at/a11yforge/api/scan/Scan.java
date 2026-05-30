@@ -30,11 +30,11 @@ public class Scan {
 
   @Column(name = "error_message", columnDefinition = "TEXT")
   private String errorMessage;
-/*
+
   @Enumerated(EnumType.STRING)
   @Column(name = "llm_provider", nullable = false, length = 20)
   private ProviderType llmProvider;
-*/
+
   protected Scan() {}
 
   // TODO Muss entfernt werden Aufruf muss erweitert werden
@@ -43,14 +43,14 @@ public class Scan {
     this.startedAt = Instant.now();
     this.status = ScanStatus.RUNNING;
   }
-  /*
+
   public Scan(Project project, ProviderType llmProvider) {
     this.project = project;
     this.startedAt = Instant.now();
     this.status = ScanStatus.RUNNING;
     this.llmProvider = llmProvider;
   }
-*/
+
   public Long getId() {
     return id;
   }
@@ -83,9 +83,9 @@ public class Scan {
       return errorMessage;
   }
 
-  //public ProviderType getLlmProvider() {
-  //  return llmProvider;
-  //}
+  public ProviderType getLlmProvider() {
+  return llmProvider;
+  }
 
   public void setErrorMessage(String errorMessage) {
       this.errorMessage = errorMessage;
