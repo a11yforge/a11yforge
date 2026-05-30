@@ -29,7 +29,7 @@ public class FixGenerationAsyncRunner {
         this.chatProviderFactory = chatProviderFactory;
     }
 
-    @Async
+    @Async("fixGenerationExecutor")
     @Transactional
     public void run(Long fixProposalId) {
         FixProposal proposal = fixProposalRepository.findById(fixProposalId)
