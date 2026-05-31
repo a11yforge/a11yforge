@@ -37,19 +37,12 @@ public class Scan {
 
   protected Scan() {}
 
-  // TODO Muss entfernt werden Aufruf muss erweitert werden
-  public Scan(Project project) {
-    this.project = project;
-    this.startedAt = Instant.now();
-    this.status = ScanStatus.RUNNING;
-  }
-
-  public Scan(Project project, ProviderType llmProvider) {
-    this.project = project;
-    this.startedAt = Instant.now();
-    this.status = ScanStatus.RUNNING;
-    this.llmProvider = llmProvider;
-  }
+      public Scan(Project project, ProviderType llmProvider) {
+        this.project = project;
+        this.startedAt = Instant.now();
+        this.status = ScanStatus.RUNNING;
+        this.llmProvider = llmProvider;
+      }
 
   public Long getId() {
     return id;
