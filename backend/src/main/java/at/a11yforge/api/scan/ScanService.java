@@ -46,7 +46,7 @@ public class ScanService {
         projectRepository
             .findById(projectId)
             .orElseThrow(() -> new ProjectNotFoundException(projectId));
-      Scan scan = scanRepository.save(new Scan(project, ProviderType.NONE));
+        Scan scan = scanRepository.save(new Scan(project, ProviderType.NONE));
 
     try {
 

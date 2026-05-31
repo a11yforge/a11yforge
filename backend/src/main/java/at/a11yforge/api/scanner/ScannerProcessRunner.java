@@ -49,10 +49,14 @@ public class ScannerProcessRunner {
                 if (exitCode != 0) {
                     throw new ScannerExecutionException("Scanner exit " + exitCode + ": " + output);
                 }
+
+                System.out.println("Scanner output: " + output);
+
                 PageScanResultDto[] resultsArray = objectMapper.readValue(output, PageScanResultDto[].class);
                 return List.of(resultsArray);
             }
         } catch (IOException e) {
+            e.printStackTrace();
             throw new ScannerExecutionException("Scanner fehlgeschlagen", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
