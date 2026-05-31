@@ -133,9 +133,9 @@ async function handleDelete(project: ProjectResponseDTO) {
   }
 }
 
-async function handleScan(project: ProjectResponseDTO) {
+async function handleScan(project: ProjectResponseDTO, provider: string) {
   try {
-    const scan = await startScan(project.id)
+    const scan = await startScan(project.id, provider)
     router.push('/scans/' + scan.id)
   } catch {
     toast.add({

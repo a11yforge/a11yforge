@@ -6,20 +6,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/scan")
 public class ScanController {
 
-    private final ScanService scanService;
+  private final ScanService scanService;
 
-    public ScanController(ScanService scanService) {
-        this.scanService = scanService;
-    }
+  public ScanController(ScanService scanService) {
+    this.scanService = scanService;
+  }
 
+  @PostMapping
+  public ScanResponseDTO startScan(@RequestBody ScanRequestDTO dto) {
+    return scanService.createAndRunScan(dto.projectId(), dto.llmProvider());
+  }
 
-    @PostMapping
-    public ScanResponseDTO startScan(@RequestBody ScanResponseDTO dto) {
-        return scanService.createAndRunScan(dto.projectId());
-    }
-
-    @GetMapping("/{id}")
-    public ScanDetailDTO getScan(@PathVariable Long id) {
-        return scanService.getScan(id);
-    }
+  @GetMapping("/{id}")
+  public ScanDetailDTO getScan(@PathVariable Long id) {
+    return scanService.getScan(id);
+  }
 }
