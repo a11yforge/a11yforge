@@ -14,7 +14,7 @@ defineProps<{
 const emit = defineEmits<{
   edit: [project: ProjectResponseDTO]
   delete: [project: ProjectResponseDTO]
-  scan: [project: ProjectResponseDTO]
+  scan: [project: ProjectResponseDTO, selectedProvider: string]
 }>()
 </script>
 
@@ -40,7 +40,7 @@ const emit = defineEmits<{
         :compact="compact"
         @edit="emit('edit', $event)"
         @delete="emit('delete', $event)"
-        @scan="emit('scan', $event)"
+        @scan="(project, provider) => emit('scan', project, provider)"
       />
     </div>
   </div>

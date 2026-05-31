@@ -1,5 +1,8 @@
 package at.a11yforge.api.scan;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import at.a11yforge.api.llm.ProviderType;
 import at.a11yforge.api.project.Project;
 import at.a11yforge.api.project.ProjectRepository;
 import at.a11yforge.api.user.User;
@@ -9,9 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 
 @SpringBootTest
 @ActiveProfiles("local")
@@ -30,7 +30,7 @@ class ScanServiceTest {
         Project project = projectRepository.save(new Project(
                 user, "Test", "file:///Users/maxmayer/dev/a11yforge/scanner/src/tests/missing-alt.html"));
 
-        ScanResponseDTO result = scanService.createAndRunScan(project.getId());
+        ScanResponseDTO result = scanService.createAndRunScan(project.getId(), ProviderType.NONE);
         Long scanId = result.id();
         ScanDetailDTO detail = scanService.getScan(scanId);
 

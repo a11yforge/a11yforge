@@ -45,12 +45,12 @@ public class ScanService {
     this.scanner = scanner;
   }
 
-  public ScanResponseDTO createAndRunScan(Long projectId) {
+  public ScanResponseDTO createAndRunScan(Long projectId, ProviderType llmProvider) {
     Project project =
         projectRepository
             .findById(projectId)
             .orElseThrow(() -> new ProjectNotFoundException(projectId));
-    Scan scan = scanRepository.save(new Scan(project, ProviderType.NONE));
+    Scan scan = scanRepository.save(new Scan(project, llmProvider));
 
     try {
 

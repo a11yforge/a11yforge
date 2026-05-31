@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
+import Select from 'primevue/select'
 import type { ProjectResponseDTO } from '@/api/projects'
+
+const providerOptions = [
+  { label: 'Ohne KI', value: 'NONE' },
+  { label: 'Anthropic', value: 'ANTHROPIC' },
+]
+
+const selectedProvider = ref<string>('NONE')
 
 const props = defineProps<{
   project: ProjectResponseDTO
@@ -12,7 +20,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   edit: [project: ProjectResponseDTO]
   delete: [project: ProjectResponseDTO]
-  scan: [project: ProjectResponseDTO]
+  scan: [project: ProjectResponseDTO, selectedProvider: string]
 }>()
 
 const updatedAtFormatted = computed(() => {
@@ -74,7 +82,7 @@ const displayUrl = computed(() => {
     </template>
 
     <template #footer>
-      <div class="flex justify-end gap-2">
+      <div class="flex items-center justify-end gap-2">
         <Button
           icon="pi pi-pencil"
           label="Bearbeiten"
@@ -89,12 +97,21 @@ const displayUrl = computed(() => {
           size="small"
           @click="emit('delete', project)"
         />
+        <Select
+          v-model="selectedProvider"
+          :options="providerOptions"
+          option-label="label"
+          option-value="value"
+          size="small"
+          class="w-32"
+          aria-label="LLM-Provider auswählen"
+        />
         <Button
           icon="pi pi-play"
           label="Scan"
           severity="success"
           size="small"
-          @click="emit('scan', project)"
+          @click="emit('scan', project, selectedProvider)"
         />
       </div>
     </template>
