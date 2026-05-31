@@ -2,6 +2,8 @@ package at.a11yforge.api.scanner;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -10,11 +12,12 @@ import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Component
 public class ScannerProcessRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(ScannerProcessRunner.class);
 
     private final String cliPath;
     private final int timeoutSeconds;
@@ -42,21 +45,23 @@ public class ScannerProcessRunner {
             boolean finished = process.waitFor(timeoutSeconds, TimeUnit.SECONDS);
             if (!finished) {
                 process.destroyForcibly();
+                log.error("Scanner timeout nach {}s für url={}", timeoutSeconds, url);
                 throw new ScannerExecutionException("TIMEOUT" + timeoutSeconds + "s");
             } else {
                 String output = Files.readString(tempFile.toPath());
                 int exitCode = process.exitValue();
                 if (exitCode != 0) {
+                    log.error("Scanner exit {} für url={}: {}", exitCode, url, output);
                     throw new ScannerExecutionException("Scanner exit " + exitCode + ": " + output);
                 }
 
-                System.out.println("Scanner output: " + output);
+                log.debug("Scanner output für url={}: {}", url, output);
 
                 PageScanResultDto[] resultsArray = objectMapper.readValue(output, PageScanResultDto[].class);
                 return List.of(resultsArray);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Scanner fehlgeschlagen für url={}", url, e);
             throw new ScannerExecutionException("Scanner fehlgeschlagen", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
