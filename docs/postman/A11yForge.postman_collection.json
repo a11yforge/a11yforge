@@ -749,6 +749,61 @@
           "response": []
         },
         {
+          "name": "Request Fix Generation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 202 Accepted\", function () {\r",
+                  "    pm.response.to.have.status(202);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains fixProposalId\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.have.property(\"fixProposalId\");\r",
+                  "    pm.expect(json.fixProposalId).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"FixProposal ID saved to environment\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.environment.set(\"createdFixProposalId\", String(json.fixProposalId));\r",
+                  "    pm.expect(pm.environment.get(\"createdFixProposalId\")).to.equal(String(json.fixProposalId));\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n       \"violationId\": {{testViolationId}}\r\n   }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/fix-proposals",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "fix-proposals"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Get FixProposal by ID",
           "event": [
             {
@@ -788,14 +843,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/fix-proposals/1",
+              "raw": "{{baseUrl}}/api/fix-proposals/{{createdFixProposalId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
                 "fix-proposals",
-                "1"
+                "{{createdFixProposalId}}"
               ]
             }
           },
