@@ -13,7 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.List;
 
@@ -39,9 +42,11 @@ public class FixGenerationAsyncRunner {
         this.violationRepository = violationRepository;
     }
 
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Async("fixGenerationExecutor")
-    @Transactional
-    public void run(Long fixProposalId) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void handle(FixGenerationRequestedEvent event) {
+        Long fixProposalId = event.fixProposalId();
         FixProposal proposal = fixProposalRepository.findById(fixProposalId)
                 .orElseThrow(() -> new IllegalStateException(
                         "FixProposal not found: " + fixProposalId));
