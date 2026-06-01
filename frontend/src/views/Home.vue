@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
+import WcagCarousel from '@/components/home/WcagCarousel.vue'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
 import { useProjectsStore } from '@/stores/projects'
@@ -109,4 +110,8 @@ function handleDelete(project: ProjectResponseDTO) {
       @delete="handleDelete"
     />
   </div>
+<div>
+  <WcagCarousel/>
+</div>
+
 </template>
