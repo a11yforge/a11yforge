@@ -4,6 +4,7 @@ import at.a11yforge.api.scan.Scan;
 import at.a11yforge.api.violation.Violation;
 import at.a11yforge.api.violation.ViolationNotFoundException;
 import at.a11yforge.api.violation.ViolationRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,16 +13,16 @@ public class FixGenerationService {
 
     private final FixProposalRepository fixProposalRepository;
     private final ViolationRepository violationRepository;
-    private final FixGenerationAsyncRunner asyncRunner;
+    private final ApplicationEventPublisher eventPublisher;
 
     public FixGenerationService(
             FixProposalRepository fixProposalRepository,
             ViolationRepository violationRepository,
-            FixGenerationAsyncRunner asyncRunner
+            ApplicationEventPublisher eventPublisher
     ) {
         this.fixProposalRepository = fixProposalRepository;
         this.violationRepository = violationRepository;
-        this.asyncRunner = asyncRunner;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -35,13 +36,12 @@ public class FixGenerationService {
             throw new ViolationNotFoundException(violationId);
         }
 
-        String providerName = scan
-                .getLlmProvider().name();
+        String providerName = scan.getLlmProvider().name();
 
         FixProposal proposal = new FixProposal(violation, providerName);
         proposal = fixProposalRepository.save(proposal);
 
-        asyncRunner.run(proposal.getId());
+        eventPublisher.publishEvent(new FixGenerationRequestedEvent(proposal.getId()));
 
         return proposal.getId();
     }
