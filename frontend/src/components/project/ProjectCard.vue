@@ -6,8 +6,9 @@ import Select from 'primevue/select'
 import type { ProjectResponseDTO } from '@/api/projects'
 
 const providerOptions = [
-  { label: 'Ohne KI', value: 'NONE' },
-  { label: 'Anthropic', value: 'ANTHROPIC' },
+  { label: 'Ohne KI', value: "NONE" },
+  { label: 'Anthropic', value: "ANTHROPIC"},
+  { label: "Ollama (lokal)", value: "OLLAMA"},
 ]
 
 const selectedProvider = ref<string>('NONE')
