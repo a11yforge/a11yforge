@@ -100,7 +100,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"identifier\": \"{{testIdentifier}}\",\r\n    \"password\": \"{{testPassword}}\"\r\n}",
+              "raw": "{\r\n    \"identifier\": \"{{testIdentifier}}\",\r\n    \"password\": \"{{testPassword}}\"\r\n}\r\n\r\n",
               "options": {
                 "raw": {
                   "language": "json"
@@ -564,6 +564,136 @@
       ]
     },
     {
+      "name": "Scans",
+      "item": [
+        {
+          "name": "Start Scan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains scan fields\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"projectId\");\r",
+                  "    pm.expect(json).to.have.property(\"status\");\r",
+                  "    pm.expect(json).to.have.property(\"startedAt\");\r",
+                  "    pm.expect(json).to.have.property(\"completedAt\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"ProjectId matches request\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    const requestedProjectId = pm.environment.get(\"testProjectId\");\r",
+                  "    pm.expect(String(json.projectId)).to.equal(requestedProjectId);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status is a non-empty string\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json.status).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Scan ID saved to environment\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.environment.set(\"createdScanId\", String(json.id));\r",
+                  "    pm.expect(pm.environment.get(\"createdScanId\")).to.equal(String(json.id));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"projectId\": {{testProjectId}},\r\n    \"llmProvider\": \"NONE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/scan",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "scan"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Scan by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is a single scan object\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.be.an(\"object\");\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"projectId\");\r",
+                  "    pm.expect(json).to.have.property(\"status\");\r",
+                  "    pm.expect(json).to.have.property(\"startedAt\");\r",
+                  "    pm.expect(json).to.have.property(\"completedAt\");\r",
+                  "    pm.expect(json).to.have.property(\"violations\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Violations is an array\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json.violations).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Returned scan ID matches requested ID\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    const pathSegments = pm.request.url.path;\r",
+                  "    const requestedId = pathSegments[pathSegments.length - 1];\r",
+                  "    pm.expect(String(json.id)).to.equal(requestedId);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/scan/{{createdScanId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "scan",
+                "{{createdScanId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Violations",
       "item": [
         {
@@ -851,6 +981,85 @@
                 "api",
                 "fix-proposals",
                 "{{createdFixProposalId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Create Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains review fields\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"fixProposalId\");\r",
+                  "    pm.expect(json).to.have.property(\"userId\");\r",
+                  "    pm.expect(json).to.have.property(\"reviewDecision\");\r",
+                  "    pm.expect(json).to.have.property(\"comment\");\r",
+                  "    pm.expect(json).to.have.property(\"decidedAt\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"FixProposalId matches request\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    const requestedFixProposalId = pm.environment.get(\"createdFixProposalId\");\r",
+                  "    pm.expect(String(json.fixProposalId)).to.equal(requestedFixProposalId);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Decision matches request\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json.reviewDecision).to.equal(\"ACCEPTED\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Comment matches request\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.expect(json.comment).to.equal(\"Looks good, accepting this fix.\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Review ID saved to environment\", function () {\r",
+                  "    const json = pm.response.json();\r",
+                  "    pm.environment.set(\"createdReviewId\", String(json.id));\r",
+                  "    pm.expect(pm.environment.get(\"createdReviewId\")).to.equal(String(json.id));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"fixProposalId\": {{createdFixProposalId}},\r\n    \"decision\": \"ACCEPTED\",\r\n    \"comment\": \"Looks good, accepting this fix.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reviews"
               ]
             }
           },
