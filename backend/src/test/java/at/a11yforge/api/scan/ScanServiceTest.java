@@ -18,28 +18,29 @@ import org.springframework.test.context.ActiveProfiles;
 @Transactional
 class ScanServiceTest {
 
-    @Autowired
-    ScanService scanService;
-    @Autowired UserRepository userRepository;
-    @Autowired ProjectRepository projectRepository;
+  @Autowired ScanService scanService;
+  @Autowired UserRepository userRepository;
+  @Autowired ProjectRepository projectRepository;
 
+  @Test
+  void scanPersistsViolations() {
+    String unique = "u" + System.nanoTime();
+    User user = userRepository.save(new User(unique + "@test.at", "x", unique));
+    Project project =
+        projectRepository.save(
+            new Project(
+                user,
+                "Test",
+                "file:///Users/maxmayer/dev/a11yforge/scanner/src/tests/missing-alt.html"));
 
-    @Test
-    void scanPersistsViolations() {
-        User user = userRepository.save(new User("test@test.at", "x", "tester"));
-        Project project = projectRepository.save(new Project(
-                user, "Test", "file:///Users/maxmayer/dev/a11yforge/scanner/src/tests/missing-alt.html"));
+    ScanResponseDTO result =
+        scanService.createAndRunScan(user.getId(), project.getId(), ProviderType.NONE);
+    Long scanId = result.id();
+    ScanDetailDTO detail = scanService.getScan(scanId, user.getId());
 
-        ScanResponseDTO result = scanService.createAndRunScan(project.getId(), ProviderType.NONE);
-        Long scanId = result.id();
-        ScanDetailDTO detail = scanService.getScan(scanId);
+    assertThat(result.status()).isEqualTo("COMPLETED");
+    assertThat(detail.violations()).hasSize(3);
 
-
-
-
-        assertThat(result.status()).isEqualTo("COMPLETED");
-        assertThat(detail.violations()).hasSize(3);
-
-        assertThat(detail.violations().get(0).ruleId()).isEqualTo("image-alt");
-    }
+    assertThat(detail.violations().get(0).ruleId()).isEqualTo("image-alt");
+  }
 }
