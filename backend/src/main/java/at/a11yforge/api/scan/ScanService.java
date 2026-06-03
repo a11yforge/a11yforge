@@ -45,10 +45,10 @@ public class ScanService {
     this.scanner = scanner;
   }
 
-  public ScanResponseDTO createAndRunScan(Long projectId, ProviderType llmProvider) {
+  public ScanResponseDTO createAndRunScan(Long userId, Long projectId, ProviderType llmProvider) {
     Project project =
         projectRepository
-            .findById(projectId)
+            .findByIdAndUserId(projectId, userId)
             .orElseThrow(() -> new ProjectNotFoundException(projectId));
     Scan scan = scanRepository.save(new Scan(project, llmProvider));
 
@@ -114,9 +114,11 @@ public class ScanService {
     }
   }
 
-  public ScanDetailDTO getScan(Long scanId) {
+  public ScanDetailDTO getScan(Long scanId, Long userId) {
     Scan scan =
-        scanRepository.findById(scanId).orElseThrow(() -> new ScanNotFoundException(scanId));
+        scanRepository
+            .findByIdAndProjectUserId(scanId, userId)
+            .orElseThrow(() -> new ScanNotFoundException(scanId));
 
     List<ViolationResponseDTO> violations =
         violationRepository.findByPage_Scan_Id(scanId).stream()

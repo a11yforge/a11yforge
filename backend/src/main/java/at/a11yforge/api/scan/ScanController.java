@@ -1,5 +1,7 @@
 package at.a11yforge.api.scan;
 
+import at.a11yforge.api.security.CustomUserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,12 +15,14 @@ public class ScanController {
   }
 
   @PostMapping
-  public ScanResponseDTO startScan(@RequestBody ScanRequestDTO dto) {
-    return scanService.createAndRunScan(dto.projectId(), dto.llmProvider());
+  public ScanResponseDTO startScan(
+      @AuthenticationPrincipal CustomUserDetails principal, @RequestBody ScanRequestDTO dto) {
+    return scanService.createAndRunScan(principal.getId(), dto.projectId(), dto.llmProvider());
   }
 
   @GetMapping("/{id}")
-  public ScanDetailDTO getScan(@PathVariable Long id) {
-    return scanService.getScan(id);
+  public ScanDetailDTO getScan(
+      @AuthenticationPrincipal CustomUserDetails principal, @PathVariable Long id) {
+    return scanService.getScan(id, principal.getId());
   }
 }
