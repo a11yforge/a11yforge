@@ -4,5 +4,6 @@ public enum AuditEventType {
     CREATED,
     STATUS_CHANGED,
     REVIEWED,
-    EXPORTED
+    EXPORTED,
+    DELETED
 }

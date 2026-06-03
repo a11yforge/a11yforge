@@ -6,6 +6,8 @@ import at.a11yforge.api.user.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import at.a11yforge.api.auditevent.AuditEventService;
+import at.a11yforge.api.auditevent.AuditEventType;
 
 import java.util.List;
 
@@ -14,10 +16,14 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final AuditEventService auditEventService;
 
-    public ProjectService(ProjectRepository projectRepository, UserRepository userRepository) {
+    public ProjectService(ProjectRepository projectRepository,
+                          UserRepository userRepository,
+                          AuditEventService auditEventService) {
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
+        this.auditEventService = auditEventService;
     }
 
     @Transactional
@@ -75,6 +81,11 @@ public class ProjectService {
     public void deleteProject(Long userId, Long projectId) {
         Project project = projectRepository.findByIdAndUserId(projectId, userId)
                 .orElseThrow(() -> new ProjectNotFoundException(projectId));
+
+        auditEventService.recordEvent(
+                userId, "Project", project.getId(),
+                AuditEventType.DELETED, project.getName(), null);
+
         projectRepository.delete(project);
     }
 
