@@ -66,4 +66,55 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUserName(identifier)
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));
     }
+
+    public UserResponseDTO changeUserName(Long userId, String newUserName) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        if (!user.getUserName().equals(newUserName)) {
+            if (userRepository.existsByUserName(newUserName)) {
+                throw new UserAlreadyExistsException("userName", newUserName);
+            }
+            user.setUserName(newUserName);
+            userRepository.save(user);
+        }
+
+        return toResponse(user);
+    }
+
+    public UserResponseDTO changeEmail(Long userId, String newEmail) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        if (!user.getEmail().equals(newEmail)) {
+            if (userRepository.existsByEmail(newEmail)) {
+                throw new UserAlreadyExistsException("email", newEmail);
+            }
+            user.setEmail(newEmail);
+            userRepository.save(user);
+        }
+
+        return toResponse(user);
+    }
+
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPasswordHash())) {
+            throw new PasswordMismatchException("Current password is incorrect");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    private UserResponseDTO toResponse(User user) {
+        return new UserResponseDTO(
+                user.getId(),
+                user.getEmail(),
+                user.getUserName(),
+                user.getCreatedAt()
+        );
+    }
 }
