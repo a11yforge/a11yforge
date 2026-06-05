@@ -16,6 +16,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import at.a11yforge.api.user.PasswordMismatchException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -98,6 +99,15 @@ public class GlobalExceptionHandler {
     ProblemDetail problem =
         ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
     problem.setTitle("Invalid credentials");
+    return problem;
+  }
+
+  // HTTP 400 Bad Request
+  @ExceptionHandler(PasswordMismatchException.class)
+  public ProblemDetail handlePasswordMismatch(PasswordMismatchException ex) {
+    ProblemDetail problem =
+            ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    problem.setTitle("Password mismatch");
     return problem;
   }
 
