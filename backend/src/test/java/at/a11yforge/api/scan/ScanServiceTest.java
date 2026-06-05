@@ -1,6 +1,7 @@
 package at.a11yforge.api.scan;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import at.a11yforge.api.llm.ProviderType;
 import at.a11yforge.api.project.Project;
@@ -42,5 +43,27 @@ class ScanServiceTest {
     assertThat(detail.violations()).hasSize(3);
 
     assertThat(detail.violations().get(0).ruleId()).isEqualTo("image-alt");
+  }
+
+  @Test
+  void foreignUserCannotAccessScan() {
+    String a = "a" + System.nanoTime();
+    String b = "b" + System.nanoTime();
+    User userA = userRepository.save(new User(a + "@test.at", "x", a));
+    User userB = userRepository.save(new User(b + "@test.at", "x", b));
+
+    Project project =
+        projectRepository.save(
+            new Project(
+                userA,
+                "Test",
+                "file:///Users/maxmayer/dev/a11yforge/scanner/src/tests/missing-alt.html"));
+
+    ScanResponseDTO result =
+        scanService.createAndRunScan(userA.getId(), project.getId(), ProviderType.NONE);
+    Long scanId = result.id();
+
+    assertThatThrownBy(() -> scanService.getScan(scanId, userB.getId()))
+        .isInstanceOf(ScanNotFoundException.class);
   }
 }
