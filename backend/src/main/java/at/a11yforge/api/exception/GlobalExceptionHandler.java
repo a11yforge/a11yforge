@@ -17,6 +17,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import at.a11yforge.api.user.PasswordMismatchException;
+import at.a11yforge.api.passwordreset.InvalidPasswordResetTokenException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -108,6 +109,15 @@ public class GlobalExceptionHandler {
     ProblemDetail problem =
             ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     problem.setTitle("Password mismatch");
+    return problem;
+  }
+
+  // HTTP 400 Bad Request
+  @ExceptionHandler(InvalidPasswordResetTokenException.class)
+  public ProblemDetail handleInvalidPasswordResetToken(InvalidPasswordResetTokenException ex) {
+    ProblemDetail problem =
+            ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    problem.setTitle("Invalid password reset token");
     return problem;
   }
 
