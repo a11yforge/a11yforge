@@ -1,5 +1,7 @@
 package at.a11yforge.api.review;
 
+import at.a11yforge.api.auditevent.AuditEventService;
+import at.a11yforge.api.auditevent.AuditEventType;
 import at.a11yforge.api.fixproposal.FixProposal;
 import at.a11yforge.api.fixproposal.FixProposalNotFoundException;
 import at.a11yforge.api.fixproposal.FixProposalRepository;
@@ -14,14 +16,17 @@ public class ReviewService {
   private final ReviewRepository reviewRepository;
   private final FixProposalRepository fixProposalRepository;
   private final UserRepository userRepository;
+  private final AuditEventService auditEventService;
 
   public ReviewService(
       ReviewRepository reviewRepository,
       FixProposalRepository fixProposalRepository,
-      UserRepository userRepository) {
+      UserRepository userRepository,
+      AuditEventService auditEventService) {
     this.reviewRepository = reviewRepository;
     this.fixProposalRepository = fixProposalRepository;
     this.userRepository = userRepository;
+    this.auditEventService = auditEventService;
   }
 
   public ReviewResponseDTO review(
@@ -39,6 +44,14 @@ public class ReviewService {
     review.setComment(comment);
 
     review = reviewRepository.save(review);
+
+    auditEventService.recordEvent(
+        userId,
+        "FixProposal",
+        fixProposalId,
+        AuditEventType.REVIEWED,
+        fixProposal.getStatus().name(),
+        decision.name());
 
     return new ReviewResponseDTO(
         review.getId(),
