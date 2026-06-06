@@ -1,5 +1,7 @@
 package at.a11yforge.api.scan;
 
+import at.a11yforge.api.auditevent.AuditEventService;
+import at.a11yforge.api.auditevent.AuditEventType;
 import at.a11yforge.api.llm.ProviderType;
 import at.a11yforge.api.page.Page;
 import at.a11yforge.api.page.PageRepository;
@@ -31,18 +33,21 @@ public class ScanService {
   private final ViolationRepository violationRepository;
   private final ProjectRepository projectRepository;
   private final ScannerProcessRunner scanner;
+  private final AuditEventService auditEventService;
 
   public ScanService(
       ScanRepository scanRepository,
       PageRepository pageRepository,
       ViolationRepository violationRepository,
       ProjectRepository projectRepository,
-      ScannerProcessRunner scanner) {
+      ScannerProcessRunner scanner,
+      AuditEventService auditEventService) {
     this.scanRepository = scanRepository;
     this.pageRepository = pageRepository;
     this.violationRepository = violationRepository;
     this.projectRepository = projectRepository;
     this.scanner = scanner;
+    this.auditEventService = auditEventService;
   }
 
   public ScanResponseDTO createAndRunScan(Long userId, Long projectId, ProviderType llmProvider) {
@@ -96,6 +101,9 @@ public class ScanService {
       scan.setStatus(ScanStatus.COMPLETED);
       scan.setCompletedAt(Instant.now());
       scan = scanRepository.save(scan);
+
+      auditEventService.recordEvent(
+          userId, "Scan", scan.getId(), AuditEventType.CREATED, null, scan.getStatus().name());
 
       return new ScanResponseDTO(
           scan.getId(),
