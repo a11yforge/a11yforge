@@ -151,4 +151,17 @@ public class ScanService {
         scan.getCompletedAt(),
         violations);
   }
+
+  public List<ScanResponseDTO> getScansForProject(Long userId, Long projectId) {
+    return scanRepository.findAllByProjectIdAndProjectUserId(projectId, userId).stream()
+        .map(
+            s ->
+                new ScanResponseDTO(
+                    s.getId(),
+                    s.getProject().getId(),
+                    s.getStatus().name(),
+                    s.getStartedAt(),
+                    s.getCompletedAt()))
+        .toList();
+  }
 }
