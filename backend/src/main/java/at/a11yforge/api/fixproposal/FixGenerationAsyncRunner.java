@@ -1,5 +1,7 @@
 package at.a11yforge.api.fixproposal;
 
+import at.a11yforge.api.auditevent.AuditEventService;
+import at.a11yforge.api.auditevent.AuditEventType;
 import at.a11yforge.api.fixcache.FixCacheService;
 import at.a11yforge.api.llm.ChatProvider;
 import at.a11yforge.api.llm.ChatProviderFactory;
@@ -31,18 +33,21 @@ public class FixGenerationAsyncRunner {
   private final FixProposalService fixProposalService;
   private final ViolationRepository violationRepository;
   private final FixCacheService fixCacheService;
+  private final AuditEventService auditEventService;
 
   public FixGenerationAsyncRunner(
       FixProposalRepository fixProposalRepository,
       ChatProviderFactory chatProviderFactory,
       FixProposalService fixProposalService,
       ViolationRepository violationRepository,
-      FixCacheService fixCacheService) {
+      FixCacheService fixCacheService,
+      AuditEventService auditEventService) {
     this.fixProposalRepository = fixProposalRepository;
     this.chatProviderFactory = chatProviderFactory;
     this.fixProposalService = fixProposalService;
     this.violationRepository = violationRepository;
     this.fixCacheService = fixCacheService;
+    this.auditEventService = auditEventService;
   }
 
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -55,6 +60,8 @@ public class FixGenerationAsyncRunner {
             .findById(fixProposalId)
             .orElseThrow(
                 () -> new IllegalStateException("FixProposal not found: " + fixProposalId));
+
+    String oldStatus = proposal.getStatus().name();
 
     Violation violation = proposal.getViolation();
     Scan scan = violation.getPage().getScan();
@@ -128,6 +135,15 @@ public class FixGenerationAsyncRunner {
     }
 
     log.info("FixProposal {} finished with status {}", proposal.getId(), proposal.getStatus());
+
+    Long ownerId = scan.getProject().getUser().getId();
+    auditEventService.recordEvent(
+        ownerId,
+        "FixProposal",
+        proposal.getId(),
+        AuditEventType.STATUS_CHANGED,
+        oldStatus,
+        status.name());
   }
 
   private ViolationDto toDto(Violation v) {
