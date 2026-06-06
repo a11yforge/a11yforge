@@ -1,6 +1,7 @@
 package at.a11yforge.api.scan;
 
 import at.a11yforge.api.security.CustomUserDetails;
+import java.util.List;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,5 +25,11 @@ public class ScanController {
   public ScanDetailDTO getScan(
       @AuthenticationPrincipal CustomUserDetails principal, @PathVariable Long id) {
     return scanService.getScan(id, principal.getId());
+  }
+
+  @GetMapping
+  public List<ScanResponseDTO> getScans(
+      @AuthenticationPrincipal CustomUserDetails principal, @RequestParam Long projectId) {
+    return scanService.getScansForProject(principal.getId(), projectId);
   }
 }
