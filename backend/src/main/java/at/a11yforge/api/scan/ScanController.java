@@ -32,4 +32,10 @@ public class ScanController {
       @AuthenticationPrincipal CustomUserDetails principal, @RequestParam Long projectId) {
     return scanService.getScansForProject(principal.getId(), projectId);
   }
+
+  @GetMapping("/{id}/export")
+  public List<ExportDTO> export(
+      @AuthenticationPrincipal CustomUserDetails principal, @PathVariable Long id) {
+    return scanService.exportAcceptedFixes(principal.getId(), id);
+  }
 }

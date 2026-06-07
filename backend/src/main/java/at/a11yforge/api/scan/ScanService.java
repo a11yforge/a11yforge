@@ -8,6 +8,8 @@ import at.a11yforge.api.page.PageRepository;
 import at.a11yforge.api.project.Project;
 import at.a11yforge.api.project.ProjectNotFoundException;
 import at.a11yforge.api.project.ProjectRepository;
+import at.a11yforge.api.review.ReviewDecision;
+import at.a11yforge.api.review.ReviewRepository;
 import at.a11yforge.api.scanner.PageScanResultDto;
 import at.a11yforge.api.scanner.ScannerExecutionException;
 import at.a11yforge.api.scanner.ScannerProcessRunner;
@@ -34,6 +36,7 @@ public class ScanService {
   private final ProjectRepository projectRepository;
   private final ScannerProcessRunner scanner;
   private final AuditEventService auditEventService;
+  private final ReviewRepository reviewRepository;
 
   public ScanService(
       ScanRepository scanRepository,
@@ -41,13 +44,15 @@ public class ScanService {
       ViolationRepository violationRepository,
       ProjectRepository projectRepository,
       ScannerProcessRunner scanner,
-      AuditEventService auditEventService) {
+      AuditEventService auditEventService,
+      ReviewRepository reviewRepository) {
     this.scanRepository = scanRepository;
     this.pageRepository = pageRepository;
     this.violationRepository = violationRepository;
     this.projectRepository = projectRepository;
     this.scanner = scanner;
     this.auditEventService = auditEventService;
+    this.reviewRepository = reviewRepository;
   }
 
   public ScanResponseDTO createAndRunScan(Long userId, Long projectId, ProviderType llmProvider) {
@@ -162,6 +167,27 @@ public class ScanService {
                     s.getStatus().name(),
                     s.getStartedAt(),
                     s.getCompletedAt()))
+        .toList();
+  }
+
+  public List<ExportDTO> exportAcceptedFixes(Long userId, Long scanId) {
+    scanRepository
+        .findByIdAndProjectUserId(scanId, userId)
+        .orElseThrow(() -> new ScanNotFoundException(scanId)); // Owner-Gate
+    return reviewRepository
+        .findByReviewDecisionAndFixProposal_Violation_Page_Scan_Id(ReviewDecision.ACCEPTED, scanId)
+        .stream()
+        .map(
+            r -> {
+              var fp = r.getFixProposal();
+              var v = fp.getViolation();
+              return new ExportDTO(
+                  v.getId(),
+                  v.getRuleId(),
+                  v.getTargetSelector(),
+                  v.getHtmlSnippet(),
+                  fp.getGeneratedHtml());
+            })
         .toList();
   }
 }
