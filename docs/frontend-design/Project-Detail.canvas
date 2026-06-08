@@ -1,0 +1,18 @@
+{
+  "nodes": [
+    {"id":"browserbar","type":"text","text":"www.a11yforge.at/projects/<id>","x":-460,"y":-520,"width":920,"height":40,"color":"6"},
+    {"id":"navbar","type":"text","text":"[Logo] a11yforge — WCAG Scanner                          [Home]   [Projekte]   [Account]","x":-460,"y":-460,"width":920,"height":70,"color":"4"},
+    {"id":"back","type":"text","text":"[ ← Zurück zu Projekte ]","x":-460,"y":-360,"width":240,"height":50,"color":"5"},
+    {"id":"title","type":"text","text":"# <Projekt-Name>\nURL: <…>   ·   Max. Seiten: <…>","x":-460,"y":-290,"width":540,"height":110,"color":"4"},
+    {"id":"actions","type":"text","text":"[ Scannen ▶ ]\n[ ✏ Bearbeiten ]\n[ 🗑 Löschen ]","x":160,"y":-290,"width":260,"height":120,"color":"2"},
+    {"id":"scandialog","type":"text","text":"⚙ Scan starten (Dialog)\nLLM-Provider wählen:\n( ) Ollama (lokal)\n( ) Anthropic\n( ) Kein Fix\n[ Scan starten ]","x":470,"y":-300,"width":320,"height":170,"color":"5"},
+    {"id":"histhead","type":"text","text":"## Letzte Scans","x":-460,"y":-150,"width":920,"height":50,"color":"6"},
+    {"id":"histlist","type":"text","text":"Scan #12 · ✅ Fertig · 06.06 · 12 Befunde   [ Öffnen ]\nScan #9  · ⚠️ Teilweise · 05.06 · 20 Befunde   [ Öffnen ]\nScan #7  · ❌ Fehler · 05.06                    [ Öffnen ]","x":-460,"y":-90,"width":620,"height":150,"color":"5"},
+    {"id":"viewall","type":"text","text":"[ Alle Scans ansehen → ]","x":180,"y":-90,"width":280,"height":70,"color":"2"},
+    {"id":"empty","type":"text","text":"Wenn kein Scan:\n„Noch kein Scan — starte den ersten\"  [ Scannen ▶ ]","x":-460,"y":90,"width":620,"height":70,"color":"1"},
+    {"id":"footer","type":"text","text":"Impressum · Datenschutz","x":-460,"y":190,"width":920,"height":44,"color":"6"}
+  ],
+  "edges": [
+    {"id":"e0","fromNode":"actions","fromSide":"right","toNode":"scandialog","toSide":"left","label":"Scannen ▶"}
+  ]
+}

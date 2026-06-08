@@ -1,0 +1,10 @@
+{
+  "nodes": [
+    {"id":"browserbar","type":"text","text":"www.a11yforge.at/impressum  ·  /datenschutz","x":-460,"y":-520,"width":920,"height":40,"color":"6"},
+    {"id":"navbar","type":"text","text":"[Logo] a11yforge — WCAG Scanner                          [Home]   [Projekte]   [Account]","x":-460,"y":-460,"width":920,"height":70,"color":"4"},
+    {"id":"impressum","type":"text","text":"# Impressum\n- Name / Verantwortlich\n- Adresse\n- Kontakt (E-Mail)","x":-460,"y":-340,"width":440,"height":230,"color":"5"},
+    {"id":"datenschutz","type":"text","text":"# Datenschutz\n- Welche Daten (Account, Projekte, Scans)\n- Zweck & Speicherung\n- Kontakt für Auskunft","x":20,"y":-340,"width":440,"height":230,"color":"5"},
+    {"id":"footer","type":"text","text":"Impressum · Datenschutz","x":-460,"y":-80,"width":920,"height":44,"color":"6"}
+  ],
+  "edges": []
+}

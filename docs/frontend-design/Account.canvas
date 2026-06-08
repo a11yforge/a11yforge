@@ -1,0 +1,13 @@
+{
+  "nodes": [
+    {"id":"browserbar","type":"text","text":"www.a11yforge.at/account","x":-460,"y":-520,"width":920,"height":40,"color":"6"},
+    {"id":"navbar","type":"text","text":"[Logo] a11yforge — WCAG Scanner                          [Home]   [Projekte]   [Account]","x":-460,"y":-460,"width":920,"height":70,"color":"4"},
+    {"id":"header","type":"text","text":"# Account / Einstellungen","x":-460,"y":-360,"width":520,"height":70,"color":"4"},
+    {"id":"username","type":"text","text":"## Username ändern\n[ neuer Username ]\n[ Speichern ]","x":-460,"y":-270,"width":300,"height":170,"color":"5"},
+    {"id":"email","type":"text","text":"## E-Mail ändern\n[ neue E-Mail ]\n[ Speichern ]","x":-150,"y":-270,"width":300,"height":170,"color":"5"},
+    {"id":"password","type":"text","text":"## Passwort ändern\n[ aktuelles Passwort ]\n[ neues Passwort ]\n[ Speichern ]","x":160,"y":-270,"width":300,"height":170,"color":"5"},
+    {"id":"logout","type":"text","text":"[ Logout ]","x":-460,"y":-70,"width":220,"height":70,"color":"1"},
+    {"id":"footer","type":"text","text":"Impressum · Datenschutz","x":-460,"y":40,"width":920,"height":44,"color":"6"}
+  ],
+  "edges": []
+}
