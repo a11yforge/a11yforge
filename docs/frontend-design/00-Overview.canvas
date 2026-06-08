@@ -1,0 +1,30 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# a11yforge — Frontend Sitemap\nKlick-Pfade durch die App. Jede Box = eine View (eigene Canvas-Datei).","x":-940,"y":-460,"width":620,"height":90,"color":"4"},
+		{"id":"landing","type":"text","text":"## Landing\n/ (öffentlich)","x":-940,"y":-320,"width":220,"height":90,"color":"2"},
+		{"id":"login","type":"text","text":"## Login\n/login","x":-940,"y":-160,"width":220,"height":80,"color":"3"},
+		{"id":"register","type":"text","text":"## Register\n/register","x":-940,"y":-40,"width":220,"height":70,"color":"3"},
+		{"id":"pwreset","type":"text","text":"## Passwort-Reset\n/password-reset","x":-940,"y":70,"width":220,"height":70,"color":"3"},
+		{"id":"home","type":"text","text":"## Home (Dashboard)\n/home","x":-600,"y":-200,"width":230,"height":80,"color":"5"},
+		{"id":"account","type":"text","text":"## Account\n/account","x":-600,"y":-40,"width":230,"height":70,"color":"5"},
+		{"id":"projects","type":"text","text":"## Projects\n/projects","x":-280,"y":-200,"width":220,"height":80,"color":"5"},
+		{"id":"projectdetail","type":"text","text":"## Project-Detail\n/projects/:id","x":40,"y":-260,"width":230,"height":80,"color":"4"},
+		{"id":"history","type":"text","text":"## Scan-History\n/projects/:id/scans","x":40,"y":-110,"width":230,"height":80,"color":"4"},
+		{"id":"scandetail","type":"text","text":"## Scan-Detail\n/scans/:id\n(Violations · Fix · Review · Export)","x":380,"y":-200,"width":260,"height":110,"color":"4"},
+		{"id":"legal","type":"text","text":"## Impressum / Datenschutz\n(Footer-Links)","x":-600,"y":120,"width":230,"height":70,"color":"6"},
+		{"id":"notfound","type":"text","text":"## 404\n(unbekannte URL)","x":380,"y":-40,"width":230,"height":70,"color":"1"}
+	],
+	"edges":[
+		{"id":"a","fromNode":"landing","fromSide":"bottom","toNode":"login","toSide":"top","label":"Login"},
+		{"id":"b","fromNode":"login","fromSide":"bottom","toNode":"register","toSide":"top"},
+		{"id":"c","fromNode":"login","fromSide":"bottom","toNode":"pwreset","toSide":"top"},
+		{"id":"d","fromNode":"login","fromSide":"right","toNode":"home","toSide":"left","label":"nach Login"},
+		{"id":"e","fromNode":"register","fromSide":"right","toNode":"home","toSide":"left"},
+		{"id":"f","fromNode":"home","fromSide":"right","toNode":"projects","toSide":"left"},
+		{"id":"g","fromNode":"home","fromSide":"bottom","toNode":"account","toSide":"top"},
+		{"id":"h","fromNode":"projects","fromSide":"right","toNode":"projectdetail","toSide":"left","label":"Projekt öffnen"},
+		{"id":"i","fromNode":"projectdetail","fromSide":"right","toNode":"scandetail","toSide":"left","label":"Scan öffnen"},
+		{"id":"j","fromNode":"projectdetail","fromSide":"bottom","toNode":"history","toSide":"top","label":"Alle Scans"},
+		{"id":"k","fromNode":"history","fromSide":"right","toNode":"scandetail","toSide":"left","label":"Scan öffnen"}
+	]
+}

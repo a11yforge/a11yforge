@@ -1,0 +1,15 @@
+{
+  "nodes": [
+    {"id":"browserbar","type":"text","text":"www.a11yforge.at/projects","x":-460,"y":-520,"width":920,"height":40,"color":"6"},
+    {"id":"navbar","type":"text","text":"[Logo] a11yforge — WCAG Scanner                          [Home]   [Projekte]   [Account]","x":-460,"y":-460,"width":920,"height":70,"color":"4"},
+    {"id":"header","type":"text","text":"# Meine Projekte","x":-460,"y":-360,"width":420,"height":80,"color":"4"},
+    {"id":"newbtn","type":"text","text":"[ + Neues Projekt ]","x":280,"y":-350,"width":180,"height":64,"color":"2"},
+    {"id":"search","type":"text","text":"[ 🔍 Projekt suchen … ]","x":-460,"y":-260,"width":920,"height":50,"color":"5"},
+    {"id":"card1","type":"text","text":"┌─ Projekt-Card ─┐\nName\nURL\nMax. Seiten\n[ Öffnen ] [ Scannen ▶ ]\n[ ✏ ] [ 🗑 ]","x":-460,"y":-180,"width":290,"height":230,"color":"5"},
+    {"id":"card2","type":"text","text":"┌─ Projekt-Card ─┐\nName\nURL\n…","x":-150,"y":-180,"width":290,"height":230,"color":"5"},
+    {"id":"card3","type":"text","text":"┌─ Projekt-Card ─┐\n…","x":160,"y":-180,"width":290,"height":230,"color":"5"},
+    {"id":"empty","type":"text","text":"Wenn keine Projekte:\n„Noch keine Projekte — leg dein erstes an\"\n[ + Neues Projekt ]","x":-460,"y":80,"width":460,"height":110,"color":"1"},
+    {"id":"footer","type":"text","text":"Impressum · Datenschutz","x":-460,"y":210,"width":920,"height":44,"color":"6"}
+  ],
+  "edges": []
+}

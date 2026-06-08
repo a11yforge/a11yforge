@@ -1,0 +1,17 @@
+{
+  "nodes": [
+    {"id":"browserbar","type":"text","text":"www.a11yforge.at","x":-460,"y":-520,"width":920,"height":40,"color":"6"},
+    {"id":"title","type":"text","text":"# A11YFORGE — WCAG Scanner","x":-460,"y":-460,"width":520,"height":80,"color":"4"},
+    {"id":"login","type":"text","text":"[ Login ]","x":300,"y":-450,"width":160,"height":56,"color":"2"},
+    {"id":"logo","type":"text","text":"LOGO","x":-360,"y":-300,"width":220,"height":110,"color":"6"},
+    {"id":"willkommen","type":"text","text":"## Willkommen\nBarrierefreiheit automatisch prüfen & beheben.\nKurzer Untertext (1-2 Sätze).","x":40,"y":-340,"width":380,"height":300,"color":"4"},
+    {"id":"probescantext","type":"text","text":"Teste eine Website sofort — gib eine URL ein.","x":60,"y":0,"width":340,"height":120,"color":"4"},
+    {"id":"urlprobescan","type":"text","text":"[ https://… ]            [ Probescan ▶ ]","x":40,"y":150,"width":380,"height":56,"color":"2"},
+    {"id":"regelslider","type":"text","text":"## WCAG-Regeln (Slider)\nimage-alt · color-contrast · label ·\nhtml-has-lang · heading-order","x":-460,"y":-20,"width":420,"height":240,"color":"5"},
+    {"id":"maskottchen","type":"text","text":"🐭 Maskottchen\n(Maulwurf-Bergmann) lugt über den Slider","x":-440,"y":-130,"width":360,"height":100,"color":"1"},
+    {"id":"footer","type":"text","text":"Impressum · Datenschutz","x":-460,"y":260,"width":920,"height":44,"color":"6"}
+  ],
+  "edges": [
+    {"id":"e1","fromNode":"maskottchen","fromSide":"bottom","toNode":"regelslider","toSide":"top"}
+  ]
+}

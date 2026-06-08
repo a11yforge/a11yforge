@@ -1,0 +1,14 @@
+{
+  "nodes": [
+    {"id":"browserbar","type":"text","text":"www.a11yforge.at/projects/<id>/scans","x":-460,"y":-520,"width":920,"height":40,"color":"6"},
+    {"id":"navbar","type":"text","text":"[Logo] a11yforge — WCAG Scanner                          [Home]   [Projekte]   [Account]","x":-460,"y":-460,"width":920,"height":70,"color":"4"},
+    {"id":"back","type":"text","text":"[ ← Zurück zum Projekt ]","x":-460,"y":-360,"width":260,"height":50,"color":"5"},
+    {"id":"header","type":"text","text":"# Scan-Historie — <Projekt-Name>","x":-460,"y":-290,"width":620,"height":70,"color":"4"},
+    {"id":"toolbar","type":"text","text":"Filter: [ Status ▾ ]      Sortierung: [ Neueste zuerst ▾ ]","x":-460,"y":-200,"width":920,"height":50,"color":"5"},
+    {"id":"table","type":"text","text":"Tabelle (kompakt, scrollbar):\n\n#        · Status      · gestartet   · abgeschlossen · Befunde\nScan #12 · ✅ Fertig    · 06.06 10:21 · 06.06 10:23  · 12   · [ Öffnen ]\nScan #11 · ✅ Fertig    · …                                · [ Öffnen ]\nScan #10 · ⚠️ Teilweise · …                                · [ Öffnen ]\n…","x":-460,"y":-130,"width":620,"height":250,"color":"5"},
+    {"id":"trend","type":"text","text":"Trend-Chart:\nBefunde über Zeit","x":180,"y":-130,"width":280,"height":250,"color":"5"},
+    {"id":"pagination","type":"text","text":"[ ‹ ]    Seite 1 / 3    [ › ]","x":-460,"y":140,"width":620,"height":50,"color":"2"},
+    {"id":"footer","type":"text","text":"Impressum · Datenschutz","x":-460,"y":210,"width":920,"height":44,"color":"6"}
+  ],
+  "edges": []
+}
