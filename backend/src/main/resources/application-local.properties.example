@@ -8,7 +8,8 @@ spring.datasource.password=YOUR_DB_PASSWORD_HERE
 # --- JWT ---
 # WARNING: Development only. Use a randomly generated secret in production.
 jwt.secret=YOUR_JWT_SECRET_AT_LEAST_32_CHARS
-jwt.expiration-ms=86400000
+jwt.access-expiration-ms=86400000
+jwt.refresh-expiration-ms=604800000
 
 # --- Verifier ---
 verifier.cli.path=../verifier/dist/cli.js
@@ -17,6 +18,7 @@ verifier.timeout.seconds=30
 # --- LLM ---
 a11yforge.llm.anthropic.api-key=YOUR_ANTHROPIC_API_KEY_HERE
 
-# Mail (Mailtrap)
-spring.mail.username=DEIN_MAILTRAP_USERNAME
-spring.mail.password=DEIN_MAILTRAP_PASSWORD
+# --- Mail (Mailtrap) ---
+# Credentials aus dem Mailtrap-Dashboard (Email Testing -> Inbox -> SMTP Settings)
+spring.mail.username=YOUR_MAILTRAP_USERNAME
+spring.mail.password=YOUR_MAILTRAP_PASSWORD
