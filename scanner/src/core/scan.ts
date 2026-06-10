@@ -20,6 +20,24 @@ export async function scan(
     const pageTitle = await page.title();
     const finalUrl = page.url();
     const httpStatus = response?.status();
+
+    const violations = axeResultsToViolationDtos(results, "axe_violation");
+    const incomplete = axeResultsToViolationDtos(results, "axe_incomplete");
+
+    for(const v of violations) {
+      if(v.ruleId === "image-alt") {
+        const selector = v.target[0];
+        if (selector) {
+          try {
+            const buffer = await page.locator(selector).first().screenshot();
+            v.screenshot = buffer.toString("base64");
+          } catch (e) {
+            console.error(`Screenshot ${selector}:`, (e as Error).message);
+          }
+        }
+      }
+    }
+
     return {
       scannerVersion: "a11yforge-scanner@0.1.0",
       url,
@@ -31,8 +49,8 @@ export async function scan(
       pageTitle,
       ruleSet: rules,
       renderedHtml,
-      violations: axeResultsToViolationDtos(results, "axe_violation"),
-      incomplete: axeResultsToViolationDtos(results, "axe_incomplete"),
+      violations: violations,
+      incomplete: incomplete,
     };
   } finally {
     await browser.close();

@@ -42,6 +42,22 @@ export async function crawl(
       const finalUrl = page.url();
       const httpStatus = response?.status();
 
+      const violations = axeResultsToViolationDtos(axeResults, "axe_violation");
+
+      for (const v of violations) {
+        if (v.ruleId === "image-alt") {
+          const selector = v.target[0];
+          if (selector) {
+            try {
+              const buffer = await page.locator(selector).first().screenshot();
+              v.screenshot = buffer.toString("base64");
+            } catch (e) {
+              console.error(`Screenshot ${selector}:`, (e as Error).message);
+            }
+          }
+        }
+      }
+
       results.push({
         scannerVersion: "a11yforge-scanner@0.1.0",
         url,
@@ -53,7 +69,7 @@ export async function crawl(
         pageTitle,
         ruleSet: rules,
         renderedHtml,
-        violations: axeResultsToViolationDtos(axeResults, "axe_violation"),
+        violations: violations,
         incomplete: axeResultsToViolationDtos(axeResults, "axe_incomplete"),
       });
 
