@@ -91,6 +91,9 @@ const displayUrl = computed(() => {
           size="small"
           @click="emit('edit', project)"
         />
+        <router-link :to="`/projects/${project.id}/scans`" custom v-slot="{ navigate }">
+          <Button label="Historie" icon="pi pi-history" severity="secondary" size="small" @click="navigate" />
+        </router-link>
         <Button
           icon="pi pi-trash"
           label="Löschen"

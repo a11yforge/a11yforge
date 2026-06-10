@@ -33,7 +33,14 @@ export async function getScan(id: number): Promise<ScanDetailDTO> {
   return scan.data
 }
 
+export async function getScanFromProject(projectId: number): Promise<ScanResponseDTO[]> {
+  const scan = await client.get<ScanResponseDTO[]>('/scan', { params: { projectId }})
+  return scan.data
+}
+
 export async function startScan(projectId: number, llmProvider: string = "NONE"): Promise<ScanResponseDTO> {
   const scan = await client.post<ScanResponseDTO>('/scan', { projectId, llmProvider })
   return scan.data
 }
+
+
