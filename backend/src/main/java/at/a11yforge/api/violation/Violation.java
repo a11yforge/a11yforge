@@ -1,91 +1,102 @@
 package at.a11yforge.api.violation;
 
-import jakarta.persistence.*;
 import at.a11yforge.api.page.Page;
-
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "violation")
 public class Violation {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "page_id", nullable = false)
-    private Page page;
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "page_id", nullable = false)
+  private Page page;
 
-    @Column(name = "rule_id", nullable = false, length = 50)
-    private String ruleId;
+  @Column(name = "rule_id", nullable = false, length = 50)
+  private String ruleId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "source", nullable = false, length = 30)
-    private ViolationSource source;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "source", nullable = false, length = 30)
+  private ViolationSource source;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "impact", nullable = false, length = 30)
-    private Impact impact;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "impact", nullable = false, length = 30)
+  private Impact impact;
 
-    @Column(name = "html_snippet", columnDefinition = "TEXT")
-    private String htmlSnippet;
+  @Column(name = "html_snippet", columnDefinition = "TEXT")
+  private String htmlSnippet;
 
-    @Column(name = "target_selector", length = 500)
-    private String targetSelector;
+  @Column(name = "target_selector", length = 500)
+  private String targetSelector;
 
-    @Column(name = "description", columnDefinition = "TEXT")
-    private String description;
+  @Column(name = "description", columnDefinition = "TEXT")
+  private String description;
 
-    protected Violation() {}
+  @Column(name = "screenshot", columnDefinition = "TEXT")
+  private String screenshot;
 
-    public Violation(Page page, String ruleId, ViolationSource source, Impact impact) {
-        this.page = page;
-        this.ruleId = ruleId;
-        this.source = source;
-        this.impact = impact;
-    }
+  protected Violation() {}
 
-    public Long getId() {
-        return id;
-    }
+  public Violation(Page page, String ruleId, ViolationSource source, Impact impact) {
+    this.page = page;
+    this.ruleId = ruleId;
+    this.source = source;
+    this.impact = impact;
+    this.screenshot = screenshot;
+  }
 
-    public Page getPage() {
-        return page;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public String getRuleId() {
-        return ruleId;
-    }
+  public Page getPage() {
+    return page;
+  }
 
-    public ViolationSource getSource() {
-        return source;
-    }
+  public String getRuleId() {
+    return ruleId;
+  }
 
-    public Impact getImpact() {
-        return impact;
-    }
+  public ViolationSource getSource() {
+    return source;
+  }
 
-    public String getHtmlSnippet() {
-        return htmlSnippet;
-    }
+  public Impact getImpact() {
+    return impact;
+  }
 
-    public void setHtmlSnippet(String htmlSnippet) {
-        this.htmlSnippet = htmlSnippet;
-    }
+  public String getHtmlSnippet() {
+    return htmlSnippet;
+  }
 
-    public String getTargetSelector() {
-        return targetSelector;
-    }
+  public void setHtmlSnippet(String htmlSnippet) {
+    this.htmlSnippet = htmlSnippet;
+  }
 
-    public void setTargetSelector(String targetSelector) {
-        this.targetSelector = targetSelector;
-    }
+  public String getTargetSelector() {
+    return targetSelector;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public void setTargetSelector(String targetSelector) {
+    this.targetSelector = targetSelector;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getScreenshot() {
+    return screenshot;
+  }
+
+  public void setScreenshot(String screenshot) {
+    this.screenshot = screenshot;
+  }
 }

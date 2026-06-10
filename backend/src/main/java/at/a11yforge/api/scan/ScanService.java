@@ -86,6 +86,7 @@ public class ScanService {
           violation.setDescription(v.description());
           // Annahme: einteilige Adresse, mehrteilige sind out of scope
           violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
+          violation.setScreenshot(v.screenshot());
           violationRepository.save(violation);
         }
 
