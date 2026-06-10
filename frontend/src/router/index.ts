@@ -10,11 +10,14 @@ import ScanHistoryView from '../views/ScanHistoryView.vue'
 import LegalView from '../views/LegalView.vue'
 import ProjectDetailView from '../views/ProjectDetailView.vue'
 import AccountView from '../views/AccountView.vue'
+import LandingView from '../views/LandingView.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', redirect: '/login' },
+   // { path: '/', redirect: '/login' },
+    { path: '/', component: LandingView },
     { path: '/login', component: LoginView },
     { path: '/register', component: RegisterView },
     { path: '/password-reset', component: PasswordResetView},
