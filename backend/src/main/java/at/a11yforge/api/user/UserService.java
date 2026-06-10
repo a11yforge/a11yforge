@@ -48,17 +48,6 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    public String login(String identifier, String password) {
-        User user = findByIdentifier(identifier);
-
-        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-            throw new InvalidCredentialsException("Invalid credentials");
-        }
-
-        //return jwtUtil.generateToken(user.getEmail());
-        return jwtUtil.generateAccessToken(user.getId());
-    }
-
     public User findByIdentifier(String identifier) {
         if (identifier.contains("@")) {
             return userRepository.findByEmail(identifier)

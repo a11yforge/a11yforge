@@ -42,6 +42,10 @@ public class AuthService {
         this.refreshTokenValidity = Duration.ofMillis(refreshExpirationMs);
     }
 
+    public User register(String email, String password, String userName) {
+        return userService.register(email, password, userName);
+    }
+
     @Transactional
     public TokenPair login(String identifier, String password) {
         User user = userService.findByIdentifier(identifier);
