@@ -68,6 +68,11 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));
     }
 
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+    }
+
     public UserResponseDTO changeUserName(Long userId, String newUserName) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
