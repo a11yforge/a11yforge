@@ -55,7 +55,8 @@ public class UserService implements UserDetailsService {
             throw new InvalidCredentialsException("Invalid credentials");
         }
 
-        return jwtUtil.generateToken(user.getEmail());
+        //return jwtUtil.generateToken(user.getEmail());
+        return jwtUtil.generateAccessToken(user.getId());
     }
 
     public User findByIdentifier(String identifier) {
