@@ -1,5 +1,6 @@
 package at.a11yforge.api.exception;
 
+import at.a11yforge.api.auth.InvalidRefreshTokenException;
 import at.a11yforge.api.fixproposal.FixProposalNotFoundException;
 import at.a11yforge.api.page.PageNotFoundException;
 import at.a11yforge.api.project.DuplicateProjectNameException;
@@ -100,6 +101,15 @@ public class GlobalExceptionHandler {
     ProblemDetail problem =
         ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
     problem.setTitle("Invalid credentials");
+    return problem;
+  }
+
+  // HTTP 401 Unauthorized
+  @ExceptionHandler(InvalidRefreshTokenException.class)
+  public ProblemDetail handleInvalidRefreshToken(InvalidRefreshTokenException ex) {
+    ProblemDetail problem =
+            ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    problem.setTitle("Invalid refresh token");
     return problem;
   }
 

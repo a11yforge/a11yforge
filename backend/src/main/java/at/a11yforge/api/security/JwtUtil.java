@@ -12,37 +12,38 @@ import java.util.Date;
 public class JwtUtil {
 
     private final SecretKey key;
-    private final long expirationMs;
+    private final long accessExpirationMs;
 
     public JwtUtil(
             @Value("${jwt.secret}") String secret,
-            @Value("${jwt.expiration-ms}") long expirationMs
+            @Value("${jwt.access-expiration-ms}") long accessExpirationMs
     ) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
-        this.expirationMs = expirationMs;
+        this.accessExpirationMs = accessExpirationMs;
     }
 
-    public String generateToken(String email) {
+    public String generateAccessToken(Long userId) {
         return Jwts.builder()
-                .subject(email)
+                .subject(String.valueOf(userId))
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expirationMs))
+                .expiration(new Date(System.currentTimeMillis() + accessExpirationMs))
                 .signWith(key)
                 .compact();
     }
 
-    public String extractEmail(String token) {
-        return Jwts.parser()
+    public Long extractUserId(String token) {
+        String subject = Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
+        return Long.valueOf(subject);
     }
 
     public boolean isTokenValid(String token) {
         try {
-            extractEmail(token);
+            extractUserId(token);
             return true;
         } catch (Exception e) {
             return false;
