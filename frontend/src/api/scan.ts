@@ -43,4 +43,9 @@ export async function startScan(projectId: number, llmProvider: string = "NONE")
   return scan.data
 }
 
+export async function getScanExport(id: number):Promise<unknown[]> {
+  const response = await client.get<unknown[]>(`/scan/${id}/export`)
+  return response.data
+}
+
 
