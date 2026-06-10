@@ -2,8 +2,6 @@ package at.a11yforge.api.scanner;
 
 import java.util.List;
 
-
-
 // vertrag mit types.ts
 public record ViolationDto(
         String violationId,
@@ -16,5 +14,6 @@ public record ViolationDto(
         String failureSummary,
         List<String> target,
         String htmlSnippet,
-        String domPath
+        String domPath,
+        String screenshot
 ) {}
