@@ -68,23 +68,20 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200 OK\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "pm.test(\"Has both tokens\", () => {\r",
+                  "    pm.expect(body).to.have.property(\"accessToken\");\r",
+                  "    pm.expect(body).to.have.property(\"refreshToken\");\r",
+                  "});\r",
+                  "pm.test(\"Has user info\", () => {\r",
+                  "    pm.expect(body).to.have.property(\"email\");\r",
+                  "    pm.expect(body).to.have.property(\"userName\");\r",
                   "});\r",
                   "\r",
-                  "pm.test(\"Response contains token, email, and userName\", function () {\r",
-                  "    const json = pm.response.json();\r",
-                  "    pm.expect(json).to.have.property(\"token\");\r",
-                  "    pm.expect(json).to.have.property(\"email\");\r",
-                  "    pm.expect(json).to.have.property(\"userName\");\r",
-                  "    pm.expect(json.token).to.be.a(\"string\").and.not.empty;\r",
-                  "});\r",
-                  "\r",
-                  "pm.test(\"Token saved to environment\", function () {\r",
-                  "    const json = pm.response.json();\r",
-                  "    pm.environment.set(\"jwtToken\", json.token);\r",
-                  "    pm.expect(pm.environment.get(\"jwtToken\")).to.equal(json.token);\r",
-                  "});"
+                  "pm.collectionVariables.set(\"accessToken\", body.accessToken);\r",
+                  "pm.collectionVariables.set(\"refreshToken\", body.refreshToken);"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -122,21 +119,69 @@
           "response": []
         },
         {
-          "name": "Logout",
+          "name": "Access token works (protected endpoint)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 204 No Content\", function () {\r",
-                  "    pm.response.to.have.status(204);\r",
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/projects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh (Rotation)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "pm.test(\"New tokens issued\", () => {\r",
+                  "    pm.expect(body.accessToken).to.be.a(\"string\");\r",
+                  "    pm.expect(body.refreshToken).to.be.a(\"string\");\r",
                   "});\r",
                   "\r",
-                  "pm.test(\"Response body is empty\", function () {\r",
-                  "    pm.expect(pm.response.text()).to.equal(\"\");\r",
-                  "});\r",
+                  "pm.collectionVariables.set(\"oldRefreshToken\", pm.collectionVariables.get(\"refreshToken\"));\r",
                   "\r",
-                  "pm.environment.unset(\"jwtToken\");"
+                  "pm.collectionVariables.set(\"accessToken\", body.accessToken);\r",
+                  "pm.collectionVariables.set(\"refreshToken\", body.refreshToken);\r",
+                  "\r",
+                  "pm.test(\"Refresh token rotated\", () => {\r",
+                  "    pm.expect(body.refreshToken).to.not.eql(pm.collectionVariables.get(\"oldRefreshToken\"));\r",
+                  "});"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -147,6 +192,149 @@
           "request": {
             "method": "POST",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"refreshToken\": \"{{refreshToken}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reuse detection (old token after rotation)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 401\", () => pm.response.to.have.status(401));\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "pm.test(\"Reuse detected\", () => {\r",
+                  "    pm.expect(body.title).to.eql(\"Invalid refresh token\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"refreshToken\": \"{{oldRefreshToken}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh with invalid token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 401\", () => pm.response.to.have.status(401));\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "pm.test(\"Invalid refresh token title\", () => {\r",
+                  "    pm.expect(body.title).to.eql(\"Invalid refresh token\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"refreshToken\": \"not-a-real-token\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 204\", () => pm.response.to.have.status(204));\r",
+                  "pm.test(\"No body\", () => pm.expect(pm.response.text()).to.be.empty);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"refreshToken\": \"{{refreshToken}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/auth/logout",
               "host": [
@@ -156,6 +344,52 @@
                 "api",
                 "auth",
                 "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh after logout (revoked)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 401\", () => pm.response.to.have.status(401));\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "pm.test(\"Revoked token rejected\", () => {\r",
+                  "    pm.expect(body.title).to.eql(\"Invalid refresh token\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"refreshToken\": \"{{refreshToken}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "refresh"
               ]
             }
           },
@@ -524,7 +758,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"email\": \"test@example.com\"\r\n}",
+              "raw": "{\r\n  \"email\": \"test5@example.com\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1706,6 +1940,20 @@
           ""
         ]
       }
+    }
+  ],
+  "variable": [
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "oldRefreshToken",
+      "value": ""
     }
   ]
 }
