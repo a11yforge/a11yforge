@@ -68,3 +68,4 @@ docs/postman/*.postman_environment.json
 # Local project context
 PROJECT_CONTEXT.md
 PROJECT_STRUCTURE.md"docs/frontend-design/.obsidian/" 
+docs/frontend-design/.obsidian/
