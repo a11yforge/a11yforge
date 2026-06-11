@@ -11,14 +11,15 @@ export interface RegisterRequestDTO {
   userName: string
 }
 
-export interface LoginResponseDTO {
-  token: string
+export interface TokenResponseDTO {
+  accessToken: string
+  refreshToken: string
   email: string
   userName: string
 }
 
-export async function login(request: LoginRequestDTO): Promise<LoginResponseDTO> {
-  const response = await client.post<LoginResponseDTO>('/auth/login', request)
+export async function login(request: LoginRequestDTO): Promise<TokenResponseDTO> {
+  const response = await client.post<TokenResponseDTO>('/auth/login', request)
   return response.data
 }
 
@@ -26,6 +27,11 @@ export async function register(request: RegisterRequestDTO): Promise<void> {
   await client.post('/auth/register', request)
 }
 
-export async function logout(): Promise<void> {
-  await client.post('/auth/logout')
+export async function refresh(refreshToken: string): Promise<TokenResponseDTO> {
+  const response = await client.post<TokenResponseDTO>('/auth/refresh', { refreshToken })
+  return response.data
+}
+
+export async function logout(refreshToken: string): Promise<void> {
+  await client.post('/auth/logout', { refreshToken })
 }
