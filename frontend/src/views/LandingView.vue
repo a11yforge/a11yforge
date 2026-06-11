@@ -13,7 +13,7 @@ const rules = [
 ]
 
 const index = ref(0)
-const current = computed(() => rules[index.value])
+const current = computed(() => rules[index.value] ?? rules[0]!)
 let timer: number | undefined
 
 onMounted(() => {
