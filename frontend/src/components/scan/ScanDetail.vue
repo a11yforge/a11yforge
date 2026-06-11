@@ -95,7 +95,7 @@ async function handleReview(violationId: number, fixProposalId: number, decision
         </div>
 
         <div v-if="fixes[v.id]" class="mt-3 border-t border-gray-700 pt-3">
-          <p v-if="fixes[v.id].status === 'PENDING'" class="text-sm text-gray-400">
+          <p v-if="fixes[v.id]?.status === 'PENDING'" class="text-sm text-gray-400">
             ⏳ Wird generiert & verifiziert…
           </p>
 
@@ -103,12 +103,12 @@ async function handleReview(violationId: number, fixProposalId: number, decision
             <div class="mb-2 flex items-center gap-2 text-sm">
               <span
                 class="rounded px-2 py-0.5 font-medium"
-                :class="fixes[v.id].status === 'VERIFIED' ? 'bg-emerald-900 text-emerald-200' : 'bg-red-900 text-red-200'"
+                :class="fixes[v.id]?.status === 'VERIFIED' ? 'bg-emerald-900 text-emerald-200' : 'bg-red-900 text-red-200'"
               >
-                {{ fixes[v.id].status }}
+                {{ fixes[v.id]?.status }}
               </span>
               <span class="text-gray-500">
-                {{ fixes[v.id].llmProvider }} / {{ fixes[v.id].llmModel }}
+                {{ fixes[v.id]?.llmProvider }} / {{ fixes[v.id]?.llmModel }}
               </span>
             </div>
 
@@ -117,9 +117,9 @@ async function handleReview(violationId: number, fixProposalId: number, decision
                 <p class="mb-1 text-xs uppercase tracking-wide text-gray-500">Vorher</p>
                 <pre class="overflow-x-auto rounded bg-gray-900 p-2 text-xs text-gray-300">{{ v.htmlSnippet }}</pre>
               </div>
-              <div v-if="fixes[v.id].generatedHtml">
+              <div v-if="fixes[v.id]?.generatedHtml">
                 <p class="mb-1 text-xs uppercase tracking-wide text-gray-500">Nachher</p>
-                <pre class="overflow-x-auto rounded bg-gray-900 p-2 text-xs text-emerald-300">{{ fixes[v.id].generatedHtml }}</pre>
+                <pre class="overflow-x-auto rounded bg-gray-900 p-2 text-xs text-emerald-300">{{ fixes[v.id]?.generatedHtml }}</pre>
               </div>
             </div>
             <div v-if="fixes[v.id]?.status === 'VERIFIED'" class="mt-2 flex gap-2">
