@@ -1,17 +1,17 @@
 {
-  "nodes": [
-    {"id":"browserbar","type":"text","text":"www.a11yforge.at/scans/<id>","x":-460,"y":-520,"width":920,"height":40,"color":"6"},
-    {"id":"navbar","type":"text","text":"[Logo] a11yforge — WCAG Scanner                          [Home]   [Projekte]   [Account]","x":-460,"y":-460,"width":920,"height":70,"color":"4"},
-    {"id":"header","type":"text","text":"# Scan-Detail\n<Projekt-Name>  ·  <URL>\nStatus: Fertig / Läuft / Fehler","x":-460,"y":-360,"width":560,"height":110,"color":"4"},
-    {"id":"export","type":"text","text":"[ Export ⬇ ]\nAkzeptierte Fixes\nherunterladen","x":300,"y":-355,"width":160,"height":110,"color":"2"},
-    {"id":"violist","type":"text","text":"## Befunde","x":-500,"y":-230,"width":540,"height":50,"color":"6"},
-    {"id":"bulkfix","type":"text","text":"[ ⚡ Alle mit KI fixen ]","x":80,"y":-225,"width":380,"height":60,"color":"2"},
-    {"id":"viocard","type":"text","text":"┌─ Befund-Card ─┐\nRegel (z.B. image-alt)\nSchweregrad\nBeschreibung\nHTML-Ausschnitt (Vorher)\n\n[ 🤖 Mit KI fixen ]\n[ ✋ Selbst fixen ]","x":-500,"y":-100,"width":450,"height":290,"color":"5"},
-    {"id":"fixcard","type":"text","text":"┌─ Fix-Vorschlag ─┐\nStatus: Wird geprüft → Verifiziert / Verworfen\n\n**Vorher | Nachher** (Diff)\n[ ✅ Annehmen ]   [ ❌ Ablehnen ]","x":10,"y":-100,"width":450,"height":290,"color":"3"},
-    {"id":"maskottchen","type":"text","text":"🐭 Maskottchen klein (Ecke)","x":300,"y":210,"width":160,"height":60,"color":"1"},
-    {"id":"footer","type":"text","text":"Impressum · Datenschutz","x":-460,"y":290,"width":920,"height":44,"color":"6"}
-  ],
-  "edges": [
-    {"id":"e1","fromNode":"viocard","fromSide":"right","toNode":"fixcard","toSide":"left","label":"Mit KI fixen"}
-  ]
+	"nodes":[
+		{"id":"browserbar","type":"text","text":"www.a11yforge.at/scans/<id>","x":-460,"y":-520,"width":920,"height":40,"color":"6"},
+		{"id":"navbar","type":"text","text":"[Logo] a11yforge — WCAG Scanner                          [Home]   [Projekte]   [Account]","x":-460,"y":-460,"width":920,"height":70,"color":"4"},
+		{"id":"header","type":"text","text":"# Scan-Detail\n<Projekt-Name>  ·  <URL>\nStatus: Fertig / Läuft / Fehler","x":-460,"y":-360,"width":560,"height":110,"color":"4"},
+		{"id":"export","type":"text","text":"[ Export ⬇ ]\nAkzeptierte Fixes\nherunterladen","x":300,"y":-355,"width":160,"height":110,"color":"2"},
+		{"id":"violist","type":"text","text":"## Befunde","x":-500,"y":-230,"width":540,"height":50,"color":"6"},
+		{"id":"bulkfix","type":"text","text":"[ ⚡ Alle mit KI fixen ]","x":80,"y":-225,"width":380,"height":60,"color":"2"},
+		{"id":"viocard","type":"text","text":"┌─ Befund-Card ─┐\nRegel (z.B. image-alt)\nSchweregrad\nBeschreibung\nHTML-Ausschnitt (Vorher)\n\n[ 🤖 Mit KI fixen ]\n[ ✋ Selbst fixen ]","x":-500,"y":-100,"width":450,"height":290,"color":"5"},
+		{"id":"fixcard","type":"text","text":"┌─ Fix-Vorschlag ─┐\nStatus: Wird geprüft → Verifiziert / Verworfen\n\n**Vorher | Nachher** (Diff)\n[ ✅ Annehmen ]   [ ❌ Ablehnen ]","x":10,"y":-100,"width":450,"height":290,"color":"3"},
+		{"id":"maskottchen","type":"text","text":"🐭 Maskottchen klein (Ecke)","x":300,"y":210,"width":160,"height":60,"color":"1"},
+		{"id":"footer","type":"text","text":"Impressum · Datenschutz","x":-460,"y":290,"width":920,"height":44,"color":"6"}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"viocard","fromSide":"right","toNode":"fixcard","toSide":"left","label":"Mit KI fixen"}
+	]
 }

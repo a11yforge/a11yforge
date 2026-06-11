@@ -1,14 +1,14 @@
 {
-  "nodes": [
-    {"id":"info","type":"text","text":"# Auth\nSchlichte, zentrierte Karte — Logo + Formular.","x":-480,"y":-360,"width":960,"height":80,"color":"4"},
-    {"id":"login","type":"text","text":"## Login\n[ E-Mail ]\n[ Passwort ]\n[ Login ]\n\n„Passwort vergessen?\"\n„Noch kein Konto? → Registrieren\"","x":-480,"y":-250,"width":300,"height":300,"color":"5"},
-    {"id":"register","type":"text","text":"## Registrieren\n[ Username ]\n[ E-Mail ]\n[ Passwort ]\n[ Registrieren ]\n\n„Schon ein Konto? → Login\"","x":-160,"y":-250,"width":300,"height":300,"color":"5"},
-    {"id":"resetreq","type":"text","text":"## Passwort vergessen\n[ E-Mail ]\n[ Link senden ]\n\nMail mit Link folgt.","x":160,"y":-250,"width":300,"height":300,"color":"5"},
-    {"id":"resetconf","type":"text","text":"## Neues Passwort\n(über Link aus der Mail)\n[ Neues Passwort ]\n[ Speichern ]","x":480,"y":-250,"width":300,"height":300,"color":"5"}
-  ],
-  "edges": [
-    {"id":"e1","fromNode":"login","fromSide":"right","toNode":"register","toSide":"left","label":"Registrieren"},
-    {"id":"e2","fromNode":"login","fromSide":"top","toNode":"resetreq","toSide":"top","label":"Passwort vergessen"},
-    {"id":"e3","fromNode":"resetreq","fromSide":"right","toNode":"resetconf","toSide":"left","label":"Mail-Link"}
-  ]
+	"nodes":[
+		{"id":"info","type":"text","text":"# Auth\nSchlichte, zentrierte Karte — Logo + Formular.","x":-480,"y":-360,"width":960,"height":80,"color":"4"},
+		{"id":"login","type":"text","text":"## Login\n[ E-Mail ]\n[ Passwort ]\n[ Login ]\n\n„Passwort vergessen?\"\n„Noch kein Konto? → Registrieren\"","x":-480,"y":-250,"width":300,"height":300,"color":"5"},
+		{"id":"register","type":"text","text":"## Registrieren\n[ Username ]\n[ E-Mail ]\n[ Passwort ]\n[ Registrieren ]\n\n„Schon ein Konto? → Login\"","x":-160,"y":-250,"width":300,"height":300,"color":"5"},
+		{"id":"resetreq","type":"text","text":"## Passwort vergessen\n[ E-Mail ]\n[ Link senden ]\n\nMail mit Link folgt.","x":160,"y":-250,"width":300,"height":300,"color":"5"},
+		{"id":"resetconf","type":"text","text":"## Neues Passwort\n(über Link aus der Mail)\n[ Neues Passwort ]\n[ Speichern ]","x":480,"y":-250,"width":300,"height":300,"color":"5"}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"login","fromSide":"right","toNode":"register","toSide":"left","label":"Registrieren"},
+		{"id":"e2","fromNode":"login","fromSide":"top","toNode":"resetreq","toSide":"top","label":"Passwort vergessen"},
+		{"id":"e3","fromNode":"resetreq","fromSide":"right","toNode":"resetconf","toSide":"left","label":"Mail-Link"}
+	]
 }
