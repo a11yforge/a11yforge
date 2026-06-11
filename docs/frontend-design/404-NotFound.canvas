@@ -1,11 +1,11 @@
 {
-  "nodes": [
-    {"id":"browserbar","type":"text","text":"www.a11yforge.at/<unbekannt>","x":-460,"y":-520,"width":920,"height":40,"color":"6"},
-    {"id":"navbar","type":"text","text":"[Logo] a11yforge — WCAG Scanner","x":-460,"y":-460,"width":920,"height":70,"color":"4"},
-    {"id":"big","type":"text","text":"# 404\n## Seite nicht gefunden","x":-220,"y":-300,"width":440,"height":160,"color":"1"},
-    {"id":"mascot","type":"text","text":"🐭 Maulwurf kratzt sich am Helm\n(„hier hab ich nichts ausgegraben\")","x":-220,"y":-110,"width":440,"height":90,"color":"5"},
-    {"id":"cta","type":"text","text":"[ ← Zurück zur Startseite ]","x":-150,"y":10,"width":300,"height":56,"color":"2"},
-    {"id":"footer","type":"text","text":"Impressum · Datenschutz","x":-460,"y":120,"width":920,"height":44,"color":"6"}
-  ],
-  "edges": []
+	"nodes":[
+		{"id":"browserbar","type":"text","text":"www.a11yforge.at/<unbekannt>","x":-460,"y":-520,"width":920,"height":40,"color":"6"},
+		{"id":"navbar","type":"text","text":"[Logo] a11yforge — WCAG Scanner","x":-460,"y":-460,"width":920,"height":70,"color":"4"},
+		{"id":"big","type":"text","text":"# 404\n## Seite nicht gefunden","x":-220,"y":-300,"width":440,"height":160,"color":"1"},
+		{"id":"mascot","type":"text","text":"🐭 Maulwurf kratzt sich am Helm\n(„hier hab ich nichts ausgegraben\")","x":-220,"y":-110,"width":440,"height":90,"color":"5"},
+		{"id":"cta","type":"text","text":"[ ← Zurück zur Startseite ]","x":-150,"y":10,"width":300,"height":56,"color":"2"},
+		{"id":"footer","type":"text","text":"Impressum · Datenschutz","x":-460,"y":120,"width":920,"height":44,"color":"6"}
+	],
+	"edges":[]
 }
