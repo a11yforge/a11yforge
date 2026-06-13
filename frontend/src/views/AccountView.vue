@@ -12,77 +12,20 @@ async function handleLogout() {
 </script>
 
 <template>
-  <div class="page">
-    <h1 class="title">Account / Einstellungen</h1>
+  <div class="max-w-[980px] mx-auto px-6 pt-6 pb-8 text-[#f3e9e2] font-sans">
+    <h1 class="text-[1.5rem] font-extrabold text-[#f3e9e2] mt-0 mb-[1.2rem]">Account / Einstellungen</h1>
 
-    <div class="grid">
-      <div class="card"><ChangeUserNameForm /></div>
-      <div class="card"><ChangeEmailForm /></div>
-      <div class="card"><ChangePasswordForm /></div>
+    <div class="grid gap-4 grid-cols-1 min-[760px]:grid-cols-3">
+      <div class="card bg-[#1e1a29] border border-[#322840] rounded-[14px] px-[1.3rem] py-[1.2rem]"><ChangeUserNameForm /></div>
+      <div class="card bg-[#1e1a29] border border-[#322840] rounded-[14px] px-[1.3rem] py-[1.2rem]"><ChangeEmailForm /></div>
+      <div class="card bg-[#1e1a29] border border-[#322840] rounded-[14px] px-[1.3rem] py-[1.2rem]"><ChangePasswordForm /></div>
     </div>
 
-    <button class="btn btn--danger logout" type="button" @click="handleLogout">Logout</button>
+    <button class="border border-[#5a2a2a] rounded-[10px] py-[0.6rem] px-[1.2rem] font-semibold text-[0.9rem] cursor-pointer bg-transparent text-[#f6a3a3] mt-[1.2rem] hover:bg-[#3a1a1a] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" type="button" @click="handleLogout">Logout</button>
   </div>
 </template>
 
 <style scoped>
-.page {
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 1.5rem 1.5rem 2rem;
-  color: var(--text);
-  font-family: ui-sans-serif, system-ui, sans-serif;
-}
-.title {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--text);
-  margin: 0 0 1.2rem;
-}
-
-.grid {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: 1fr;
-}
-@media (min-width: 760px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 1.2rem 1.3rem;
-}
-
-.btn {
-  border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 0.6rem 1.2rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-.btn:focus-visible {
-  outline: 2px solid var(--teal);
-  outline-offset: 2px;
-}
-.btn--danger {
-  background: transparent;
-  color: #f6a3a3;
-  border-color: #5a2a2a;
-}
-.btn--danger:hover {
-  background: #3a1a1a;
-}
-.logout {
-  margin-top: 1.2rem;
-}
-
-/* Philipps Form-Komponenten an den Sunset-Look angleichen */
 .card :deep(h2) {
   font-size: 1rem;
   font-weight: 700;

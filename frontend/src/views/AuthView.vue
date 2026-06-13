@@ -1,10 +1,10 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="card">
-    <router-link to="/" class="brand" aria-label="Zur Startseite">
-      <img class="brand__logo" src="/mole.png" alt="" aria-hidden="true" />
-      <span class="brand__name">a11y<span class="brand__accent">forge</span></span>
+  <div class="w-full max-w-[420px] bg-[#1e1a29] border border-[#322840] rounded-[16px] px-[1.9rem] pt-8 pb-[1.8rem] shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+    <router-link to="/" class="flex items-center justify-center gap-[0.6rem] mb-[1.6rem] no-underline text-[#f3e9e2]" aria-label="Zur Startseite">
+      <img class="w-10 h-10 rounded-[11px] object-cover object-[center_18%] border border-[#322840] [image-rendering:pixelated]" src="/mole.png" alt="" aria-hidden="true" />
+      <span class="font-extrabold text-xl tracking-[0.2px]">a11y<span class="text-[#ff7a52]">forge</span></span>
     </router-link>
 
     <router-view />
@@ -12,44 +12,6 @@
 </template>
 
 <style scoped>
-.card {
-  width: 100%;
-  max-width: 420px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 2rem 1.9rem 1.8rem;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  margin-bottom: 1.6rem;
-  text-decoration: none;
-  color: var(--text);
-}
-.brand__logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
-  object-fit: cover;
-  object-position: center 18%;
-  border: 1px solid var(--border);
-  image-rendering: pixelated;
-}
-.brand__name {
-  font-weight: 800;
-  font-size: 1.25rem;
-  letter-spacing: 0.2px;
-}
-.brand__accent {
-  color: var(--coral);
-}
-
-/* --- PrimeVue + Inhalt der Auth-Forms an die Sunset-Palette angleichen --- */
 :deep(h2) {
   font-size: 1.25rem;
   font-weight: 700;
@@ -101,7 +63,6 @@
   outline-offset: 2px;
 }
 
-/* Links (Passwort vergessen / Registrieren) im Coral-Akzent statt Blau */
 :deep(a) {
   color: var(--peach);
   text-decoration: none;

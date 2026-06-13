@@ -1,33 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="auth">
+  <div class="min-h-screen flex items-center justify-center p-6 text-[#f3e9e2] font-sans bg-[radial-gradient(800px_480px_at_50%_0%,rgba(255,122,82,0.12),transparent_60%),linear-gradient(160deg,#16121d_0%,#16121d_55%,#142323_100%)]">
     <slot />
   </div>
 </template>
-
-<style scoped>
-.auth {
-  --bg: #16121d;
-  --bg-2: #142323;
-  --surface: #1e1a29;
-  --field: #14111c;
-  --text: #f3e9e2;
-  --muted: #a99cb0;
-  --coral: #ff7a52;
-  --peach: #f6c89a;
-  --teal: #5bbeb2;
-  --border: #322840;
-
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-  color: var(--text);
-  background:
-    radial-gradient(800px 480px at 50% 0%, rgba(255, 122, 82, 0.12), transparent 60%),
-    linear-gradient(160deg, var(--bg) 0%, var(--bg) 55%, var(--bg-2) 100%);
-  font-family: ui-sans-serif, system-ui, sans-serif;
-}
-</style>

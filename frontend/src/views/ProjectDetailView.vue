@@ -1,10 +1,6 @@
 <script setup lang="ts">
-// ⚠️ DESIGN-PHASE: alles hier ist PLATZHALTER und wird in der Logik-Phase
-// durch echte Daten (getProjectById / getScanFromProject) ersetzt.
-// Layout folgt dem Wireframe docs/frontend-design/Project-Detail.canvas.
 import { ref } from 'vue'
 
-// Platzhalter-Flags zum Durchschalten der Zustände:
 const loading = ref(false)
 const hasScans = ref(true)
 
@@ -14,7 +10,6 @@ const project = {
   crawlMaxPages: 10,
 }
 
-// Form ~ ScanResponseDTO  (⚠️ violationCount ist NICHT im DTO -> Platzhalter)
 const scans = [
   { id: 12, status: 'COMPLETED', startedAt: '2026-06-06T12:00:00Z', violationCount: 12 },
   { id: 9, status: 'RUNNING', startedAt: '2026-06-05T10:00:00Z', violationCount: 20 },
@@ -35,282 +30,66 @@ function fmt(iso: string) {
 </script>
 
 <template>
-  <div class="page">
-    <router-link to="/projects" class="back">← Zurück zu Projekte</router-link>
+  <div class="max-w-[880px] mx-auto px-6 pt-8 pb-12 text-[#f3e9e2] font-sans">
+    <router-link to="/projects" class="inline-block mb-[1.4rem] text-[#a99cb0] no-underline text-[0.9rem] hover:text-[#ff7a52]">← Zurück zu Projekte</router-link>
 
-    <!-- Projekt-Kopf -->
-    <header class="head">
-      <div class="head__info">
-        <h1 class="head__title">{{ project.name }}</h1>
-        <p class="head__sub">
+    <header class="flex justify-between items-start gap-6 flex-wrap bg-[#1e1a29] border border-[#322840] rounded-[16px] px-[1.7rem] py-[1.6rem] shadow-[0_18px_44px_rgba(0,0,0,0.35)]">
+      <div>
+        <h1 class="text-[1.7rem] font-extrabold text-[#f3e9e2] m-0">{{ project.name }}</h1>
+        <p class="mt-2 mb-0 text-[#a99cb0] text-[0.92rem]">
           URL:
-          <a :href="project.baseUrl" target="_blank" rel="noopener" class="head__url">
+          <a :href="project.baseUrl" target="_blank" rel="noopener" class="text-[#5bbeb2] no-underline hover:underline">
             {{ project.baseUrl }} ↗
           </a>
-          <span class="dot">·</span>
+          <span class="mx-2 text-[#322840]">·</span>
           Max. Seiten: {{ project.crawlMaxPages }}
         </p>
       </div>
-      <div class="head__actions">
-        <!-- öffnet später den Scan-Dialog mit LLM-Provider-Auswahl -->
-        <button class="btn btn--primary" type="button">Scannen ▶</button>
-        <button class="btn btn--ghost" type="button">✏ Bearbeiten</button>
-        <button class="btn btn--danger" type="button">🗑 Löschen</button>
+      <div class="flex gap-2 flex-wrap">
+        <button class="border border-transparent rounded-[10px] py-[0.6rem] px-4 font-semibold text-[0.9rem] cursor-pointer bg-[#ff7a52] text-[#2a1410] hover:brightness-[1.07] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" type="button">Scannen ▶</button>
+        <button class="border border-[#322840] rounded-[10px] py-[0.6rem] px-4 font-semibold text-[0.9rem] cursor-pointer bg-transparent text-[#f3e9e2] hover:border-[#ff7a52] hover:text-[#ff7a52] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" type="button">✏ Bearbeiten</button>
+        <button class="border border-[#5a2a2a] rounded-[10px] py-[0.6rem] px-4 font-semibold text-[0.9rem] cursor-pointer bg-transparent text-[#f6a3a3] hover:bg-[#3a1a1a] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" type="button">🗑 Löschen</button>
       </div>
     </header>
 
-    <!-- Letzte Scans -->
-    <section class="scans">
-      <div class="scans__head">
-        <h2 class="scans__title">Letzte Scans</h2>
+    <section class="mt-8">
+      <div class="flex items-baseline justify-between mb-4">
+        <h2 class="text-[1.15rem] font-bold text-[#f3e9e2] m-0">Letzte Scans</h2>
         <router-link
           v-if="hasScans && !loading"
           :to="`/projects/1/scans`"
-          class="scans__all"
+          class="text-[#ff7a52] no-underline text-[0.9rem] font-semibold hover:underline"
         >
           Alle Scans ansehen →
         </router-link>
       </div>
 
-      <!-- Loading -->
-      <div v-if="loading" class="state">Scans werden geladen…</div>
+      <div v-if="loading" class="bg-[#1e1a29] border border-[#322840] rounded-[14px] p-8 text-center text-[#a99cb0]">Scans werden geladen…</div>
 
-      <!-- Empty -->
-      <div v-else-if="!hasScans" class="state state--empty">
-        <img src="/mole.png" alt="" aria-hidden="true" class="state__mole" />
+      <div v-else-if="!hasScans" class="bg-[#1e1a29] border border-[#322840] rounded-[14px] p-8 text-center text-[#a99cb0] flex flex-col items-center gap-[0.9rem]">
+        <img src="/mole.png" alt="" aria-hidden="true" class="w-[72px] [image-rendering:pixelated] opacity-85" />
         <p>Noch kein Scan — starte den ersten.</p>
-        <button class="btn btn--primary" type="button">Scannen ▶</button>
+        <button class="border border-transparent rounded-[10px] py-[0.6rem] px-4 font-semibold text-[0.9rem] cursor-pointer bg-[#ff7a52] text-[#2a1410] hover:brightness-[1.07] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" type="button">Scannen ▶</button>
       </div>
 
-      <!-- List -->
-      <ul v-else class="list">
-        <li v-for="scan in scans" :key="scan.id" class="row">
-          <span class="row__id">Scan #{{ scan.id }}</span>
-          <span class="badge" :class="`badge--${meta(scan.status).cls}`">
+      <ul v-else class="list-none m-0 p-0 flex flex-col gap-[0.6rem]">
+        <li v-for="scan in scans" :key="scan.id" class="flex items-center gap-4 bg-[#1e1a29] border border-[#322840] rounded-[12px] py-[0.85rem] px-[1.1rem]">
+          <span class="font-bold min-w-[5.5rem]">Scan #{{ scan.id }}</span>
+          <span
+            class="rounded-full py-[0.2rem] px-[0.65rem] text-[0.74rem] font-bold whitespace-nowrap"
+            :class="{
+              'bg-[rgba(91,190,178,0.15)] text-[#5bbeb2]': meta(scan.status).cls === 'completed',
+              'bg-[rgba(246,200,154,0.15)] text-[#f6c89a]': meta(scan.status).cls === 'running',
+              'bg-[rgba(255,122,82,0.15)] text-[#ff7a52]': meta(scan.status).cls === 'failed',
+            }"
+          >
             {{ meta(scan.status).icon }} {{ meta(scan.status).label }}
           </span>
-          <span class="row__date">{{ fmt(scan.startedAt) }}</span>
-          <span class="row__count">{{ scan.violationCount }} Befunde</span>
-          <router-link :to="`/scans/${scan.id}`" class="row__open">Öffnen</router-link>
+          <span class="text-[#a99cb0] text-[0.9rem]">{{ fmt(scan.startedAt) }}</span>
+          <span class="text-[#a99cb0] text-[0.9rem] ml-auto">{{ scan.violationCount }} Befunde</span>
+          <router-link :to="`/scans/${scan.id}`" class="bg-transparent border border-[#322840] rounded-[9px] py-[0.4rem] px-[0.9rem] text-[#f3e9e2] no-underline text-[0.88rem] font-semibold hover:border-[#ff7a52] hover:text-[#ff7a52]">Öffnen</router-link>
         </li>
       </ul>
     </section>
   </div>
 </template>
-
-<style scoped>
-.page {
-  --surface: #1e1a29;
-  --field: #14111c;
-  --text: #f3e9e2;
-  --muted: #a99cb0;
-  --coral: #ff7a52;
-  --peach: #f6c89a;
-  --teal: #5bbeb2;
-  --border: #322840;
-
-  max-width: 880px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 3rem;
-  color: var(--text);
-  font-family: ui-sans-serif, system-ui, sans-serif;
-}
-
-.back {
-  display: inline-block;
-  margin-bottom: 1.4rem;
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-.back:hover {
-  color: var(--coral);
-}
-
-.head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 1.6rem 1.7rem;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.35);
-}
-.head__title {
-  font-size: 1.7rem;
-  font-weight: 800;
-  color: var(--text);
-  margin: 0;
-}
-.head__sub {
-  margin: 0.5rem 0 0;
-  color: var(--muted);
-  font-size: 0.92rem;
-}
-.head__url {
-  color: var(--teal);
-  text-decoration: none;
-}
-.head__url:hover {
-  text-decoration: underline;
-}
-.dot {
-  margin: 0 0.5rem;
-  color: var(--border);
-}
-.head__actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.btn {
-  border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 0.6rem 1rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-.btn:focus-visible {
-  outline: 2px solid var(--teal);
-  outline-offset: 2px;
-}
-.btn--primary {
-  background: var(--coral);
-  color: #2a1410;
-}
-.btn--primary:hover {
-  filter: brightness(1.07);
-}
-.btn--ghost {
-  background: transparent;
-  color: var(--text);
-  border-color: var(--border);
-}
-.btn--ghost:hover {
-  border-color: var(--coral);
-  color: var(--coral);
-}
-.btn--danger {
-  background: transparent;
-  color: #f6a3a3;
-  border-color: #5a2a2a;
-}
-.btn--danger:hover {
-  background: #3a1a1a;
-}
-
-.scans {
-  margin-top: 2rem;
-}
-.scans__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
-.scans__title {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--text);
-  margin: 0;
-}
-.scans__all {
-  color: var(--coral);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-.scans__all:hover {
-  text-decoration: underline;
-}
-
-.state {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 2rem;
-  text-align: center;
-  color: var(--muted);
-}
-.state--empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.9rem;
-}
-.state__mole {
-  width: 72px;
-  image-rendering: pixelated;
-  opacity: 0.85;
-}
-
-.list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-.row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 0.85rem 1.1rem;
-}
-.row__id {
-  font-weight: 700;
-  min-width: 5.5rem;
-}
-.row__date {
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-.row__count {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin-left: auto;
-}
-.row__open {
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  padding: 0.4rem 0.9rem;
-  color: var(--text);
-  text-decoration: none;
-  font-size: 0.88rem;
-  font-weight: 600;
-}
-.row__open:hover {
-  border-color: var(--coral);
-  color: var(--coral);
-}
-
-.badge {
-  border-radius: 999px;
-  padding: 0.2rem 0.65rem;
-  font-size: 0.74rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-.badge--completed {
-  background: rgba(91, 190, 178, 0.15);
-  color: var(--teal);
-}
-.badge--running {
-  background: rgba(246, 200, 154, 0.15);
-  color: var(--peach);
-}
-.badge--failed {
-  background: rgba(255, 122, 82, 0.15);
-  color: var(--coral);
-}
-</style>

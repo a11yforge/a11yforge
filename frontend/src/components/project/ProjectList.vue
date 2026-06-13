@@ -20,19 +20,19 @@ const emit = defineEmits<{
 
 <template>
   <div>
-    <div v-if="loading" class="state">Projekte werden geladen…</div>
+    <div v-if="loading" class="bg-[#1e1a29] border border-[#322840] rounded-[14px] py-10 px-8 text-center text-[#a99cb0]">Projekte werden geladen…</div>
 
-    <div v-else-if="error" class="state state--error">{{ error }}</div>
+    <div v-else-if="error" class="bg-[#1e1a29] border border-[#5a2a2a] rounded-[14px] py-10 px-8 text-center text-[#f6a3a3]">{{ error }}</div>
 
-    <div v-else-if="projects.length === 0" class="state state--empty">
-      <img src="/mole.png" alt="" aria-hidden="true" class="state__mole" />
+    <div v-else-if="projects.length === 0" class="bg-[#1e1a29] border border-[#322840] rounded-[14px] py-10 px-8 text-center text-[#a99cb0] flex flex-col items-center gap-[0.9rem]">
+      <img src="/mole.png" alt="" aria-hidden="true" class="w-[80px] [image-rendering:pixelated] opacity-85" />
       <p>{{ emptyMessage ?? 'Noch keine Projekte — leg dein erstes an.' }}</p>
-      <button class="btn btn--primary" type="button" @click="emit('create')">
+      <button class="border border-transparent rounded-[10px] py-[0.6rem] px-[1.1rem] font-semibold text-[0.9rem] cursor-pointer bg-[#ff7a52] text-[#2a1410] hover:brightness-[1.07] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" type="button" @click="emit('create')">
         + Neues Projekt
       </button>
     </div>
 
-    <div v-else class="grid">
+    <div v-else class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
       <ProjectCard
         v-for="project in projects"
         :key="project.id"
@@ -45,55 +45,3 @@ const emit = defineEmits<{
     </div>
   </div>
 </template>
-
-<style scoped>
-.grid {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-}
-
-.state {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 2.5rem 2rem;
-  text-align: center;
-  color: var(--muted);
-}
-.state--error {
-  color: #f6a3a3;
-  border-color: #5a2a2a;
-}
-.state--empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.9rem;
-}
-.state__mole {
-  width: 80px;
-  image-rendering: pixelated;
-  opacity: 0.85;
-}
-
-.btn {
-  border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 0.6rem 1.1rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-.btn--primary {
-  background: var(--coral);
-  color: #2a1410;
-}
-.btn--primary:hover {
-  filter: brightness(1.07);
-}
-.btn:focus-visible {
-  outline: 2px solid var(--teal);
-  outline-offset: 2px;
-}
-</style>

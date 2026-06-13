@@ -4,38 +4,11 @@ import AppFooter from '@/components/layout/AppFooter.vue'
 </script>
 
 <template>
-  <div class="app">
+  <div class="min-h-screen flex flex-col text-[#f3e9e2] font-sans bg-[radial-gradient(900px_500px_at_72%_0%,rgba(255,122,82,0.1),transparent_60%),linear-gradient(160deg,#16121d_0%,#16121d_55%,#142323_100%)]">
     <AppNavbar />
-    <main class="app__main">
+    <main class="flex-1">
       <slot />
     </main>
     <AppFooter />
   </div>
 </template>
-
-<style scoped>
-.app {
-  --bg: #16121d;
-  --bg-2: #142323;
-  --surface: #1e1a29;
-  --field: #14111c;
-  --text: #f3e9e2;
-  --muted: #a99cb0;
-  --coral: #ff7a52;
-  --peach: #f6c89a;
-  --teal: #5bbeb2;
-  --border: #322840;
-
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  color: var(--text);
-  background:
-    radial-gradient(900px 500px at 72% 0%, rgba(255, 122, 82, 0.1), transparent 60%),
-    linear-gradient(160deg, var(--bg) 0%, var(--bg) 55%, var(--bg-2) 100%);
-  font-family: ui-sans-serif, system-ui, sans-serif;
-}
-.app__main {
-  flex: 1;
-}
-</style>
