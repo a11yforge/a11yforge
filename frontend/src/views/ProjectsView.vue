@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, useTemplateRef } from 'vue'
+import { ref, onMounted, useTemplateRef, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
@@ -22,8 +22,16 @@ const dialogVisible = ref(false)
 const editingProject = ref<ProjectResponseDTO | null>(null)
 const dialogRef = useTemplateRef<InstanceType<typeof ProjectFormDialog>>('dialogRef')
 
-// TODO Logik-Phase: Projekte clientseitig nach `search` filtern
 const search = ref('')
+const filteredProjects = computed(() => {
+  return projects.value.filter((p) => {
+    const projectName = p.name.toLowerCase()
+    const searchInput = search.value.toLowerCase()
+    if(projectName.includes(searchInput)) {
+      return true
+    }
+  })
+})
 
 onMounted(async () => {
   try {
@@ -168,7 +176,7 @@ async function handleScan(project: ProjectResponseDTO, provider: string) {
     />
 
     <ProjectList
-      :projects="projects"
+      :projects="filteredProjects"
       :loading="loading"
       :error="error"
       empty-message="Noch keine Projekte — leg dein erstes an."
