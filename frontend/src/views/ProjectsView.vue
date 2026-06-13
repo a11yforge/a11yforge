@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, useTemplateRef } from 'vue'
+import { ref, computed, onMounted, useTemplateRef } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
@@ -23,6 +23,14 @@ const editingProject = ref<ProjectResponseDTO | null>(null)
 const dialogRef = useTemplateRef<InstanceType<typeof ProjectFormDialog>>('dialogRef')
 
 const search = ref('')
+
+const filteredProjects = computed(() => {
+  return projects.value.filter((p) => {
+    const projectName = p.name.toLowerCase()
+    const searchInput = search.value.toLowerCase()
+    return projectName.includes(searchInput)
+  })
+})
 
 onMounted(async () => {
   try {
@@ -167,7 +175,7 @@ async function handleScan(project: ProjectResponseDTO, provider: string) {
     />
 
     <ProjectList
-      :projects="projects"
+      :projects="filteredProjects"
       :loading="loading"
       :error="error"
       empty-message="Noch keine Projekte — leg dein erstes an."
