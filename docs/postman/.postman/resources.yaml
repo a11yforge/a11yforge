@@ -1,0 +1,13 @@
+# Use this workspace to collaborate
+workspace:
+  id: 12ba59ca-9440-4e32-83ae-8948bbf943cb
+
+localResources:
+  collections:
+    - ../A11yForge.postman_collection.json
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
+cloudResources:
+  collections:
+    ../postman/collections/A11yForge: 3c2ed42a-4022-4f64-9cf2-1f361d93a5f5

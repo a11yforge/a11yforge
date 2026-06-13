@@ -1,0 +1,64 @@
+$kind: http-request
+url: "{{baseUrl}}/api/pages?scanId=1"
+method: GET
+queryParams:
+  scanId: "1"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response is an array\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    pm.expect(json).to.be.an(\"array\");\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Each page has expected properties\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    json.forEach(function (page) {\r
+
+      \        pm.expect(page).to.have.property(\"id\");\r
+
+      \        pm.expect(page).to.have.property(\"scanId\");\r
+
+      \        pm.expect(page).to.have.property(\"url\");\r
+
+      \        pm.expect(page).to.have.property(\"httpStatus\");\r
+
+      \        pm.expect(page).to.have.property(\"scanStatus\");\r
+
+      \        pm.expect(page).to.have.property(\"fetchedAt\");\r
+
+      \    });\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Each page matches requested scanId\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    const requestedScanId = pm.request.url.query.get(\"scanId\");\r
+
+      \    json.forEach(function (page) {\r
+
+      \        pm.expect(String(page.scanId)).to.equal(requestedScanId);\r
+
+      \    });\r
+
+      });"
+    language: text/javascript
+order: 1000

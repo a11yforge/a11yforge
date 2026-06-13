@@ -1,0 +1,33 @@
+$kind: http-request
+url: "{{baseUrl}}/api/auth/register"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"email\": \"test4@example.com\",\r
+
+    \    \"password\": \"TestPassword123!\",\r
+
+    \    \"userName\": \"testuser4\"\r
+
+    }"
+auth:
+  type: noauth
+scripts:
+  - type: beforeRequest
+    code: "pm.test(\"Status code is 201 Created\", function () {\r
+
+      \    pm.response.to.have.status(201);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response body is empty\", function () {\r
+
+      \    pm.expect(pm.response.text()).to.equal(\"\");\r
+
+      });"
+    language: text/javascript
+order: 1000

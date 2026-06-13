@@ -1,0 +1,52 @@
+$kind: http-request
+url: "{{baseUrl}}/api/violations?scanId=1"
+method: GET
+queryParams:
+  scanId: "1"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response is an array\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    pm.expect(json).to.be.an(\"array\");\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Each violation has expected properties\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    json.forEach(function (violation) {\r
+
+      \        pm.expect(violation).to.have.property(\"id\");\r
+
+      \        pm.expect(violation).to.have.property(\"pageId\");\r
+
+      \        pm.expect(violation).to.have.property(\"ruleId\");\r
+
+      \        pm.expect(violation).to.have.property(\"source\");\r
+
+      \        pm.expect(violation).to.have.property(\"impact\");\r
+
+      \        pm.expect(violation).to.have.property(\"htmlSnippet\");\r
+
+      \        pm.expect(violation).to.have.property(\"targetSelector\");\r
+
+      \        pm.expect(violation).to.have.property(\"description\");\r
+
+      \    });\r
+
+      });"
+    language: text/javascript
+order: 1000

@@ -1,0 +1,12 @@
+name: A11yForge Local
+values:
+  - key: baseUrl
+    value: ''
+  - key: testIdentifier
+    value: ''
+  - key: testPassword
+    value: ''
+  - key: jwtToken
+    value: ''
+  - key: createdProjectId
+    value: ''

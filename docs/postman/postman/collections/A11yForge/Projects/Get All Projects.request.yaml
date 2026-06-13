@@ -1,0 +1,56 @@
+$kind: http-request
+url: "{{baseUrl}}/api/projects"
+method: GET
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response is a JSON array\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    pm.expect(json).to.be.an(\"array\");\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Array contains at least one project\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    pm.expect(json.length).to.be.at.least(1);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Each project has expected fields\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    json.forEach(project => {\r
+
+      \        pm.expect(project).to.have.property(\"id\");\r
+
+      \        pm.expect(project).to.have.property(\"name\");\r
+
+      \        pm.expect(project).to.have.property(\"baseUrl\");\r
+
+      \        pm.expect(project).to.have.property(\"crawlMaxPages\");\r
+
+      \        pm.expect(project).to.have.property(\"createdAt\");\r
+
+      \        pm.expect(project).to.have.property(\"updatedAt\");\r
+
+      \    });\r
+
+      });"
+    language: text/javascript
+order: 2000

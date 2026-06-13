@@ -1,0 +1,8 @@
+$kind: collection
+description: StartFragmentBackend-Tests für A11yForge — JWT-Auth, Projects-CRUDEndFragment
+auth:
+  - id: c6c2b25b-20e2-4b0a-bc92-45d8fec44bc0
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{jwtToken}}"
