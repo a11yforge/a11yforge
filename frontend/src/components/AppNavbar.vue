@@ -38,9 +38,14 @@ async function handleLogout() {
         >
           Projekte
         </router-link>
-        <span v-if="userName" class="text-gray-400 text-sm">
+        <router-link
+          v-if="userName"
+          to="/account"
+          class="text-gray-400 text-sm hover:text-blue-400"
+          active-class="text-blue-400"
+        >
           {{ userName }}
-        </span>
+        </router-link>
         <Button
           icon="pi pi-sign-out"
           label="Logout"
