@@ -34,219 +34,66 @@ function fmt(iso: string | null) {
 </script>
 
 <template>
-  <div class="page">
-    <router-link :to="`/projects/${projectId}`" class="back">← Zurück zum Projekt</router-link>
+  <div class="max-w-[920px] mx-auto px-6 pt-8 pb-12 text-[#f3e9e2] font-sans">
+    <router-link :to="`/projects/${projectId}`" class="inline-block mb-[1.2rem] text-[#a99cb0] no-underline text-[0.9rem] hover:text-[#ff7a52]">← Zurück zum Projekt</router-link>
 
-    <h1 class="title">Scan-Historie</h1>
+    <h1 class="text-[1.7rem] font-extrabold text-[#f3e9e2] mt-0 mb-[1.2rem]">Scan-Historie</h1>
 
-    <!-- Platzhalter: Filter/Sortierung (Logik-Phase) -->
-    <div class="toolbar">
-      <label class="ctrl">Filter:
-        <select class="select"><option>Status ▾</option></select>
+    <div class="flex gap-6 flex-wrap mb-[1.2rem]">
+      <label class="text-[#a99cb0] text-[0.9rem] flex items-center gap-2">Filter:
+        <select class="bg-[#14111c] border border-[#322840] rounded-lg text-[#f3e9e2] py-[0.4rem] px-[0.6rem]"><option>Status ▾</option></select>
       </label>
-      <label class="ctrl">Sortierung:
-        <select class="select"><option>Neueste zuerst ▾</option></select>
+      <label class="text-[#a99cb0] text-[0.9rem] flex items-center gap-2">Sortierung:
+        <select class="bg-[#14111c] border border-[#322840] rounded-lg text-[#f3e9e2] py-[0.4rem] px-[0.6rem]"><option>Neueste zuerst ▾</option></select>
       </label>
     </div>
 
-    <div v-if="loading" class="state">Lädt…</div>
-    <div v-else-if="error" class="state state--error">{{ error }}</div>
-    <div v-else-if="scans.length === 0" class="state">Noch keine Scans für dieses Projekt.</div>
+    <div v-if="loading" class="bg-[#1e1a29] border border-[#322840] rounded-[14px] p-8 text-center text-[#a99cb0]">Lädt…</div>
+    <div v-else-if="error" class="bg-[#1e1a29] border border-[#5a2a2a] rounded-[14px] p-8 text-center text-[#f6a3a3]">{{ error }}</div>
+    <div v-else-if="scans.length === 0" class="bg-[#1e1a29] border border-[#322840] rounded-[14px] p-8 text-center text-[#a99cb0]">Noch keine Scans für dieses Projekt.</div>
 
-    <div v-else class="tablewrap">
-      <table class="table">
+    <div v-else class="bg-[#1e1a29] border border-[#322840] rounded-[14px] overflow-x-auto">
+      <table class="w-full border-collapse text-[0.9rem]">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Status</th>
-            <th>Gestartet</th>
-            <th>Abgeschlossen</th>
-            <th>Befunde</th>
-            <th></th>
+            <th class="text-left text-[#a99cb0] font-semibold text-[0.78rem] uppercase tracking-[0.4px] py-[0.8rem] px-4 border-b border-[#322840]">#</th>
+            <th class="text-left text-[#a99cb0] font-semibold text-[0.78rem] uppercase tracking-[0.4px] py-[0.8rem] px-4 border-b border-[#322840]">Status</th>
+            <th class="text-left text-[#a99cb0] font-semibold text-[0.78rem] uppercase tracking-[0.4px] py-[0.8rem] px-4 border-b border-[#322840]">Gestartet</th>
+            <th class="text-left text-[#a99cb0] font-semibold text-[0.78rem] uppercase tracking-[0.4px] py-[0.8rem] px-4 border-b border-[#322840]">Abgeschlossen</th>
+            <th class="text-left text-[#a99cb0] font-semibold text-[0.78rem] uppercase tracking-[0.4px] py-[0.8rem] px-4 border-b border-[#322840]">Befunde</th>
+            <th class="text-left text-[#a99cb0] font-semibold text-[0.78rem] uppercase tracking-[0.4px] py-[0.8rem] px-4 border-b border-[#322840]"></th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="scan in scans" :key="scan.id">
-            <td class="mono">#{{ scan.id }}</td>
-            <td>
-              <span class="badge" :class="`badge--${meta(scan.status).cls}`">
+          <tr v-for="scan in scans" :key="scan.id" class="group">
+            <td class="py-[0.8rem] px-4 border-b border-[#322840] text-[#f3e9e2] group-last:border-b-0 font-mono font-bold">#{{ scan.id }}</td>
+            <td class="py-[0.8rem] px-4 border-b border-[#322840] text-[#f3e9e2] group-last:border-b-0">
+              <span
+                class="rounded-full py-[0.2rem] px-[0.6rem] text-[0.74rem] font-bold whitespace-nowrap"
+                :class="{
+                  'bg-[rgba(91,190,178,0.15)] text-[#5bbeb2]': meta(scan.status).cls === 'completed',
+                  'bg-[rgba(246,200,154,0.15)] text-[#f6c89a]': meta(scan.status).cls === 'running',
+                  'bg-[rgba(255,122,82,0.15)] text-[#ff7a52]': meta(scan.status).cls === 'failed',
+                }"
+              >
                 {{ meta(scan.status).icon }} {{ meta(scan.status).label }}
               </span>
             </td>
-            <td class="muted">{{ fmt(scan.startedAt) }}</td>
-            <td class="muted">{{ fmt(scan.completedAt) }}</td>
-            <!-- violationCount ist NICHT im ScanResponseDTO -> Platzhalter -->
-            <td class="muted">–</td>
-            <td><router-link :to="`/scans/${scan.id}`" class="open">Öffnen</router-link></td>
+            <td class="py-[0.8rem] px-4 border-b border-[#322840] text-[#a99cb0] group-last:border-b-0">{{ fmt(scan.startedAt) }}</td>
+            <td class="py-[0.8rem] px-4 border-b border-[#322840] text-[#a99cb0] group-last:border-b-0">{{ fmt(scan.completedAt) }}</td>
+            <td class="py-[0.8rem] px-4 border-b border-[#322840] text-[#a99cb0] group-last:border-b-0">–</td>
+            <td class="py-[0.8rem] px-4 border-b border-[#322840] text-[#f3e9e2] group-last:border-b-0"><router-link :to="`/scans/${scan.id}`" class="text-[#ff7a52] no-underline font-semibold hover:underline">Öffnen</router-link></td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Platzhalter: Trend-Chart (Logik-Phase / F-09) -->
-    <div class="chart">📈 Trend-Chart: Befunde über Zeit <span class="muted">(kommt später)</span></div>
+    <div class="mt-6 bg-[#1e1a29] border border-dashed border-[#322840] rounded-[14px] p-8 text-center text-[#f3e9e2]">📈 Trend-Chart: Befunde über Zeit <span class="text-[#a99cb0]">(kommt später)</span></div>
 
-    <!-- Platzhalter: Pagination -->
-    <div class="pager">
-      <button class="pager__btn" type="button">‹</button>
-      <span class="muted">Seite 1 / 1</span>
-      <button class="pager__btn" type="button">›</button>
+    <div class="flex items-center justify-center gap-4 mt-6">
+      <button class="bg-transparent border border-[#322840] rounded-lg text-[#f3e9e2] w-[2.2rem] h-[2.2rem] cursor-pointer hover:border-[#ff7a52] hover:text-[#ff7a52]" type="button">‹</button>
+      <span class="text-[#a99cb0]">Seite 1 / 1</span>
+      <button class="bg-transparent border border-[#322840] rounded-lg text-[#f3e9e2] w-[2.2rem] h-[2.2rem] cursor-pointer hover:border-[#ff7a52] hover:text-[#ff7a52]" type="button">›</button>
     </div>
   </div>
 </template>
-
-<style scoped>
-.page {
-  max-width: 920px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 3rem;
-  color: var(--text);
-  font-family: ui-sans-serif, system-ui, sans-serif;
-}
-.back {
-  display: inline-block;
-  margin-bottom: 1.2rem;
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-.back:hover {
-  color: var(--coral);
-}
-.title {
-  font-size: 1.7rem;
-  font-weight: 800;
-  color: var(--text);
-  margin: 0 0 1.2rem;
-}
-
-.toolbar {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 1.2rem;
-}
-.ctrl {
-  color: var(--muted);
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.select {
-  background: var(--field);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  padding: 0.4rem 0.6rem;
-}
-
-.state {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 2rem;
-  text-align: center;
-  color: var(--muted);
-}
-.state--error {
-  color: #f6a3a3;
-  border-color: #5a2a2a;
-}
-
-.tablewrap {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  overflow-x: auto;
-}
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-.table th {
-  text-align: left;
-  color: var(--muted);
-  font-weight: 600;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  padding: 0.8rem 1rem;
-  border-bottom: 1px solid var(--border);
-}
-.table td {
-  padding: 0.8rem 1rem;
-  border-bottom: 1px solid var(--border);
-  color: var(--text);
-}
-.table tr:last-child td {
-  border-bottom: 0;
-}
-.mono {
-  font-family: ui-monospace, monospace;
-  font-weight: 700;
-}
-.muted {
-  color: var(--muted);
-}
-.open {
-  color: var(--coral);
-  text-decoration: none;
-  font-weight: 600;
-}
-.open:hover {
-  text-decoration: underline;
-}
-
-.badge {
-  border-radius: 999px;
-  padding: 0.2rem 0.6rem;
-  font-size: 0.74rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-.badge--completed {
-  background: rgba(91, 190, 178, 0.15);
-  color: var(--teal);
-}
-.badge--running {
-  background: rgba(246, 200, 154, 0.15);
-  color: var(--peach);
-}
-.badge--failed {
-  background: rgba(255, 122, 82, 0.15);
-  color: var(--coral);
-}
-
-.chart {
-  margin-top: 1.5rem;
-  background: var(--surface);
-  border: 1px dashed var(--border);
-  border-radius: 14px;
-  padding: 2rem;
-  text-align: center;
-  color: var(--text);
-}
-
-.pager {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-.pager__btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  width: 2.2rem;
-  height: 2.2rem;
-  cursor: pointer;
-}
-.pager__btn:hover {
-  border-color: var(--coral);
-  color: var(--coral);
-}
-</style>

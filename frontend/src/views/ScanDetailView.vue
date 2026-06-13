@@ -52,98 +52,96 @@ const statusLabel: Record<string, string> = {
 </script>
 
 <template>
-  <div v-if="!scan" class="page state">Scan wird geladen…</div>
+  <div v-if="!scan" class="relative max-w-[900px] mx-auto px-6 pt-8 pb-12 text-[#a99cb0] font-sans">Scan wird geladen…</div>
 
-  <div v-else class="page">
-    <img src="/mole.png" alt="" aria-hidden="true" class="mascot" />
+  <div v-else class="relative max-w-[900px] mx-auto px-6 pt-8 pb-12 text-[#f3e9e2] font-sans">
+    <img src="/mole.png" alt="" aria-hidden="true" class="absolute top-[-8px] right-3 w-[64px] [image-rendering:pixelated] opacity-90 pointer-events-none" />
 
-    <!-- Kopf -->
-    <header class="head">
+    <header class="flex justify-between items-start gap-6 flex-wrap bg-[#1e1a29] border border-[#322840] rounded-[16px] px-[1.6rem] py-6 shadow-[0_18px_44px_rgba(0,0,0,0.35)]">
       <div>
-        <h1 class="head__title">Scan #{{ scan.id }}</h1>
-        <p class="head__sub">
+        <h1 class="text-[1.6rem] font-extrabold text-[#f3e9e2] m-0">Scan #{{ scan.id }}</h1>
+        <p class="mt-[0.4rem] mb-0 text-[#a99cb0] text-[0.9rem]">
           Status:
-          <span class="status">{{ statusLabel[scan.status] ?? scan.status }}</span>
-          <span class="dot">·</span>
+          <span class="text-[#f6c89a] font-semibold">{{ statusLabel[scan.status] ?? scan.status }}</span>
+          <span class="mx-2 text-[#322840]">·</span>
           {{ new Date(scan.startedAt).toLocaleString('de-AT') }}
         </p>
       </div>
-      <button class="btn btn--primary" type="button" @click="handleExport">Export ⬇</button>
+      <button class="border border-transparent rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer bg-[#ff7a52] text-[#2a1410] hover:brightness-[1.07] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" type="button" @click="handleExport">Export ⬇</button>
     </header>
 
-    <!-- Befunde -->
-    <div class="befunde__head">
-      <h2 class="h2">Befunde</h2>
-      <!-- Platzhalter: Bulk-Fix (Backend-Endpoint kommt später) -->
-      <button class="btn btn--ghost" type="button">⚡ Alle mit KI fixen</button>
+    <div class="flex items-center justify-between my-8 mb-4">
+      <h2 class="text-[1.2rem] font-bold text-[#f3e9e2] m-0">Befunde</h2>
+      <button class="border border-[#322840] rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer bg-transparent text-[#f3e9e2] hover:border-[#ff7a52] hover:text-[#ff7a52] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" type="button">⚡ Alle mit KI fixen</button>
     </div>
 
-    <div class="list">
-      <article v-for="v in scan.violations" :key="v.id" class="vcard">
-        <div class="vcard__head">
+    <div class="flex flex-col gap-[0.9rem]">
+      <article v-for="v in scan.violations" :key="v.id" class="bg-[#1e1a29] border border-[#322840] rounded-[14px] px-[1.2rem] py-[1.1rem]">
+        <div class="flex justify-between gap-4 flex-wrap">
           <div>
-            <span class="rule">{{ v.ruleId }}</span>
-            <span class="badge" :class="v.impact === 'CRITICAL' ? 'badge--crit' : 'badge--warn'">
+            <span class="font-bold text-[#f3e9e2]">{{ v.ruleId }}</span>
+            <span
+              class="rounded-full py-[0.2rem] px-[0.6rem] text-[0.72rem] font-bold ml-2"
+              :class="v.impact === 'CRITICAL' ? 'bg-[rgba(255,122,82,0.15)] text-[#ff7a52]' : 'bg-[rgba(246,200,154,0.15)] text-[#f6c89a]'"
+            >
               {{ v.impact }}
             </span>
-            <p class="desc">{{ v.description }}</p>
+            <p class="mt-[0.4rem] mb-0 text-[#a99cb0] text-[0.9rem]">{{ v.description }}</p>
           </div>
-          <div class="vcard__actions">
+          <div class="flex gap-2 flex-wrap h-fit">
             <button
-              class="btn btn--primary"
+              class="border border-transparent rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer bg-[#ff7a52] text-[#2a1410] disabled:opacity-50 disabled:cursor-not-allowed hover:enabled:brightness-[1.07] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]"
               type="button"
               :disabled="fixes[v.id]?.status === 'PENDING'"
               @click="handleRequestFix(v.id)"
             >
               🤖 Mit KI fixen
             </button>
-            <!-- Platzhalter: manueller Fix (MANUAL-Status kommt später) -->
-            <button class="btn btn--ghost" type="button">✋ Selbst fixen</button>
+            <button class="border border-[#322840] rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer bg-transparent text-[#f3e9e2] hover:border-[#ff7a52] hover:text-[#ff7a52] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" type="button">✋ Selbst fixen</button>
           </div>
         </div>
 
-        <pre class="snippet">{{ v.htmlSnippet }}</pre>
+        <pre class="mt-[0.8rem] mb-0 bg-[#14111c] border border-[#322840] rounded-lg py-[0.7rem] px-[0.8rem] font-mono text-[0.82rem] text-[#a99cb0] overflow-x-auto whitespace-pre">{{ v.htmlSnippet }}</pre>
 
-        <!-- Fix-Vorschlag -->
-        <div v-if="fixes[v.id]" class="fix">
-          <p v-if="fixes[v.id]?.status === 'PENDING'" class="fix__pending">
+        <div v-if="fixes[v.id]" class="mt-4 border-t border-[#322840] pt-4">
+          <p v-if="fixes[v.id]?.status === 'PENDING'" class="text-[#a99cb0] text-[0.9rem] m-0">
             ⏳ Wird generiert &amp; verifiziert…
           </p>
 
           <template v-else>
-            <div class="fix__status">
+            <div class="flex items-center gap-[0.6rem] mb-[0.6rem] text-[0.85rem]">
               <span
-                class="badge"
-                :class="fixes[v.id]?.status === 'VERIFIED' ? 'badge--ok' : 'badge--crit'"
+                class="rounded-full py-[0.2rem] px-[0.6rem] text-[0.72rem] font-bold"
+                :class="fixes[v.id]?.status === 'VERIFIED' ? 'bg-[rgba(91,190,178,0.15)] text-[#5bbeb2]' : 'bg-[rgba(255,122,82,0.15)] text-[#ff7a52]'"
               >
                 {{ fixes[v.id]?.status }}
               </span>
-              <span class="muted">
+              <span class="text-[#a99cb0]">
                 {{ fixes[v.id]?.llmProvider }} / {{ fixes[v.id]?.llmModel }}
               </span>
             </div>
 
-            <div class="diff">
+            <div class="grid gap-[0.8rem] grid-cols-1 min-[720px]:grid-cols-2">
               <div>
-                <p class="diff__label">Vorher</p>
-                <pre class="snippet">{{ v.htmlSnippet }}</pre>
+                <p class="mt-0 mb-[0.3rem] text-[0.72rem] uppercase tracking-[0.4px] text-[#a99cb0]">Vorher</p>
+                <pre class="mt-[0.8rem] mb-0 bg-[#14111c] border border-[#322840] rounded-lg py-[0.7rem] px-[0.8rem] font-mono text-[0.82rem] text-[#a99cb0] overflow-x-auto whitespace-pre">{{ v.htmlSnippet }}</pre>
               </div>
               <div v-if="fixes[v.id]?.generatedHtml">
-                <p class="diff__label">Nachher</p>
-                <pre class="snippet snippet--ok">{{ fixes[v.id]?.generatedHtml }}</pre>
+                <p class="mt-0 mb-[0.3rem] text-[0.72rem] uppercase tracking-[0.4px] text-[#a99cb0]">Nachher</p>
+                <pre class="mt-[0.8rem] mb-0 bg-[#14111c] border border-[#322840] rounded-lg py-[0.7rem] px-[0.8rem] font-mono text-[0.82rem] text-[#5bbeb2] overflow-x-auto whitespace-pre">{{ fixes[v.id]?.generatedHtml }}</pre>
               </div>
             </div>
 
-            <div v-if="fixes[v.id]?.status === 'VERIFIED'" class="fix__review">
+            <div v-if="fixes[v.id]?.status === 'VERIFIED'" class="flex gap-2 mt-[0.8rem]">
               <button
-                class="btn btn--ok"
+                class="border border-transparent rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer bg-[#5bbeb2] text-[#0d201d] hover:brightness-[1.07] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]"
                 type="button"
                 @click="handleReview(v.id, fixes[v.id]!.id, 'ACCEPTED')"
               >
                 ✅ Annehmen
               </button>
               <button
-                class="btn btn--danger"
+                class="border border-[#5a2a2a] rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer bg-transparent text-[#f6a3a3] hover:bg-[#3a1a1a] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]"
                 type="button"
                 @click="handleReview(v.id, fixes[v.id]!.id, 'REJECTED')"
               >
@@ -156,232 +154,3 @@ const statusLabel: Record<string, string> = {
     </div>
   </div>
 </template>
-
-<style scoped>
-.page {
-  position: relative;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 3rem;
-  color: var(--text);
-  font-family: ui-sans-serif, system-ui, sans-serif;
-}
-.state {
-  color: var(--muted);
-}
-
-.mascot {
-  position: absolute;
-  top: -8px;
-  right: 12px;
-  width: 64px;
-  image-rendering: pixelated;
-  opacity: 0.9;
-  pointer-events: none;
-}
-
-.head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 1.5rem 1.6rem;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.35);
-}
-.head__title {
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: var(--text);
-  margin: 0;
-}
-.head__sub {
-  margin: 0.4rem 0 0;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-.status {
-  color: var(--peach);
-  font-weight: 600;
-}
-.dot {
-  margin: 0 0.5rem;
-  color: var(--border);
-}
-
-.befunde__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 2rem 0 1rem;
-}
-.h2 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--text);
-  margin: 0;
-}
-
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-}
-.vcard {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 1.1rem 1.2rem;
-}
-.vcard__head {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-.vcard__actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  height: fit-content;
-}
-.rule {
-  font-weight: 700;
-  color: var(--text);
-}
-.desc {
-  margin: 0.4rem 0 0;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.snippet {
-  margin: 0.8rem 0 0;
-  background: var(--field);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.7rem 0.8rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.82rem;
-  color: var(--muted);
-  overflow-x: auto;
-  white-space: pre;
-}
-.snippet--ok {
-  color: var(--teal);
-}
-
-.fix {
-  margin-top: 1rem;
-  border-top: 1px solid var(--border);
-  padding-top: 1rem;
-}
-.fix__pending {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin: 0;
-}
-.fix__status {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.6rem;
-  font-size: 0.85rem;
-}
-.diff {
-  display: grid;
-  gap: 0.8rem;
-}
-@media (min-width: 720px) {
-  .diff {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-.diff__label {
-  margin: 0 0 0.3rem;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  color: var(--muted);
-}
-.fix__review {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.8rem;
-}
-.muted {
-  color: var(--muted);
-}
-
-.btn {
-  border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 0.55rem 1rem;
-  font-weight: 600;
-  font-size: 0.88rem;
-  cursor: pointer;
-}
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-.btn:focus-visible {
-  outline: 2px solid var(--teal);
-  outline-offset: 2px;
-}
-.btn--primary {
-  background: var(--coral);
-  color: #2a1410;
-}
-.btn--primary:hover:not(:disabled) {
-  filter: brightness(1.07);
-}
-.btn--ghost {
-  background: transparent;
-  color: var(--text);
-  border-color: var(--border);
-}
-.btn--ghost:hover {
-  border-color: var(--coral);
-  color: var(--coral);
-}
-.btn--ok {
-  background: var(--teal);
-  color: #0d201d;
-}
-.btn--ok:hover {
-  filter: brightness(1.07);
-}
-.btn--danger {
-  background: transparent;
-  color: #f6a3a3;
-  border-color: #5a2a2a;
-}
-.btn--danger:hover {
-  background: #3a1a1a;
-}
-
-.badge {
-  border-radius: 999px;
-  padding: 0.2rem 0.6rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  margin-left: 0.5rem;
-}
-.badge--crit {
-  background: rgba(255, 122, 82, 0.15);
-  color: var(--coral);
-}
-.badge--warn {
-  background: rgba(246, 200, 154, 0.15);
-  color: var(--peach);
-}
-.badge--ok {
-  background: rgba(91, 190, 178, 0.15);
-  color: var(--teal);
-  margin-left: 0;
-}
-</style>

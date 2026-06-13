@@ -1,1 +1,12 @@
 @import 'tailwindcss';
+
+:root {
+  --surface: #1e1a29;
+  --field: #14111c;
+  --text: #f3e9e2;
+  --muted: #a99cb0;
+  --coral: #ff7a52;
+  --peach: #f6c89a;
+  --teal: #5bbeb2;
+  --border: #322840;
+}
