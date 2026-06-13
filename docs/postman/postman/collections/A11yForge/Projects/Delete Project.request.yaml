@@ -1,0 +1,24 @@
+$kind: http-request
+url: "{{baseUrl}}/api/projects/{{createdProjectId}}"
+method: DELETE
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 204 No Content\", function () {\r
+
+      \    pm.response.to.have.status(204);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response body is empty\", function () {\r
+
+      \    pm.expect(pm.response.text()).to.equal(\"\");\r
+
+      });\r
+
+      \r
+
+      pm.environment.unset(\"createdProjectId\");"
+    language: text/javascript
+order: 5000

@@ -4,8 +4,7 @@ import LoginForm from '../components/auth/LoginForm.vue'
 import RegisterForm from '../components/auth/RegisterForm.vue'
 import PasswordResetSwitch from '../components/auth/PasswordResetSwitch.vue'
 import ProjectsView from '../views/ProjectsView.vue'
-import Home from '../views/Home.vue'
-import ScanDetail from '../components/scan/ScanDetail.vue'
+import ScanDetailView from '../views/ScanDetailView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 import ScanHistoryView from '../views/ScanHistoryView.vue'
 import LegalView from '../views/LegalView.vue'
@@ -20,26 +19,36 @@ const router = createRouter({
     {
       path: '/login',
       component: AuthView,
+      meta: { layout: 'auth' },
       children: [{ path: '', component: LoginForm }],
     },
     {
       path: '/register',
       component: AuthView,
+      meta: { layout: 'auth' },
       children: [{ path: '', component: RegisterForm }],
     },
     {
       path: '/password-reset',
       component: AuthView,
+      meta: { layout: 'auth' },
       children: [{ path: '', component: PasswordResetSwitch }],
     },
-    { path: '/datenschutz', component: LegalView },
-    { path: '/impressum', component: LegalView },
-    { path: '/projects/:id/scans', component: ScanHistoryView, meta: { requiresAuth: true } },
-    { path: '/projects/:id', component: ProjectDetailView, meta: { requiresAuth: true } },
-    { path: '/account', component: AccountView, meta: { requiresAuth: true } },
-    { path: '/home', component: Home, meta: { requiresAuth: true } },
-    { path: '/projects', component: ProjectsView, meta: { requiresAuth: true } },
-    { path: '/scans/:id', component: ScanDetail, meta: { requiresAuth: true } },
+    { path: '/datenschutz', component: LegalView, meta: { layout: 'public' } },
+    { path: '/impressum', component: LegalView, meta: { layout: 'public' } },
+    {
+      path: '/projects/:id/scans',
+      component: ScanHistoryView,
+      meta: { requiresAuth: true, layout: 'default' },
+    },
+    {
+      path: '/projects/:id',
+      component: ProjectDetailView,
+      meta: { requiresAuth: true, layout: 'default' },
+    },
+    { path: '/account', component: AccountView, meta: { requiresAuth: true, layout: 'default' } },
+    { path: '/projects', component: ProjectsView, meta: { requiresAuth: true, layout: 'default' } },
+    { path: '/scans/:id', component: ScanDetailView, meta: { requiresAuth: true, layout: 'default' } },
     { path: '/:pathMatch(.*)*', component: NotFoundView },
   ],
 })

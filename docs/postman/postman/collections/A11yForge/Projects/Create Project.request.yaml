@@ -1,0 +1,69 @@
+$kind: http-request
+url: "{{baseUrl}}/api/projects"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"name\": \"A11yForge Test Project\",\r
+
+    \    \"baseUrl\": \"https://example.com\",\r
+
+    \    \"crawlMaxPages\": 50\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 201 Created\", function () {\r
+
+      \    pm.response.to.have.status(201);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response contains project fields\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    pm.expect(json).to.have.property(\"id\");\r
+
+      \    pm.expect(json).to.have.property(\"name\");\r
+
+      \    pm.expect(json).to.have.property(\"baseUrl\");\r
+
+      \    pm.expect(json).to.have.property(\"crawlMaxPages\");\r
+
+      \    pm.expect(json).to.have.property(\"createdAt\");\r
+
+      \    pm.expect(json).to.have.property(\"updatedAt\");\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response values match request\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    pm.expect(json.name).to.equal(\"A11yForge Test Project\");\r
+
+      \    pm.expect(json.baseUrl).to.equal(\"https://example.com\");\r
+
+      \    pm.expect(json.crawlMaxPages).to.equal(50);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Project ID saved to environment\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    pm.environment.set(\"createdProjectId\", json.id);\r
+
+      \    pm.expect(pm.environment.get(\"createdProjectId\")).to.equal(String(json.id));\r
+
+      });"
+    language: text/javascript
+order: 1000

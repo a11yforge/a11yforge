@@ -1,0 +1,52 @@
+$kind: http-request
+url: "{{baseUrl}}/api/violations/1"
+method: GET
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response is a single violation object\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    pm.expect(json).to.be.an(\"object\");\r
+
+      \    pm.expect(json).to.have.property(\"id\");\r
+
+      \    pm.expect(json).to.have.property(\"pageId\");\r
+
+      \    pm.expect(json).to.have.property(\"ruleId\");\r
+
+      \    pm.expect(json).to.have.property(\"source\");\r
+
+      \    pm.expect(json).to.have.property(\"impact\");\r
+
+      \    pm.expect(json).to.have.property(\"htmlSnippet\");\r
+
+      \    pm.expect(json).to.have.property(\"targetSelector\");\r
+
+      \    pm.expect(json).to.have.property(\"description\");\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Returned violation ID matches requested ID\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    const pathSegments = pm.request.url.path;\r
+
+      \    const requestedId = pathSegments[pathSegments.length - 1];\r
+
+      \    pm.expect(String(json.id)).to.equal(requestedId);\r
+
+      });"
+    language: text/javascript
+order: 2000

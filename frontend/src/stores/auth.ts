@@ -28,6 +28,11 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken)
   }
 
+  function setUserInfo(newEmail: string, newUserName: string): void {
+    email.value = newEmail
+    userName.value = newUserName
+  }
+
   function clearAuth(): void {
     accessToken.value = null
     refreshToken.value = null
@@ -42,7 +47,7 @@ export const useAuthStore = defineStore('auth', () => {
     setTokens(response.accessToken, response.refreshToken)
     email.value = response.email
     userName.value = response.userName
-    await router.push('/home')
+    await router.push('/projects')
   }
 
   async function register(request: RegisterRequestDTO): Promise<void> {
@@ -92,5 +97,6 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     setTokens,
     clearAuth,
+    setUserInfo,
   }
 })

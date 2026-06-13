@@ -1,0 +1,70 @@
+# A11yForge – HTTP Client (IntelliJ)
+# Ausfuehren: gruener Pfeil links neben dem Request.
+# Reihenfolge: zuerst Register (einmalig) -> Login (setzt {{token}}) -> Rest.
+
+@host = http://localhost:8080
+
+### Register (einmalig)
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "max@example.com",
+  "password": "password123",
+  "userName": "max"
+}
+
+### Login -> speichert Token in globale Variable
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "identifier": "max@example.com",
+  "password": "password123"
+}
+
+> {%
+    client.global.set("token", response.body.token);
+%}
+
+### Logout
+POST {{host}}/api/auth/logout
+Authorization: Bearer {{token}}
+
+### Scan starten (projectId anpassen)
+POST {{host}}/api/scan
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "projectId": 1
+}
+
+### Scan abrufen (id anpassen)
+GET {{host}}/api/scan/1
+Authorization: Bearer {{token}}
+
+### Projekte auflisten
+GET {{host}}/api/projects
+Authorization: Bearer {{token}}
+
+### Pages auflisten
+GET {{host}}/api/pages
+Authorization: Bearer {{token}}
+
+### Violations auflisten
+GET {{host}}/api/violations
+Authorization: Bearer {{token}}
+
+### Fix-Generierung anstossen (violationId anpassen) -> 202 Accepted
+POST {{host}}/api/fix-proposals
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "violationId": 1
+}
+
+### Fix-Proposal abrufen (id anpassen)
+GET {{host}}/api/fix-proposals/1
+Authorization: Bearer {{token}}

@@ -1,0 +1,63 @@
+$kind: http-request
+url: "{{baseUrl}}/api/projects/{{createdProjectId}}"
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \    \"name\": \"A11yForge Test Project (Updated)\",\r
+
+    \    \"baseUrl\": \"https://example.org\",\r
+
+    \    \"crawlMaxPages\": 25\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Updated values are reflected in response\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    pm.expect(json.name).to.equal(\"A11yForge Test Project (Updated)\");\r
+
+      \    pm.expect(json.baseUrl).to.equal(\"https://example.org\");\r
+
+      \    pm.expect(json.crawlMaxPages).to.equal(25);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Project ID is unchanged\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    const expectedId = pm.environment.get(\"createdProjectId\");\r
+
+      \    pm.expect(String(json.id)).to.equal(expectedId);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"updatedAt is newer than createdAt\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    const created = new Date(json.createdAt).getTime();\r
+
+      \    const updated = new Date(json.updatedAt).getTime();\r
+
+      \    pm.expect(updated).to.be.at.least(created);\r
+
+      });"
+    language: text/javascript
+order: 4000

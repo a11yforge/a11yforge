@@ -1,0 +1,48 @@
+$kind: http-request
+url: "{{baseUrl}}/api/pages/1"
+method: GET
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response is a single page object\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    pm.expect(json).to.be.an(\"object\");\r
+
+      \    pm.expect(json).to.have.property(\"id\");\r
+
+      \    pm.expect(json).to.have.property(\"scanId\");\r
+
+      \    pm.expect(json).to.have.property(\"url\");\r
+
+      \    pm.expect(json).to.have.property(\"httpStatus\");\r
+
+      \    pm.expect(json).to.have.property(\"scanStatus\");\r
+
+      \    pm.expect(json).to.have.property(\"fetchedAt\");\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Returned page ID matches requested ID\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    const pathSegments = pm.request.url.path;\r
+
+      \    const requestedId = pathSegments[pathSegments.length - 1];\r
+
+      \    pm.expect(String(json.id)).to.equal(requestedId);\r
+
+      });"
+    language: text/javascript
+order: 2000
