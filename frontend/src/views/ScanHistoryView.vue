@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getScanFromProject, type ScanResponseDTO } from '../api/scan'
 
@@ -9,6 +9,9 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const projectId = Number(route.params.id)
 const scans = ref<ScanResponseDTO[]>([])
+
+const statusFilter = ref('ALL')
+const sortOrder = ref<'newest' | 'oldest'>('newest')
 
 onMounted(async () => {
   try {
@@ -31,6 +34,18 @@ function meta(status: string) {
 function fmt(iso: string | null) {
   return iso ? new Date(iso).toLocaleString('de-AT') : '–'
 }
+
+const displayedScans = computed(() => {
+  const filtered =
+    statusFilter.value === 'ALL'
+      ? scans.value
+      : scans.value.filter((s) => s.status === statusFilter.value)
+
+  return [...filtered].sort((a, b) => {
+    const diff = new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()
+    return sortOrder.value === 'newest' ? diff : -diff
+  })
+})
 </script>
 
 <template>
@@ -41,10 +56,18 @@ function fmt(iso: string | null) {
 
     <div class="flex gap-6 flex-wrap mb-[1.2rem]">
       <label class="text-[#a99cb0] text-[0.9rem] flex items-center gap-2">Filter:
-        <select class="bg-[#14111c] border border-[#322840] rounded-lg text-[#f3e9e2] py-[0.4rem] px-[0.6rem]"><option>Status ▾</option></select>
+        <select v-model="statusFilter" class="bg-[#14111c] border border-[#322840] rounded-lg text-[#f3e9e2] py-[0.4rem] px-[0.6rem]">
+          <option value="ALL">Alle</option>
+          <option value="COMPLETED">Fertig</option>
+          <option value="RUNNING">Läuft</option>
+          <option value="FAILED">Fehler</option>
+        </select>
       </label>
       <label class="text-[#a99cb0] text-[0.9rem] flex items-center gap-2">Sortierung:
-        <select class="bg-[#14111c] border border-[#322840] rounded-lg text-[#f3e9e2] py-[0.4rem] px-[0.6rem]"><option>Neueste zuerst ▾</option></select>
+        <select v-model="sortOrder" class="bg-[#14111c] border border-[#322840] rounded-lg text-[#f3e9e2] py-[0.4rem] px-[0.6rem]">
+          <option value="newest">Neueste zuerst</option>
+          <option value="oldest">Älteste zuerst</option>
+        </select>
       </label>
     </div>
 
@@ -65,7 +88,7 @@ function fmt(iso: string | null) {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="scan in scans" :key="scan.id" class="group">
+          <tr v-for="scan in displayedScans" :key="scan.id" class="group">
             <td class="py-[0.8rem] px-4 border-b border-[#322840] text-[#f3e9e2] group-last:border-b-0 font-mono font-bold">#{{ scan.id }}</td>
             <td class="py-[0.8rem] px-4 border-b border-[#322840] text-[#f3e9e2] group-last:border-b-0">
               <span
@@ -89,11 +112,5 @@ function fmt(iso: string | null) {
     </div>
 
     <div class="mt-6 bg-[#1e1a29] border border-dashed border-[#322840] rounded-[14px] p-8 text-center text-[#f3e9e2]">📈 Trend-Chart: Befunde über Zeit <span class="text-[#a99cb0]">(kommt später)</span></div>
-
-    <div class="flex items-center justify-center gap-4 mt-6">
-      <button class="bg-transparent border border-[#322840] rounded-lg text-[#f3e9e2] w-[2.2rem] h-[2.2rem] cursor-pointer hover:border-[#ff7a52] hover:text-[#ff7a52]" type="button">‹</button>
-      <span class="text-[#a99cb0]">Seite 1 / 1</span>
-      <button class="bg-transparent border border-[#322840] rounded-lg text-[#f3e9e2] w-[2.2rem] h-[2.2rem] cursor-pointer hover:border-[#ff7a52] hover:text-[#ff7a52]" type="button">›</button>
-    </div>
   </div>
 </template>
