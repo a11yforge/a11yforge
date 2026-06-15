@@ -104,7 +104,7 @@ const displayedScans = computed(() => {
             </td>
             <td class="py-[0.8rem] px-4 border-b border-[#322840] text-[#a99cb0] group-last:border-b-0">{{ fmt(scan.startedAt) }}</td>
             <td class="py-[0.8rem] px-4 border-b border-[#322840] text-[#a99cb0] group-last:border-b-0">{{ fmt(scan.completedAt) }}</td>
-            <td class="py-[0.8rem] px-4 border-b border-[#322840] text-[#a99cb0] group-last:border-b-0">–</td>
+            <td class="py-[0.8rem] px-4 border-b border-[#322840] text-[#a99cb0] group-last:border-b-0">{{ scan.violationCount }}</td>
             <td class="py-[0.8rem] px-4 border-b border-[#322840] text-[#f3e9e2] group-last:border-b-0"><router-link :to="`/scans/${scan.id}`" class="text-[#ff7a52] no-underline font-semibold hover:underline">Öffnen</router-link></td>
           </tr>
         </tbody>

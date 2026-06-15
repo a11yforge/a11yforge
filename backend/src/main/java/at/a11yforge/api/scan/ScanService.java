@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,6 +38,9 @@ public class ScanService {
   private final ScannerProcessRunner scanner;
   private final AuditEventService auditEventService;
   private final ReviewRepository reviewRepository;
+
+  @Value("${a11yforge.llm.default-provider}")
+  private ProviderType defaultProvider;
 
   public ScanService(
       ScanRepository scanRepository,
@@ -55,12 +59,12 @@ public class ScanService {
     this.reviewRepository = reviewRepository;
   }
 
-  public ScanResponseDTO createAndRunScan(Long userId, Long projectId, ProviderType llmProvider) {
+  public ScanResponseDTO createAndRunScan(Long userId, Long projectId) {
     Project project =
         projectRepository
             .findByIdAndUserId(projectId, userId)
             .orElseThrow(() -> new ProjectNotFoundException(projectId));
-    Scan scan = scanRepository.save(new Scan(project, llmProvider));
+    Scan scan = scanRepository.save(new Scan(project, defaultProvider));
 
     try {
 
@@ -116,7 +120,8 @@ public class ScanService {
           scan.getProject().getId(),
           scan.getStatus().name(),
           scan.getStartedAt(),
-          scan.getCompletedAt());
+          scan.getCompletedAt(),
+          violationRepository.countByPage_Scan_Id(scan.getId()));
 
     } catch (ScannerExecutionException e) {
       scan.setStatus(ScanStatus.FAILED);
@@ -167,7 +172,8 @@ public class ScanService {
                     s.getProject().getId(),
                     s.getStatus().name(),
                     s.getStartedAt(),
-                    s.getCompletedAt()))
+                    s.getCompletedAt(),
+                    violationRepository.countByPage_Scan_Id(s.getId())))
         .toList();
   }
 

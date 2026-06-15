@@ -26,6 +26,7 @@ export interface ScanResponseDTO {
   status: string
   startedAt: string
   completedAt: string | null
+  violationCount: number
 }
 
 export async function getScan(id: number): Promise<ScanDetailDTO> {
@@ -38,8 +39,8 @@ export async function getScanFromProject(projectId: number): Promise<ScanRespons
   return scan.data
 }
 
-export async function startScan(projectId: number, llmProvider: string = "NONE"): Promise<ScanResponseDTO> {
-  const scan = await client.post<ScanResponseDTO>('/scan', { projectId, llmProvider })
+export async function startScan(projectId: number): Promise<ScanResponseDTO> {
+  const scan = await client.post<ScanResponseDTO>('/scan', { projectId })
   return scan.data
 }
 
