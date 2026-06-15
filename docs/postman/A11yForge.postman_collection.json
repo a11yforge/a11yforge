@@ -40,7 +40,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"test5@example.com\",\r\n    \"password\": \"TestPassword123!\",\r\n    \"userName\": \"testuser5\"\r\n}",
+              "raw": "{\r\n    \"email\": \"test6@example.com\",\r\n    \"password\": \"TestPassword123!\",\r\n    \"userName\": \"testuser6\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -429,7 +429,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"userName\": \"newUserName\"\r\n}",
+              "raw": "{\r\n  \"userName\": \"newUserName\",\r\n  \"currentPassword\": \"{{testPassword}}\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -476,7 +476,53 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"userName\": \"test\"\r\n}",
+              "raw": "{\r\n  \"userName\": \"test\",\r\n  \"currentPassword\": \"{{testPassword}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me/username",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me",
+                "username"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Username (Wrong Password)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 400 (not 401)\", () => pm.response.to.have.status(400));\r",
+                  "const body = pm.response.json();\r",
+                  "pm.test(\"Password mismatch title\", () => {\r",
+                  "    pm.expect(body.title).to.eql(\"Password mismatch\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"userName\": \"whateverName\",\r\n  \"currentPassword\": \"wrongPassword\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -523,7 +569,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"email\": \"new@example.com\"\r\n}",
+              "raw": "{\r\n  \"email\": \"new@example.com\",\r\n  \"currentPassword\": \"{{testPassword}}\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -572,7 +618,53 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"email\": \"not-an-email\"\r\n}",
+              "raw": "{\r\n  \"email\": \"not-an-email\",\r\n  \"currentPassword\": \"{{testPassword}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me/email",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me",
+                "email"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Email (Wrong Password)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 400 (not 401)\", () => pm.response.to.have.status(400));\r",
+                  "const body = pm.response.json();\r",
+                  "pm.test(\"Password mismatch title\", () => {\r",
+                  "    pm.expect(body.title).to.eql(\"Password mismatch\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"whatever@example.com\",\r\n  \"currentPassword\": \"wrongPassword\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1051,7 +1143,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"A11yForge Test Project2\",\r\n    \"baseUrl\": \"https://example.com\",\r\n    \"crawlMaxPages\": 50\r\n}",
+              "raw": "{\r\n    \"name\": \"A11yForge Test Project4\",\r\n    \"baseUrl\": \"https://example.com\",\r\n    \"crawlMaxPages\": 50\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1913,7 +2005,7 @@
     "bearer": [
       {
         "key": "token",
-        "value": "{{jwtToken}}",
+        "value": "{{accessToken}}",
         "type": "string"
       }
     ]
