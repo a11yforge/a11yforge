@@ -111,7 +111,7 @@ async function handleScan() {
       <div v-else-if="scans.length === 0" class="bg-[#1e1a29] border border-[#322840] rounded-[14px] p-8 text-center text-[#a99cb0] flex flex-col items-center gap-[0.9rem]">
         <img src="/mole.png" alt="" aria-hidden="true" class="w-[72px] [image-rendering:pixelated] opacity-85" />
         <p>Noch kein Scan — starte den ersten.</p>
-        <button class="border border-transparent rounded-[10px] py-[0.6rem] px-4 font-semibold text-[0.9rem] cursor-pointer bg-[#ff7a52] text-[#2a1410] hover:brightness-[1.07] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" type="button">Scannen ▶</button>
+        <button class="border border-transparent rounded-[10px] py-[0.6rem] px-4 font-semibold text-[0.9rem] cursor-pointer bg-[#ff7a52] text-[#2a1410] hover:brightness-[1.07] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" type="button" @click="handleScan">Scannen ▶</button>
       </div>
 
       <ul v-else class="list-none m-0 p-0 flex flex-col gap-[0.6rem]">
