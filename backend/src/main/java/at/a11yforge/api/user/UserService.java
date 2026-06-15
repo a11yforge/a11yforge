@@ -62,9 +62,13 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UserNotFoundException(userId));
     }
 
-    public UserResponseDTO changeUserName(Long userId, String newUserName) {
+    public UserResponseDTO changeUserName(Long userId, String newUserName, String currentPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPasswordHash())) {
+            throw new PasswordMismatchException("Current password is incorrect");
+        }
 
         if (!user.getUserName().equals(newUserName)) {
             if (userRepository.existsByUserName(newUserName)) {
@@ -77,9 +81,13 @@ public class UserService implements UserDetailsService {
         return toResponse(user);
     }
 
-    public UserResponseDTO changeEmail(Long userId, String newEmail) {
+    public UserResponseDTO changeEmail(Long userId, String newEmail, String currentPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPasswordHash())) {
+            throw new PasswordMismatchException("Current password is incorrect");
+        }
 
         if (!user.getEmail().equals(newEmail)) {
             if (userRepository.existsByEmail(newEmail)) {

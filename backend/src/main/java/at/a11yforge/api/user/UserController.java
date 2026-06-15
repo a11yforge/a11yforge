@@ -25,7 +25,8 @@ public class UserController {
             @Valid @RequestBody ChangeUserNameRequestDTO request
     ) {
         UserResponseDTO response =
-                userService.changeUserName(principal.getId(), request.userName());
+                userService.changeUserName(
+                        principal.getId(), request.userName(), request.currentPassword());
         return ResponseEntity.ok(response);
     }
 
@@ -35,7 +36,8 @@ public class UserController {
             @Valid @RequestBody ChangeEmailRequestDTO request
     ) {
         UserResponseDTO response =
-                userService.changeEmail(principal.getId(), request.email());
+                userService.changeEmail(
+                        principal.getId(), request.email(), request.currentPassword());
         return ResponseEntity.ok(response);
     }
 
