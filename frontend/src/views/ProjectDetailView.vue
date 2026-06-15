@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { getScanFromProject, type ScanResponseDTO } from '../api/scan'
+import { ref, onMounted } from 'vue'
+import { getScanFromProject, startScan, type ScanResponseDTO } from '../api/scan'
 import { useRoute, useRouter } from 'vue-router'
 import { useConfirm } from 'primevue/useconfirm'
-import {startScan} from "../api/scan"
 import ProjectFormDialog from '../components/project/ProjectFormDialog.vue'
 import { getProjectById, deleteProject, updateProject, type ProjectRequestDTO, type ProjectResponseDTO } from '../api/projects'
-
 
 const router = useRouter()
 const confirm = useConfirm()
@@ -68,7 +66,7 @@ async function handleUpdate(request: ProjectRequestDTO) {
 }
 
 async function handleScan() {
-  const scan = await startScan(projectId, 'NONE')
+  const scan = await startScan(projectId)
   router.push('/scans/' + scan.id)
 }
 </script>
@@ -130,7 +128,7 @@ async function handleScan() {
             {{ meta(scan.status).icon }} {{ meta(scan.status).label }}
           </span>
           <span class="text-[#a99cb0] text-[0.9rem]">{{ fmt(scan.startedAt) }}</span>
-          <span class="text-[#a99cb0] text-[0.9rem] ml-auto">– Befunde</span>
+          <span class="text-[#a99cb0] text-[0.9rem] ml-auto">{{ scan.violationCount }} Befunde</span>
           <router-link :to="`/scans/${scan.id}`" class="bg-transparent border border-[#322840] rounded-[9px] py-[0.4rem] px-[0.9rem] text-[#f3e9e2] no-underline text-[0.88rem] font-semibold hover:border-[#ff7a52] hover:text-[#ff7a52]">Öffnen</router-link>
         </li>
       </ul>

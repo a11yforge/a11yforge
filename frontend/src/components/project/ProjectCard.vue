@@ -1,15 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import Select from 'primevue/select'
+import { computed } from 'vue'
 import type { ProjectResponseDTO } from '@/api/projects'
-
-const providerOptions = [
-  { label: 'Ohne KI', value: 'NONE' },
-  { label: 'Anthropic', value: 'ANTHROPIC' },
-  { label: 'Ollama (lokal)', value: 'OLLAMA' },
-]
-
-const selectedProvider = ref<string>('NONE')
 
 const props = defineProps<{
   project: ProjectResponseDTO
@@ -19,7 +10,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   edit: [project: ProjectResponseDTO]
   delete: [project: ProjectResponseDTO]
-  scan: [project: ProjectResponseDTO, selectedProvider: string]
+  scan: [project: ProjectResponseDTO]
 }>()
 
 const displayUrl = computed(() => {
@@ -47,26 +38,15 @@ const displayUrl = computed(() => {
     </a>
     <p class="text-[#a99cb0] text-[0.85rem] mt-0 mb-[0.4rem]">Max. {{ project.crawlMaxPages }} Seiten / Scan</p>
 
-    <div class="card__scan flex gap-2 mt-auto">
-      <Select
-        v-model="selectedProvider"
-        :options="providerOptions"
-        option-label="label"
-        option-value="value"
-        aria-label="LLM-Provider auswählen"
-        class="card__select flex-1 min-w-0"
-      />
+    <div class="flex items-center gap-2 mt-auto">
       <button
-        class="border border-transparent rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer no-underline inline-flex items-center justify-center bg-[#ff7a52] text-[#2a1410] hover:brightness-[1.07] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]"
+        class="mr-auto border border-transparent rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer inline-flex items-center justify-center bg-[#ff7a52] text-[#2a1410] hover:brightness-[1.07] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]"
         type="button"
-        @click="emit('scan', project, selectedProvider)"
+        @click="emit('scan', project)"
       >
         Scannen ▶
       </button>
-    </div>
-
-    <div class="flex items-center gap-2 mt-[0.6rem]">
-      <router-link :to="`/projects/${project.id}`" class="mr-auto border border-[#322840] rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer no-underline inline-flex items-center justify-center bg-transparent text-[#f3e9e2] hover:border-[#ff7a52] hover:text-[#ff7a52] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]">Öffnen</router-link>
+      <router-link :to="`/projects/${project.id}`" class="border border-[#322840] rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer no-underline inline-flex items-center justify-center bg-transparent text-[#f3e9e2] hover:border-[#ff7a52] hover:text-[#ff7a52] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]">Öffnen</router-link>
       <button
         class="bg-transparent border border-[#322840] rounded-[9px] w-[2.1rem] h-[2.1rem] text-[0.95rem] cursor-pointer text-[#f3e9e2] hover:border-[#ff7a52] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]"
         type="button"
@@ -88,22 +68,3 @@ const displayUrl = computed(() => {
     </div>
   </article>
 </template>
-
-<style scoped>
-.card__scan :deep(.p-select) {
-  background: var(--field);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  width: 100%;
-}
-.card__scan :deep(.p-select-label) {
-  color: var(--text);
-  padding: 0.55rem 0.7rem;
-}
-.card__scan :deep(.p-select:not(.p-disabled).p-focus) {
-  outline: 2px solid var(--teal);
-  outline-offset: 2px;
-  border-color: var(--teal);
-  box-shadow: none;
-}
-</style>

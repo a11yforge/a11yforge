@@ -24,6 +24,12 @@ async function handleRequestFix(violationId: number) {
   }
 }
 
+async function handleFixAll() {
+  for (const v of scan.value?.violations ?? []) {
+    await handleRequestFix(v.id)
+  }
+}
+
 async function handleExport() {
   const data = await getScanExport(scanId)
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
@@ -72,7 +78,7 @@ const statusLabel: Record<string, string> = {
 
     <div class="flex items-center justify-between my-8 mb-4">
       <h2 class="text-[1.2rem] font-bold text-[#f3e9e2] m-0">Befunde</h2>
-      <button class="border border-[#322840] rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer bg-transparent text-[#f3e9e2] hover:border-[#ff7a52] hover:text-[#ff7a52] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" type="button">⚡ Alle mit KI fixen</button>
+      <button class="border border-[#322840] rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer bg-transparent text-[#f3e9e2] hover:border-[#ff7a52] hover:text-[#ff7a52] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" type="button" @click="handleFixAll">⚡ Alle mit KI fixen</button>
     </div>
 
     <div class="flex flex-col gap-[0.9rem]">
