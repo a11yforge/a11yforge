@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Size;
 public record ChangeUserNameRequestDTO(
         @NotBlank
         @Size(max = 100)
-        String userName
+        String userName,
+
+        @NotBlank
+        String currentPassword
 ) {
 }
