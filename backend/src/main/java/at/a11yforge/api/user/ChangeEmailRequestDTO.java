@@ -8,6 +8,9 @@ public record ChangeEmailRequestDTO(
         @NotBlank
         @Email
         @Size(max = 255)
-        String email
+        String email,
+
+        @NotBlank
+        String currentPassword
 ) {
 }
