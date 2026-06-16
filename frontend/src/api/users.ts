@@ -20,6 +20,16 @@ export interface UserResponseDTO {
   createdAt: string
 }
 
+export interface ChangeUserNameRequestDTO {
+  userName: string
+  currentPassword: string
+}
+
+export interface ChangeEmailRequestDTO {
+  email: string
+  currentPassword: string
+}
+
 export async function changeUserName(
   request: ChangeUserNameRequestDTO,
 ): Promise<UserResponseDTO> {
