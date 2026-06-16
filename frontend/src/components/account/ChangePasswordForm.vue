@@ -12,6 +12,7 @@ const toast = useToast()
 
 const currentPassword = ref('')
 const newPassword = ref('')
+const confirmPassword = ref('')
 const errorMsg = ref('')
 const loading = ref(false)
 
@@ -20,6 +21,10 @@ async function handleSubmit() {
 
   if (newPassword.value.length < 8) {
     errorMsg.value = 'Das neue Passwort muss mindestens 8 Zeichen lang sein.'
+    return
+  }
+  if (newPassword.value !== confirmPassword.value) {
+    errorMsg.value = 'Die Passwörter stimmen nicht überein.'
     return
   }
 
@@ -48,9 +53,9 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <section class="flex flex-col gap-3">
-    <h2 class="text-lg font-semibold">Passwort ändern</h2>
-    <form @submit.prevent="handleSubmit()" class="flex flex-col gap-3">
+  <div>
+    <h2>Passwort ändern</h2>
+    <form @submit.prevent="handleSubmit" class="flex flex-col gap-4">
       <Password
         v-model="currentPassword"
         placeholder="Aktuelles Passwort"
@@ -63,8 +68,14 @@ async function handleSubmit() {
         :feedback="false"
         toggleMask
       />
+      <Password
+        v-model="confirmPassword"
+        placeholder="Neues Passwort wiederholen"
+        :feedback="false"
+        toggleMask
+      />
       <Button type="submit" label="Speichern" :loading="loading" />
       <p v-if="errorMsg" class="text-red-500 text-sm">{{ errorMsg }}</p>
     </form>
-  </section>
+  </div>
 </template>
