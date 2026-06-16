@@ -2,16 +2,35 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getScanFromProject, type ScanResponseDTO } from '../api/scan'
+import Chart from 'primevue/chart'
 
 const route = useRoute()
-
 const loading = ref(true)
 const error = ref<string | null>(null)
 const projectId = Number(route.params.id)
 const scans = ref<ScanResponseDTO[]>([])
-
 const statusFilter = ref('ALL')
 const sortOrder = ref<'newest' | 'oldest'>('newest')
+
+const chartData = computed(() => {
+  const chrono = [...scans.value].sort(
+    (a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime()
+  )
+  return {
+    labels: chrono.map((s) => new Date(s.startedAt).toLocaleDateString('de-AT')),
+    datasets: [{ label: 'Befunde', data: chrono.map((s) => s.violationCount) }],
+  }
+})
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { labels: { color: '#a99cb0' } } },
+  scales: {
+    x: { ticks: { color: '#a99cb0' }, grid: { color: '#322840' } },
+    y: { beginAtZero: true, ticks: { color: '#a99cb0' }, grid: { color: '#322840' } },
+  },
+}
 
 onMounted(async () => {
   try {
@@ -111,6 +130,8 @@ const displayedScans = computed(() => {
       </table>
     </div>
 
-    <div class="mt-6 bg-[#1e1a29] border border-dashed border-[#322840] rounded-[14px] p-8 text-center text-[#f3e9e2]">📈 Trend-Chart: Befunde über Zeit <span class="text-[#a99cb0]">(kommt später)</span></div>
+    <div class="mt-6 bg-[#1e1a29] border border-[#322840] rounded-[14px] p-6 h-[300px]">
+      <Chart type="line" :data="chartData" :options="chartOptions" class="h-full" />
+    </div>
   </div>
 </template>
