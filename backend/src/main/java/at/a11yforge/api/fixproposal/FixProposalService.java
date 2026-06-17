@@ -90,7 +90,8 @@ public class FixProposalService {
             violation.getRuleId(),
             violation.getTargetSelector(),
             violation.getDescription(),
-            violation.getImpact());
+            violation.getImpact(),
+            violation.getScreenshot());
 
     FixGenerationResponseDTO response = chatProvider.generateFix(request);
 
