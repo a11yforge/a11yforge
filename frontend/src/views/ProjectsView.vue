@@ -158,10 +158,10 @@ async function handleScan(project: ProjectResponseDTO) {
 </script>
 
 <template>
-  <div class="max-w-[1040px] mx-auto px-6 pt-8 pb-12 text-[#f3e9e2] font-sans">
+  <div class="max-w-[1040px] mx-auto px-6 pt-8 pb-12 text-[var(--text)] font-sans">
     <div class="flex items-center justify-between gap-4 mb-[1.2rem]">
-      <h1 class="text-[1.7rem] font-extrabold text-[#f3e9e2] m-0">Meine Projekte</h1>
-      <button class="border border-transparent rounded-[10px] py-[0.6rem] px-[1.1rem] font-semibold text-[0.9rem] cursor-pointer bg-[#ff7a52] text-[#2a1410] hover:brightness-[1.07] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" type="button" @click="openCreateDialog">
+      <h1 class="text-[1.7rem] font-extrabold text-[var(--text)] m-0">Meine Projekte</h1>
+      <button class="border border-transparent rounded-[10px] py-[0.6rem] px-[1.1rem] font-semibold text-[0.9rem] cursor-pointer bg-[var(--coral)] text-[var(--on-coral)] hover:brightness-[1.07] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]" type="button" @click="openCreateDialog">
         + Neues Projekt
       </button>
     </div>
@@ -169,7 +169,7 @@ async function handleScan(project: ProjectResponseDTO) {
     <input
       v-model="search"
       type="search"
-      class="w-full bg-[#14111c] border border-[#322840] rounded-[10px] py-[0.65rem] px-[0.9rem] text-[#f3e9e2] mb-6 placeholder:text-[#a99cb0] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]"
+      class="w-full bg-[var(--field)] border border-[var(--border)] rounded-[10px] py-[0.65rem] px-[0.9rem] text-[var(--text)] mb-6 placeholder:text-[var(--muted)] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]"
       placeholder="🔍 Projekt suchen …"
       aria-label="Projekt suchen"
     />
