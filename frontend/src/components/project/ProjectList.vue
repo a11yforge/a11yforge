@@ -7,13 +7,13 @@ defineProps<{
   loading: boolean
   error: string | null
   emptyMessage?: string
-  compact?: boolean
+  //compact?: boolean
 }>()
 
 const emit = defineEmits<{
   edit: [project: ProjectResponseDTO]
   delete: [project: ProjectResponseDTO]
-  scan: [project: ProjectResponseDTO]
+  //scan: [project: ProjectResponseDTO]
   create: []
 }>()
 </script>
@@ -37,11 +37,20 @@ const emit = defineEmits<{
         v-for="project in projects"
         :key="project.id"
         :project="project"
+        @edit="emit('edit', $event)"
+        @delete="emit('delete', $event)"
+      />
+    </div>
+    <!--<div v-else class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
+      <ProjectCard
+        v-for="project in projects"
+        :key="project.id"
+        :project="project"
         :compact="compact"
         @edit="emit('edit', $event)"
         @delete="emit('delete', $event)"
         @scan="(p) => emit('scan', p)"
       />
-    </div>
+    </div>-->
   </div>
 </template>

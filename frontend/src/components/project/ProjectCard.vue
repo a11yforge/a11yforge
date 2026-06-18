@@ -4,13 +4,13 @@ import type { ProjectResponseDTO } from '@/api/projects'
 
 const props = defineProps<{
   project: ProjectResponseDTO
-  compact?: boolean
+  //compact?: boolean
 }>()
 
 const emit = defineEmits<{
   edit: [project: ProjectResponseDTO]
   delete: [project: ProjectResponseDTO]
-  scan: [project: ProjectResponseDTO]
+  //scan: [project: ProjectResponseDTO]
 }>()
 
 const displayUrl = computed(() => {

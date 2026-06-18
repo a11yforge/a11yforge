@@ -7,10 +7,10 @@ import { useProjectsStore } from '@/stores/projects'
 import ProjectList from '@/components/project/ProjectList.vue'
 import ProjectFormDialog from '@/components/project/ProjectFormDialog.vue'
 import type { ProjectRequestDTO, ProjectResponseDTO } from '@/api/projects'
-import { startScan } from '@/api/scan'
-import { useRouter } from 'vue-router'
+//import { startScan } from '@/api/scan'
+//import { useRouter } from 'vue-router'
 
-const router = useRouter()
+//const router = useRouter()
 
 const projectsStore = useProjectsStore()
 const { projects, loading, error } = storeToRefs(projectsStore)
@@ -141,7 +141,7 @@ async function handleDelete(project: ProjectResponseDTO) {
     })
   }
 }
-
+/*
 async function handleScan(project: ProjectResponseDTO) {
   try {
     const scan = await startScan(project.id)
@@ -155,6 +155,7 @@ async function handleScan(project: ProjectResponseDTO) {
     })
   }
 }
+*/
 </script>
 
 <template>
@@ -181,10 +182,20 @@ async function handleScan(project: ProjectResponseDTO) {
       empty-message="Noch keine Projekte — leg dein erstes an."
       @edit="openEditDialog"
       @delete="confirmDelete"
+      @create="openCreateDialog"
+    />
+<!--
+    <ProjectList
+      :projects="filteredProjects"
+      :loading="loading"
+      :error="error"
+      empty-message="Noch keine Projekte — leg dein erstes an."
+      @edit="openEditDialog"
+      @delete="confirmDelete"
       @scan="handleScan"
       @create="openCreateDialog"
     />
-
+-->
     <ProjectFormDialog
       ref="dialogRef"
       v-model:visible="dialogVisible"
