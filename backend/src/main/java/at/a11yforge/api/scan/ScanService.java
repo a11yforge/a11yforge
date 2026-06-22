@@ -31,32 +31,32 @@ public class ScanService {
 
   private static final Logger log = LoggerFactory.getLogger(ScanService.class);
 
+  private final ProjectRepository projectRepository;
   private final ScanRepository scanRepository;
   private final PageRepository pageRepository;
   private final ViolationRepository violationRepository;
-  private final ProjectRepository projectRepository;
-  private final ScannerProcessRunner scanner;
-  private final AuditEventService auditEventService;
   private final ReviewRepository reviewRepository;
+  private final ScannerProcessRunner scannerProcessRunner;
+  private final AuditEventService auditEventService;
 
   @Value("${a11yforge.llm.default-provider}")
   private ProviderType defaultProvider;
 
   public ScanService(
+      ProjectRepository projectRepository,
       ScanRepository scanRepository,
       PageRepository pageRepository,
       ViolationRepository violationRepository,
-      ProjectRepository projectRepository,
-      ScannerProcessRunner scanner,
-      AuditEventService auditEventService,
-      ReviewRepository reviewRepository) {
+      ReviewRepository reviewRepository,
+      ScannerProcessRunner scannerProcessRunner,
+      AuditEventService auditEventService) {
+    this.projectRepository = projectRepository;
     this.scanRepository = scanRepository;
     this.pageRepository = pageRepository;
     this.violationRepository = violationRepository;
-    this.projectRepository = projectRepository;
-    this.scanner = scanner;
-    this.auditEventService = auditEventService;
     this.reviewRepository = reviewRepository;
+    this.scannerProcessRunner = scannerProcessRunner;
+    this.auditEventService = auditEventService;
   }
 
   public ScanResponseDTO createAndRunScan(Long userId, Long projectId) {
@@ -64,14 +64,14 @@ public class ScanService {
         projectRepository
             .findByIdAndUserId(projectId, userId)
             .orElseThrow(() -> new ProjectNotFoundException(projectId));
+
     Scan scan = scanRepository.save(new Scan(project, defaultProvider));
 
     try {
-
       List<String> rules =
           List.of("image-alt", "color-contrast", "label", "html-has-lang", "heading-order");
       List<PageScanResultDto> results =
-          scanner.run(project.getBaseUrl(), rules, project.getCrawlMaxPages());
+          scannerProcessRunner.run(project.getBaseUrl(), rules, project.getCrawlMaxPages());
 
       for (PageScanResultDto result : results) {
         Page page = new Page(scan, result.finalUrl());
@@ -79,32 +79,8 @@ public class ScanService {
         page.setRenderedHtml(result.renderedHtml());
         page = pageRepository.save(page);
 
-        for (ViolationDto v : result.violations()) {
-          Violation violation =
-              new Violation(
-                  page,
-                  v.ruleId(),
-                  ViolationSource.valueOf(v.source().toUpperCase()),
-                  Impact.valueOf(v.impact().toUpperCase()));
-          violation.setHtmlSnippet(v.htmlSnippet());
-          violation.setDescription(v.description());
-          violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
-          violation.setScreenshot(v.screenshot());
-          violationRepository.save(violation);
-        }
-
-        for (ViolationDto v : result.incomplete()) {
-          Violation violation =
-              new Violation(
-                  page,
-                  v.ruleId(),
-                  ViolationSource.valueOf(v.source().toUpperCase()),
-                  Impact.valueOf(v.impact().toUpperCase()));
-          violation.setHtmlSnippet(v.htmlSnippet());
-          violation.setDescription(v.description());
-          violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
-          violationRepository.save(violation);
-        }
+        persistViolations(page, result.violations(), true);
+        persistViolations(page, result.incomplete(), false);
       }
 
       scan.setStatus(ScanStatus.COMPLETED);
@@ -129,6 +105,24 @@ public class ScanService {
       scanRepository.save(scan);
       log.error("Scan {} fehlgeschlagen", scan.getId(), e);
       throw e;
+    }
+  }
+
+  private void persistViolations(Page page, List<ViolationDto> dtos, boolean withScreenshot) {
+    for (ViolationDto v : dtos) {
+      Violation violation =
+          new Violation(
+              page,
+              v.ruleId(),
+              ViolationSource.valueOf(v.source().toUpperCase()),
+              Impact.valueOf(v.impact().toUpperCase()));
+      violation.setHtmlSnippet(v.htmlSnippet());
+      violation.setDescription(v.description());
+      violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
+      if (withScreenshot) {
+        violation.setScreenshot(v.screenshot());
+      }
+      violationRepository.save(violation);
     }
   }
 
