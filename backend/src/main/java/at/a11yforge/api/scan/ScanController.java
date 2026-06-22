@@ -24,7 +24,7 @@ public class ScanController {
   @GetMapping("/{id}")
   public ScanDetailDTO getScan(
       @AuthenticationPrincipal CustomUserDetails principal, @PathVariable Long id) {
-    return scanService.getScan(id, principal.getId());
+    return scanService.getScan(principal.getId(), id);
   }
 
   @GetMapping
@@ -34,7 +34,7 @@ public class ScanController {
   }
 
   @GetMapping("/{id}/export")
-  public List<ExportDTO> export(
+  public List<ExportDTO> exportAcceptedFixes(
       @AuthenticationPrincipal CustomUserDetails principal, @PathVariable Long id) {
     return scanService.exportAcceptedFixes(principal.getId(), id);
   }

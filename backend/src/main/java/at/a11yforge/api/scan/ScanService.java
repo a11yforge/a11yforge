@@ -88,7 +88,6 @@ public class ScanService {
                   Impact.valueOf(v.impact().toUpperCase()));
           violation.setHtmlSnippet(v.htmlSnippet());
           violation.setDescription(v.description());
-          // Annahme: einteilige Adresse, mehrteilige sind out of scope
           violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
           violation.setScreenshot(v.screenshot());
           violationRepository.save(violation);
@@ -133,7 +132,7 @@ public class ScanService {
     }
   }
 
-  public ScanDetailDTO getScan(Long scanId, Long userId) {
+  public ScanDetailDTO getScan(Long userId, Long scanId) {
     Scan scan =
         scanRepository
             .findByIdAndProjectUserId(scanId, userId)
