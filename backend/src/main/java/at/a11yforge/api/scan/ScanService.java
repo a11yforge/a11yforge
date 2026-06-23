@@ -21,6 +21,8 @@ import at.a11yforge.api.violation.ViolationResponseDTO;
 import at.a11yforge.api.violation.ViolationSource;
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +40,8 @@ public class ScanService {
   private final ReviewRepository reviewRepository;
   private final ScannerProcessRunner scannerProcessRunner;
   private final AuditEventService auditEventService;
+
+  private final Executor executor = Executors.newCachedThreadPool();
 
   @Value("${a11yforge.llm.default-provider}")
   private ProviderType defaultProvider;
@@ -59,6 +63,19 @@ public class ScanService {
     this.auditEventService = auditEventService;
   }
 
+  public ScanResponseDTO startScan(Long userId, Long projectId) {
+    Project project =
+        projectRepository
+            .findByIdAndUserId(projectId, userId)
+            .orElseThrow(() -> new ProjectNotFoundException(projectId));
+
+    Scan scan = scanRepository.save(new Scan(project, defaultProvider));
+
+    executor.execute(() -> runFullScan(scan, project, userId));
+
+    return toResponse(scan);
+  }
+
   public ScanResponseDTO createAndRunScan(Long userId, Long projectId) {
     Project project =
         projectRepository
@@ -67,6 +84,12 @@ public class ScanService {
 
     Scan scan = scanRepository.save(new Scan(project, defaultProvider));
 
+    runFullScan(scan, project, userId);
+
+    return toResponse(scan);
+  }
+
+  private void runFullScan(Scan scan, Project project, Long userId) {
     try {
       List<String> rules =
           List.of("image-alt", "color-contrast", "label", "html-has-lang", "heading-order");
@@ -85,18 +108,10 @@ public class ScanService {
 
       scan.setStatus(ScanStatus.COMPLETED);
       scan.setCompletedAt(Instant.now());
-      scan = scanRepository.save(scan);
+      scanRepository.save(scan);
 
       auditEventService.recordEvent(
           userId, "Scan", scan.getId(), AuditEventType.CREATED, null, scan.getStatus().name());
-
-      return new ScanResponseDTO(
-          scan.getId(),
-          scan.getProject().getId(),
-          scan.getStatus().name(),
-          scan.getStartedAt(),
-          scan.getCompletedAt(),
-          violationRepository.countByPage_Scan_Id(scan.getId()));
 
     } catch (ScannerExecutionException e) {
       scan.setStatus(ScanStatus.FAILED);
@@ -104,8 +119,17 @@ public class ScanService {
       scan.setCompletedAt(Instant.now());
       scanRepository.save(scan);
       log.error("Scan {} fehlgeschlagen", scan.getId(), e);
-      throw e;
     }
+  }
+
+  private ScanResponseDTO toResponse(Scan scan) {
+    return new ScanResponseDTO(
+        scan.getId(),
+        scan.getProject().getId(),
+        scan.getStatus().name(),
+        scan.getStartedAt(),
+        scan.getCompletedAt(),
+        violationRepository.countByPage_Scan_Id(scan.getId()));
   }
 
   private void persistViolations(Page page, List<ViolationDto> dtos, boolean withScreenshot) {
