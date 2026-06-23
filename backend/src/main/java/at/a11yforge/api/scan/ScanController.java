@@ -18,7 +18,7 @@ public class ScanController {
   @PostMapping
   public ScanResponseDTO startScan(
       @AuthenticationPrincipal CustomUserDetails principal, @RequestBody ScanRequestDTO dto) {
-    return scanService.createAndRunScan(principal.getId(), dto.projectId());
+    return scanService.startScan(principal.getId(), dto.projectId());
   }
 
   @GetMapping("/{id}")
