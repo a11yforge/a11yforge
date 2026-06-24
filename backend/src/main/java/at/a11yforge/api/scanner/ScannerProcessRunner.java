@@ -2,17 +2,15 @@ package at.a11yforge.api.scanner;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.util.concurrent.TimeUnit;
-
-import java.io.IOException;
-import java.util.List;
 
 @Component
 public class ScannerProcessRunner {
@@ -32,7 +30,16 @@ public class ScannerProcessRunner {
         this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+  private String normalizeUrl(String url) {
+    String trimmed = url.trim();
+    if (trimmed.contains("://")) {
+      return trimmed;
+    }
+    return "https://" + trimmed;
+  }
+
     public List<PageScanResultDto> run(String url, List<String> rules, int maxPages) {
+      url = normalizeUrl(url);
         File tempFile = null;
         try {
             List<String> command = List.of("node", cliPath, url, String.join(",", rules), String.valueOf(maxPages));
