@@ -68,7 +68,7 @@ async function startProbescan() {
           <input
             id="url"
             v-model="url"
-            type="url"
+            type="text"
             placeholder="https://deine-website.at"
             class="flex-1 bg-[#1e1a29] border border-[#322840] rounded-[10px] py-[0.7rem] px-[0.9rem] text-[#f3e9e2] placeholder:text-[#a99cb0] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]"
           />
