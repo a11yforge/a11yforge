@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
+import { probeScan, type ProbeScanResponse } from '@/api/probescan'
 
 const router = useRouter()
 
@@ -15,6 +16,8 @@ const rules = [
 const index = ref(0)
 const current = computed(() => rules[index.value] ?? rules[0]!)
 let timer: number | undefined
+const loading = ref(false)
+const result = ref<ProbeScanResponse | null>(null)
 
 onMounted(() => {
   timer = window.setInterval(() => {
@@ -24,11 +27,18 @@ onMounted(() => {
 onBeforeUnmount(() => window.clearInterval(timer))
 
 const url = ref('')
-function startProbescan() {
-  router.push('/register')
-}
+
 function goLogin() {
   router.push('/login')
+}
+
+async function startProbescan() {
+  loading.value = true
+  try {
+    result.value = await probeScan(url.value)
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -62,7 +72,7 @@ function goLogin() {
             placeholder="https://deine-website.at"
             class="flex-1 bg-[#1e1a29] border border-[#322840] rounded-[10px] py-[0.7rem] px-[0.9rem] text-[#f3e9e2] placeholder:text-[#a99cb0] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]"
           />
-          <button type="submit" class="border-0 rounded-[10px] py-[0.7rem] px-[1.1rem] font-semibold cursor-pointer bg-[#ff7a52] text-[#2a1410] hover:brightness-[1.07] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]">Probescan ▶</button>
+          <button type="submit" class="border-0 rounded-[10px] py-[0.7rem] px-[1.1rem] font-semibold cursor-pointer bg-[#ff7a52] text-[#2a1410] hover:brightness-[1.07] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]" :disabled="loading">{{ loading ? 'Scan läuft…' : 'Probescan ▶' }}</button>
         </form>
         <p class="text-[#a99cb0] text-[0.82rem]">Kostenlos testen — kein Konto nötig zum Anschauen.</p>
       </section>
@@ -100,6 +110,38 @@ function goLogin() {
         <a href="/datenschutz" class="text-[#a99cb0] ml-[1.2rem] no-underline hover:text-[#ff7a52]">Datenschutz</a>
       </nav>
     </footer>
+    <div
+      v-if="result"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
+      @click.self="result = null"
+    >
+      <div class="w-full max-w-[520px] max-h-[80vh] overflow-y-auto bg-[#14111c] border border-[#322840] rounded-[14px] shadow-[0_24px_60px_rgba(0,0,0,0.5)]">
+        <div class="flex items-center justify-between py-4 px-6 border-b border-[#322840]">
+          <h2 class="m-0 text-[1.2rem] font-extrabold">{{ result.totalViolations }} Probleme gefunden</h2>
+          <button class="bg-transparent border-0 text-[#a99cb0] text-[1.4rem] cursor-pointer hover:text-[#ff7a52]" aria-label="Schließen" @click="result = null">×</button>
+        </div>
+
+        <ul class="list-none m-0 p-0">
+          <li v-for="(v, i) in result.violations" :key="i" class="py-3 px-6 border-b border-[#241d30]">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="font-mono text-[0.85rem] text-[#f6c89a]">{{ v.ruleId }}</span>
+              <span class="text-[0.72rem] uppercase tracking-wide text-[#ff7a52]">{{ v.impact }}</span>
+            </div>
+            <p class="m-0 text-[#a99cb0] text-[0.9rem]">{{ v.description }}</p>
+          </li>
+        </ul>
+
+        <div v-if="result.totalViolations > result.violations.length" class="py-3 px-6 text-[#a99cb0] text-[0.85rem]">
+          + {{ result.totalViolations - result.violations.length }} weitere — sichtbar nach Registrierung
+        </div>
+
+        <div class="p-6 border-t border-[#322840]">
+          <button class="w-full border-0 rounded-[10px] py-[0.8rem] font-semibold cursor-pointer bg-[#ff7a52] text-[#2a1410] hover:brightness-[1.07]" @click="router.push('/register')">
+            Jetzt registrieren für vollständigen Scan + Fixes
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
