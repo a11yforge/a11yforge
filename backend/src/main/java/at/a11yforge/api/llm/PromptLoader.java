@@ -40,4 +40,17 @@ public class PromptLoader {
             throw new PromptLoadException("Failed to load prompt: " + path, e);
         }
     }
+
+    public String loadForRule(String promptName, String ruleId, String version) {
+        String ruleSpecificName = promptName + "-" + ruleId;
+        if (promptExists(ruleSpecificName, version)) {
+            return load(ruleSpecificName, version);
+        }
+        return load(promptName, version);
+    }
+
+    private boolean promptExists(String promptName, String version) {
+        String path = PROMPT_BASE_PATH + promptName + "-" + version + PROMPT_FILE_EXTENSION;
+        return new ClassPathResource(path).exists();
+    }
 }

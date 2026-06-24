@@ -34,25 +34,28 @@ public class AnthropicChatProvider implements ChatProvider {
 
   @Override
   public FixGenerationResponseDTO generateFix(FixGenerationRequestDTO request) {
-    String prompt = buildPrompt(request);
+    boolean useImage =
+      request.screenshot() != null
+        && !request.screenshot().isBlank()
+        && "image-alt".equals(request.wcagRuleId());
+
+    String prompt = buildPrompt(request, useImage);
 
     try {
       var builder = MessageCreateParams.builder().model(model).maxTokens(MAX_TOKENS);
 
-      if (request.screenshot() != null
-          && !request.screenshot().isBlank()
-          && "image-alt".equals(request.wcagRuleId())) {
+      if (useImage) {
         builder.addUserMessageOfBlockParams(
-            List.of(
-                ContentBlockParam.ofText(TextBlockParam.builder().text(prompt).build()),
-                ContentBlockParam.ofImage(
-                    ImageBlockParam.builder()
-                        .source(
-                            Base64ImageSource.builder()
-                                .data(stripDataUrl(request.screenshot()))
-                                .mediaType(Base64ImageSource.MediaType.IMAGE_PNG)
-                                .build())
-                        .build())));
+          List.of(
+            ContentBlockParam.ofText(TextBlockParam.builder().text(prompt).build()),
+            ContentBlockParam.ofImage(
+              ImageBlockParam.builder()
+                .source(
+                  Base64ImageSource.builder()
+                    .data(stripDataUrl(request.screenshot()))
+                    .mediaType(Base64ImageSource.MediaType.IMAGE_PNG)
+                    .build())
+                .build())));
       } else {
         builder.addUserMessage(prompt);
       }
@@ -83,8 +86,11 @@ public class AnthropicChatProvider implements ChatProvider {
     return index >= 0 ? screenshot.substring(index + 7) : screenshot;
   }
 
-  private String buildPrompt(FixGenerationRequestDTO request) {
-    String template = promptLoader.load(PROMPT_NAME, promptVersion);
+  private String buildPrompt(FixGenerationRequestDTO request, boolean useImage) {
+    String template =
+      useImage
+        ? promptLoader.loadForRule(PROMPT_NAME, request.wcagRuleId(), promptVersion)
+        : promptLoader.load(PROMPT_NAME, promptVersion);
     Map<String, String> variables = new LinkedHashMap<>();
     variables.put("wcagRuleId", request.wcagRuleId());
     variables.put("impact", request.impact() == null ? "" : request.impact().name());
