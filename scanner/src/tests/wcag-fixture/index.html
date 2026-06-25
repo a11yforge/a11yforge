@@ -1,0 +1,342 @@
+<!doctype html>
+<!-- PASS: html-has-lang erfüllt (lang="de"). FAIL-Test: lang entfernen/ungültig setzen. Manuell. -->
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Accessibility-Prüfstand – axe-core Testfälle</title>
+    <style>
+      body {
+        background: #ffffff;
+        color: #1a1a1a;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.5;
+        margin: 0;
+        padding: 24px;
+      }
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      h1 {
+        color: #1a1a1a;
+        font-size: 28px;
+      }
+      h2 {
+        color: #1a1a1a;
+        font-size: 22px;
+        margin-top: 48px;
+        border-top: 2px solid #1a1a1a;
+        padding-top: 16px;
+      }
+      h3 {
+        color: #1a1a1a;
+        font-size: 18px;
+      }
+      h4, h5 {
+        color: #1a1a1a;
+        font-size: 16px;
+      }
+      .case-label {
+        color: #1a1a1a;
+        font-weight: bold;
+        margin-bottom: 4px;
+        margin-top: 24px;
+      }
+      .case {
+        border-left: 4px solid #1a1a1a;
+        padding-left: 12px;
+        margin-bottom: 8px;
+      }
+      img {
+        display: block;
+        border: 1px solid #1a1a1a;
+      }
+      input {
+        font-size: 16px;
+        padding: 4px;
+        border: 1px solid #1a1a1a;
+      }
+      label {
+        color: #1a1a1a;
+        display: inline-block;
+        margin-right: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Accessibility-Prüfstand für axe-core (5 Regeln)</h1>
+      <p>
+        Diese Seite ist ein Messinstrument, kein realistisches Beispiel. Jede der fünf Regeln
+        kommt in klar etikettierten Varianten (PASS / FAIL / Grenzfall) vor. FAIL-Fälle sind
+        gezielt dreifach vorhanden, um Fix-Cache (Hash über rule_id + html_snippet) und
+        LLM-Determinismus zu prüfen. Alle Struktur- und Label-Texte sind #1a1a1a auf Weiß.
+      </p>
+
+      <!-- =================================================================== -->
+      <!-- ABSCHNITT 1: image-alt                                              -->
+      <!-- =================================================================== -->
+      <h2>1. image-alt</h2>
+
+      <!-- [PASS] · Instanz - · axe-Regel: image-alt · aussagekräftiges alt -->
+      <p class="case-label">image-alt – PASS: aussagekräftiges alt (roter Kreis)</p>
+      <div class="case">
+        <img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='150'%3E%3Crect%20width='200'%20height='150'%20fill='white'/%3E%3Ccircle%20cx='100'%20cy='75'%20r='50'%20fill='red'/%3E%3C/svg%3E" width="200" height="150" alt="Roter Kreis">
+      </div>
+
+      <!-- [PASS] · Instanz - · axe-Regel: image-alt · dekorativ, leeres alt -->
+      <p class="case-label">image-alt – PASS: dekorativ, leeres alt="" (graue Trennlinie)</p>
+      <div class="case">
+        <img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='150'%3E%3Crect%20width='200'%20height='150'%20fill='white'/%3E%3Cline%20x1='0'%20y1='75'%20x2='200'%20y2='75'%20stroke='gray'%20stroke-width='1'/%3E%3C/svg%3E" width="200" height="150" alt="">
+      </div>
+
+      <!-- [PASS-aber-wertlos] · Instanz - · axe-Regel: image-alt · alt="Bild" semantisch leer, axe besteht -->
+      <p class="case-label">image-alt – PASS-aber-wertlos: alt="Bild" (grünes Quadrat)</p>
+      <div class="case">
+        <img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='150'%3E%3Crect%20width='200'%20height='150'%20fill='white'/%3E%3Crect%20x='50'%20y='25'%20width='100'%20height='100'%20fill='green'/%3E%3C/svg%3E" width="200" height="150" alt="Bild">
+      </div>
+
+      <!-- [FAIL] · Instanz 1 · axe-Regel: image-alt · img ohne alt-Attribut (blauer Stern) -->
+      <p class="case-label">image-alt – FAIL: kein alt, Instanz 1 (blauer Stern)</p>
+      <div class="case">
+        <img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='150'%3E%3Crect%20width='200'%20height='150'%20fill='white'/%3E%3Cpolygon%20points='100,30%20110,65%20145,65%20117,85%20128,120%20100,98%2072,120%2083,85%2055,65%2090,65'%20fill='blue'/%3E%3C/svg%3E" width="200" height="150">
+      </div>
+
+      <!-- [FAIL] · Instanz 2 · axe-Regel: image-alt · Cache-Klon, byte-identisch zu Instanz 1 -->
+      <p class="case-label">image-alt – FAIL: kein alt, Instanz 2 (Cache-Klon, identisch)</p>
+      <div class="case">
+        <img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='150'%3E%3Crect%20width='200'%20height='150'%20fill='white'/%3E%3Cpolygon%20points='100,30%20110,65%20145,65%20117,85%20128,120%20100,98%2072,120%2083,85%2055,65%2090,65'%20fill='blue'/%3E%3C/svg%3E" width="200" height="150">
+      </div>
+
+      <!-- [FAIL] · Instanz 3 · axe-Regel: image-alt · Variante, anderes Snippet (goldenes Dreieck) -->
+      <p class="case-label">image-alt – FAIL: kein alt, Instanz 3 (Variante, goldenes Dreieck)</p>
+      <div class="case">
+        <img src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='150'%3E%3Crect%20width='200'%20height='150'%20fill='white'/%3E%3Cpolygon%20points='100,30%20160,120%2040,120'%20fill='gold'/%3E%3C/svg%3E" width="200" height="150">
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- ABSCHNITT 2: color-contrast (Hintergrund immer #ffffff, solide)     -->
+      <!-- =================================================================== -->
+      <h2>2. color-contrast</h2>
+
+      <!-- [PASS] · Instanz - · axe-Regel: color-contrast · #000000 Normaltext ~21:1 -->
+      <p class="case-label">color-contrast – PASS klar: #000000, 16px (~21:1)</p>
+      <div class="case">
+        <p style="color:#000000">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [PASS] · Instanz - · axe-Regel: color-contrast · #595959 Normaltext ~7:1 -->
+      <p class="case-label">color-contrast – PASS komfortabel: #595959, 16px (~7:1)</p>
+      <div class="case">
+        <p style="color:#595959">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [PASS] · Instanz 1 · axe-Regel: color-contrast · #767676 Normaltext 4.54:1, knapp über Schwelle -->
+      <p class="case-label">color-contrast – PASS knapp über, Instanz 1: #767676, 16px (4.54)</p>
+      <div class="case">
+        <p style="color:#767676">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [PASS] · Instanz 2 · axe-Regel: color-contrast · Cache-Klon, byte-identisch zu Instanz 1 -->
+      <p class="case-label">color-contrast – PASS knapp über, Instanz 2: #767676, 16px (Cache-Klon)</p>
+      <div class="case">
+        <p style="color:#767676">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [PASS] · Instanz 3 · axe-Regel: color-contrast · Variante #757575 4.61:1 -->
+      <p class="case-label">color-contrast – PASS knapp über, Instanz 3: #757575, 16px (4.61, Variante)</p>
+      <div class="case">
+        <p style="color:#757575">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [FAIL] · Instanz 1 · axe-Regel: color-contrast · #777777 Normaltext 4.48:1, knapp unter Schwelle -->
+      <p class="case-label">color-contrast – FAIL knapp unter, Instanz 1: #777777, 16px (4.48)</p>
+      <div class="case">
+        <p style="color:#777777">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [FAIL] · Instanz 2 · axe-Regel: color-contrast · Cache-Klon, byte-identisch zu Instanz 1 -->
+      <p class="case-label">color-contrast – FAIL knapp unter, Instanz 2: #777777, 16px (Cache-Klon)</p>
+      <div class="case">
+        <p style="color:#777777">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [FAIL] · Instanz 3 · axe-Regel: color-contrast · Variante #797979 4.35:1 -->
+      <p class="case-label">color-contrast – FAIL knapp unter, Instanz 3: #797979, 16px (4.35, Variante)</p>
+      <div class="case">
+        <p style="color:#797979">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [FAIL] · Instanz 1 · axe-Regel: color-contrast · #bbbbbb Normaltext 1.92:1, klar zu niedrig -->
+      <p class="case-label">color-contrast – FAIL klar, Instanz 1: #bbbbbb, 16px (1.92)</p>
+      <div class="case">
+        <p style="color:#bbbbbb">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [FAIL] · Instanz 2 · axe-Regel: color-contrast · Cache-Klon, byte-identisch zu Instanz 1 -->
+      <p class="case-label">color-contrast – FAIL klar, Instanz 2: #bbbbbb, 16px (Cache-Klon)</p>
+      <div class="case">
+        <p style="color:#bbbbbb">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [FAIL] · Instanz 3 · axe-Regel: color-contrast · Variante #c0c0c0 1.82:1 -->
+      <p class="case-label">color-contrast – FAIL klar, Instanz 3: #c0c0c0, 16px (1.82, Variante)</p>
+      <div class="case">
+        <p style="color:#c0c0c0">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [PASS] · Instanz 1 · axe-Regel: color-contrast · #888888 24px 3.55:1, besteht nur als große Schrift -->
+      <p class="case-label">color-contrast – PASS nur weil groß, Instanz 1: #888888, 24px (3.55)</p>
+      <div class="case">
+        <p style="color:#888888;font-size:24px">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [PASS] · Instanz 2 · axe-Regel: color-contrast · Cache-Klon, byte-identisch zu Instanz 1 -->
+      <p class="case-label">color-contrast – PASS nur weil groß, Instanz 2: #888888, 24px (Cache-Klon)</p>
+      <div class="case">
+        <p style="color:#888888;font-size:24px">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [PASS] · Instanz 3 · axe-Regel: color-contrast · Variante #858585 24px 3.69:1 -->
+      <p class="case-label">color-contrast – PASS nur weil groß, Instanz 3: #858585, 24px (3.69, Variante)</p>
+      <div class="case">
+        <p style="color:#858585;font-size:24px">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [FAIL] · Instanz 1 · axe-Regel: color-contrast · #aaaaaa 24px 2.32:1, scheitert auch als große Schrift -->
+      <p class="case-label">color-contrast – FAIL auch als groß, Instanz 1: #aaaaaa, 24px (2.32)</p>
+      <div class="case">
+        <p style="color:#aaaaaa;font-size:24px">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [FAIL] · Instanz 2 · axe-Regel: color-contrast · Cache-Klon, byte-identisch zu Instanz 1 -->
+      <p class="case-label">color-contrast – FAIL auch als groß, Instanz 2: #aaaaaa, 24px (Cache-Klon)</p>
+      <div class="case">
+        <p style="color:#aaaaaa;font-size:24px">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [FAIL] · Instanz 3 · axe-Regel: color-contrast · Variante #adadad 24px 2.24:1 -->
+      <p class="case-label">color-contrast – FAIL auch als groß, Instanz 3: #adadad, 24px (2.24, Variante)</p>
+      <div class="case">
+        <p style="color:#adadad;font-size:24px">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- [FAIL] · Instanz - · axe-Regel: color-contrast · selbe Farbe #888888 als 16px → scheitert (Größen-Abhängigkeit) -->
+      <p class="case-label">color-contrast – Vergleichsfall: #888888 als 16px Normaltext (3.55 → FAIL)</p>
+      <div class="case">
+        <p style="color:#888888;font-size:16px">Beispieltext für Kontrastmessung.</p>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- ABSCHNITT 3: label                                                  -->
+      <!-- =================================================================== -->
+      <h2>3. label</h2>
+
+      <!-- [PASS] · Instanz - · axe-Regel: label · explizites label[for] -->
+      <p class="case-label">label – PASS explizit: label[for] + input[id]</p>
+      <div class="case">
+        <label for="n1">Name</label><input id="n1" type="text">
+      </div>
+
+      <!-- [PASS] · Instanz - · axe-Regel: label · implizites label (umschließend) -->
+      <p class="case-label">label – PASS implizit: input vom label umschlossen</p>
+      <div class="case">
+        <label>E-Mail <input type="email"></label>
+      </div>
+
+      <!-- [PASS] · Instanz - · axe-Regel: label · Name via aria-label -->
+      <p class="case-label">label – PASS aria: input mit aria-label</p>
+      <div class="case">
+        <input type="text" aria-label="Suchbegriff">
+      </div>
+
+      <!-- [FAIL] · Instanz 1 · axe-Regel: label · input ganz ohne Label -->
+      <p class="case-label">label – FAIL ohne Label, Instanz 1: text-Eingabe ohne Beschriftung</p>
+      <div class="case">
+        <input type="text">
+      </div>
+
+      <!-- [FAIL] · Instanz 2 · axe-Regel: label · Cache-Klon, byte-identisch zu Instanz 1 -->
+      <p class="case-label">label – FAIL ohne Label, Instanz 2: Cache-Klon (identisch)</p>
+      <div class="case">
+        <input type="text">
+      </div>
+
+      <!-- [FAIL] · Instanz 3 · axe-Regel: label · Variante, anderer Feldtyp (number) -->
+      <p class="case-label">label – FAIL ohne Label, Instanz 3: Variante number-Eingabe</p>
+      <div class="case">
+        <input type="number">
+      </div>
+
+      <!-- [FAIL] · Instanz 1 · axe-Regel: label · nur placeholder, kein Label -->
+      <p class="case-label">label – FAIL nur placeholder, Instanz 1: placeholder="Telefon"</p>
+      <div class="case">
+        <input type="text" placeholder="Telefon">
+      </div>
+
+      <!-- [FAIL] · Instanz 2 · axe-Regel: label · Cache-Klon, byte-identisch zu Instanz 1 -->
+      <p class="case-label">label – FAIL nur placeholder, Instanz 2: Cache-Klon (identisch)</p>
+      <div class="case">
+        <input type="text" placeholder="Telefon">
+      </div>
+
+      <!-- [FAIL] · Instanz 3 · axe-Regel: label · Variante, anderer placeholder-Text -->
+      <p class="case-label">label – FAIL nur placeholder, Instanz 3: placeholder="Postleitzahl"</p>
+      <div class="case">
+        <input type="text" placeholder="Postleitzahl">
+      </div>
+
+      <!-- [FAIL] · Instanz 1 · axe-Regel: label · label ohne for, nicht umschließend -->
+      <p class="case-label">label – FAIL Label ohne Bezug, Instanz 1: label hat kein for, umschließt nicht</p>
+      <div class="case">
+        <label>Stadt</label><input id="c1" type="text">
+      </div>
+
+      <!-- [FAIL] · Instanz 2 · axe-Regel: label · Cache-Klon, byte-identisch zu Instanz 1 -->
+      <p class="case-label">label – FAIL Label ohne Bezug, Instanz 2: Cache-Klon (identisch)</p>
+      <div class="case">
+        <label>Stadt</label><input id="c1" type="text">
+      </div>
+
+      <!-- [FAIL] · Instanz 3 · axe-Regel: label · Variante, anderer Feld-Kontext -->
+      <p class="case-label">label – FAIL Label ohne Bezug, Instanz 3: Variante mit anderem Text</p>
+      <div class="case">
+        <label>Land</label><input id="c2" type="text">
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- ABSCHNITT 4: html-has-lang                                          -->
+      <!-- =================================================================== -->
+      <h2>4. html-has-lang</h2>
+
+      <!-- [PASS] · Instanz - · axe-Regel: html-has-lang · dokumentweit über lang="de" am <html> erfüllt -->
+      <p class="case-label">html-has-lang – PASS: Dokument hat lang="de"</p>
+      <div class="case">
+        <p>
+          Diese Regel ist ein Dokument-Attribut und existiert genau einmal: Das
+          <code>&lt;html&gt;</code>-Element trägt <code>lang="de"</code>, deshalb besteht die
+          gesamte Seite html-has-lang. Ein FAIL lässt sich nur durch manuelles Entfernen oder
+          Ungültigsetzen des lang-Attributs erzeugen; er wird hier daher nicht dupliziert.
+        </p>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- ABSCHNITT 5: heading-order                                          -->
+      <!-- =================================================================== -->
+      <h2>5. heading-order</h2>
+
+      <!-- [PASS] · Instanz - · axe-Regel: heading-order · h2→h3→h4 korrekt absteigend -->
+      <h3>Korrekte Reihenfolge (PASS)</h3>
+      <p>Von h2 zu h3 und weiter zu h4 ohne Sprung – axe meldet hier nichts.</p>
+      <h4>Unterpunkt</h4>
+      <p>h3 → h4 ist ein korrekter Schritt um genau ein Level.</p>
+
+      <h3>Fehlerhafte Reihenfolge (FAIL)</h3>
+      <p>Im nächsten Schritt wird von h3 direkt auf h5 gesprungen (h4 übersprungen).</p>
+      <!-- FAIL · axe-Regel: heading-order · Sprung h3→h5 -->
+      <h5>Übersprungenes Level</h5>
+      <p>axe flaggt genau diese h5, weil das Level h4 übersprungen wurde.</p>
+    </main>
+  </body>
+</html>
