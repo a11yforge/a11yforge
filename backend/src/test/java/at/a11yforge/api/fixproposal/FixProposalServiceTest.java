@@ -50,6 +50,7 @@ public class FixProposalServiceTest {
             List.of("img"),
             "<img>",
             null,
+            null,
             null);
     //
 
@@ -87,6 +88,7 @@ public class FixProposalServiceTest {
             List.of("img"),
             "<img>",
             null,
+            null,
             null);
 
     VerifyRequestDTO request =
@@ -117,6 +119,7 @@ public class FixProposalServiceTest {
             "",
             List.of("img"),
             "<img>",
+            null,
             null,
             null);
 

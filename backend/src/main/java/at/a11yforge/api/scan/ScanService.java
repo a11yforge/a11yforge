@@ -143,6 +143,7 @@ public class ScanService {
       violation.setHtmlSnippet(v.htmlSnippet());
       violation.setDescription(v.description());
       violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
+      violation.setDetectedLang(v.detectedLang());
       if (withScreenshot) {
         violation.setScreenshot(v.screenshot());
       }

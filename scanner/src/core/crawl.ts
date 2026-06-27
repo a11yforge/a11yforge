@@ -2,8 +2,14 @@ import { AxeBuilder } from "@axe-core/playwright";
 import { chromium } from "playwright";
 import type { PageScanResult } from "./types";
 import { axeResultsToViolationDtos } from "../mapping/axe";
+import { franc } from "franc";
+import { iso6393 } from "iso-639-3";
 
 const TIMEOUT = 50_000;
+
+const TO_ISO1 = new Map(
+  iso6393.filter((e) => e.iso6391).map((e) => [e.iso6393, e.iso6391]),
+);
 
 function normalize(u: string): string {
   const url = new URL(u);
@@ -54,6 +60,14 @@ export async function crawl(
             } catch (e) {
               console.error(`Screenshot ${selector}:`, (e as Error).message);
             }
+          }
+        }
+        if (v.ruleId === "html-has-lang") {
+          const text = await page.locator("body").innerText();
+          const code = franc(text);
+          const lang = TO_ISO1.get(code) ?? (code !== "und" ? code : undefined);
+          if (lang) {
+            v.detectedLang = lang;
           }
         }
       }
