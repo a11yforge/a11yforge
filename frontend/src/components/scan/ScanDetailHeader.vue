@@ -19,7 +19,7 @@ const statusLabel: Record<string, string> = {
 <template>
   <header class="flex justify-between items-start gap-6 flex-wrap bg-[var(--surface)] border border-[var(--border)] rounded-[16px] px-[1.6rem] py-6 shadow-[0_18px_44px_rgba(0,0,0,0.35)]">
     <div>
-      <h1 class="text-[1.6rem] font-extrabold text-[var(--text)] m-0">Scan #{{ scan.id }}</h1>
+      <h1 class="text-[1.6rem] font-extrabold text-[var(--text)] m-0">Scan #{{ scan.projectScanNumber }}</h1>
       <p class="mt-[0.4rem] mb-0 text-[var(--muted)] text-[0.9rem]">
         Status:
         <span class="text-[var(--peach)] font-semibold">{{ statusLabel[scan.status] ?? scan.status }}</span>

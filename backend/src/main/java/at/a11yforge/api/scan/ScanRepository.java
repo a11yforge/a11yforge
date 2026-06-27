@@ -12,4 +12,6 @@ public interface ScanRepository extends JpaRepository<Scan, Long> {
 
   Optional<Scan> findFirstByProjectIdAndStatusOrderByCompletedAtDesc(
       Long projectId, ScanStatus status);
+
+  long countByProjectIdAndIdLessThanEqual(Long projectId, Long scanId);
 }

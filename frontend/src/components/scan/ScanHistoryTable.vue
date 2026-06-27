@@ -34,7 +34,7 @@ function fmt(iso: string | null) {
         </thead>
         <tbody>
           <tr v-for="scan in scans" :key="scan.id" class="group">
-            <td class="py-[0.8rem] px-4 border-b border-[var(--border)] text-[var(--text)] group-last:border-b-0 font-mono font-bold">#{{ scan.id }}</td>
+            <td class="py-[0.8rem] px-4 border-b border-[var(--border)] text-[var(--text)] group-last:border-b-0 font-mono font-bold">#{{ scan.projectScanNumber }}</td>
             <td class="py-[0.8rem] px-4 border-b border-[var(--border)] text-[var(--text)] group-last:border-b-0">
               <ScanStatusBadge :status="scan.status" />
             </td>
