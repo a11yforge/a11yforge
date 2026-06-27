@@ -123,13 +123,17 @@ public class ScanService {
   }
 
   private ScanResponseDTO toResponse(Scan scan) {
+    long displayNumber =
+        scanRepository.countByProjectIdAndIdLessThanEqual(scan.getProject().getId(), scan.getId());
+
     return new ScanResponseDTO(
         scan.getId(),
         scan.getProject().getId(),
         scan.getStatus().name(),
         scan.getStartedAt(),
         scan.getCompletedAt(),
-        violationRepository.countByPage_Scan_Id(scan.getId()));
+        violationRepository.countByPage_Scan_Id(scan.getId()),
+        displayNumber);
   }
 
   private void persistViolations(Page page, List<ViolationDto> dtos, boolean withScreenshot) {
@@ -152,10 +156,14 @@ public class ScanService {
   }
 
   public ScanDetailDTO getScan(Long userId, Long scanId) {
+
     Scan scan =
         scanRepository
             .findByIdAndProjectUserId(scanId, userId)
             .orElseThrow(() -> new ScanNotFoundException(scanId));
+
+    long displayNumber =
+        scanRepository.countByProjectIdAndIdLessThanEqual(scan.getProject().getId(), scan.getId());
 
     List<ViolationResponseDTO> violations =
         violationRepository.findByPage_Scan_Id(scanId).stream()
@@ -178,7 +186,8 @@ public class ScanService {
         scan.getStatus().name(),
         scan.getStartedAt(),
         scan.getCompletedAt(),
-        violations);
+        violations,
+        displayNumber);
   }
 
   public List<ScanResponseDTO> getScansForProject(Long userId, Long projectId) {
@@ -191,7 +200,9 @@ public class ScanService {
                     s.getStatus().name(),
                     s.getStartedAt(),
                     s.getCompletedAt(),
-                    violationRepository.countByPage_Scan_Id(s.getId())))
+                    violationRepository.countByPage_Scan_Id(s.getId()),
+                    scanRepository.countByProjectIdAndIdLessThanEqual(
+                        s.getProject().getId(), s.getId())))
         .toList();
   }
 

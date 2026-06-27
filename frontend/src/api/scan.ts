@@ -18,6 +18,7 @@ export interface ScanDetailDTO {
   startedAt: string
   completedAt: string | null
   violations: ViolationDTO[]
+  projectScanNumber: number
 }
 
 export interface ScanResponseDTO {
@@ -27,6 +28,7 @@ export interface ScanResponseDTO {
   startedAt: string
   completedAt: string | null
   violationCount: number
+  projectScanNumber: number
 }
 
 export async function getScan(id: number): Promise<ScanDetailDTO> {
