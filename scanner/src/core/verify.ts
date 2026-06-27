@@ -38,16 +38,24 @@ export async function verify(
     await page.setContent(originalHtml);
 
     try {
-      await page.locator(targetSelector).evaluate(
-        (el, html) => {
-          el.outerHTML = html;
-        },
-        newSnippet,
-        { timeout: 3000 },
-      );
+      if (targetSelector === "html") {
+        await page.evaluate((snippet) => {
+          const m = snippet.match(/lang=["']([^"']+)["']/);
+          if (m) document.documentElement.setAttribute("lang", m[1]);
+        }, newSnippet);
+      } else {
+        await page.locator(targetSelector).evaluate(
+          (el, html) => {
+            el.outerHTML = html;
+          },
+          newSnippet,
+          { timeout: 3000 },
+        );
+      }
     } catch {
       return { status: "discarded", reason: "malformed_patch" };
     }
+
     const results = await new AxeBuilder({ page }).withRules(rules).analyze();
     const newViolations = axeResultsToViolationDtos(results, "axe_violation");
 
