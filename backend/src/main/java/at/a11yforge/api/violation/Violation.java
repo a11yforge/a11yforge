@@ -38,6 +38,9 @@ public class Violation {
   @Column(name = "screenshot", columnDefinition = "TEXT")
   private String screenshot;
 
+  @Column(name = "detected_lang")
+  private String detectedLang;
+
   protected Violation() {}
 
   public Violation(Page page, String ruleId, ViolationSource source, Impact impact) {
@@ -98,5 +101,13 @@ public class Violation {
 
   public void setScreenshot(String screenshot) {
     this.screenshot = screenshot;
+  }
+
+  public String getDetectedLang() {
+    return detectedLang;
+  }
+
+  public void setDetectedLang(String detectedLang) {
+    this.detectedLang = detectedLang;
   }
 }

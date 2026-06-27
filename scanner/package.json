@@ -20,6 +20,8 @@
   "dependencies": {
     "@axe-core/playwright": "^4.11.3",
     "axe-core": "^4.11.4",
+    "franc": "^6.2.0",
+    "iso-639-3": "^3.0.1",
     "playwright": "^1.59.1"
   }
 }

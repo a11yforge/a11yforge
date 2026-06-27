@@ -20,6 +20,7 @@ export interface ViolationDto {
   htmlSnippet: string;
   domPath?: string;
   screenshot?: string;
+  detectedLang?: string;
 }
 
 export interface PageScanResult {

@@ -92,7 +92,11 @@ public class FixGenerationAsyncRunner {
     String promptVersion;
     boolean fromCache = cached.isPresent();
 
-    if (fromCache) {
+    if (violation.getRuleId().equals("html-has-lang")) {
+      generatedHtml = buildLangFix(violation.getHtmlSnippet(), violation.getDetectedLang());
+      llmModel = "deterministic";
+      promptVersion = "deterministic";
+    } else if (fromCache) {
       generatedHtml = cached.get();
       llmModel = "cache";
       promptVersion = "cache";
@@ -160,6 +164,14 @@ public class FixGenerationAsyncRunner {
         v.getTargetSelector() == null ? List.of() : List.of(v.getTargetSelector()),
         v.getHtmlSnippet(),
         v.getScreenshot(),
-        null);
+        null,
+        v.getDetectedLang());
+  }
+
+  private String buildLangFix(String htmlSnippet, String detectedLang) {
+    if (detectedLang == null || detectedLang.isBlank()) {
+      return htmlSnippet;
+    }
+    return htmlSnippet.replaceFirst("<html", "<html lang=\"" + detectedLang + "\"");
   }
 }
