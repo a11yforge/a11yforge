@@ -13,6 +13,8 @@ export interface ProjectResponseDTO {
   crawlMaxPages: number
   createdAt: string
   updatedAt: string
+  lastScanAt: string | null
+  findings: number | null
 }
 
 export async function getProjects(): Promise<ProjectResponseDTO[]> {
