@@ -38,7 +38,8 @@ public class FixProposalServiceTest {
             mock(Page.class), "image-alt", ViolationSource.AXE_VIOLATION, Impact.CRITICAL);
 
     ViolationDto target =
-        new ViolationDto(
+
+      new ViolationDto(
             "v1",
             "axe_violation",
             "image-alt",

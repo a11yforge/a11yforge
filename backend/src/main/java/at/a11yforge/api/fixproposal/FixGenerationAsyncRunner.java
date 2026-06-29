@@ -82,7 +82,12 @@ public class FixGenerationAsyncRunner {
             violation.getTargetSelector(),
             violation.getDescription(),
             violation.getImpact(),
-            violation.getScreenshot());
+            violation.getScreenshot(),
+            violation.getFgColor(),
+            violation.getBgColor(),
+            violation.getContrastRatio(),
+            violation.getExpectedContrastRatio()
+        );
 
     Optional<String> cached =
         fixCacheService.findCachedFix(violation.getRuleId(), violation.getHtmlSnippet());
