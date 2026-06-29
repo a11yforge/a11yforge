@@ -97,8 +97,7 @@ public class FixProposalService {
             violation.getFgColor(),
             violation.getBgColor(),
             violation.getContrastRatio(),
-            violation.getExpectedContrastRatio()
-        );
+            violation.getExpectedContrastRatio(),
             null);
 
     FixGenerationResponseDTO response = chatProvider.generateFix(request);

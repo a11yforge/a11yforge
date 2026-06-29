@@ -95,8 +95,7 @@ public class FixGenerationAsyncRunner {
             violation.getFgColor(),
             violation.getBgColor(),
             violation.getContrastRatio(),
-            violation.getExpectedContrastRatio()
-        );
+            violation.getExpectedContrastRatio(),
             pageLang);
 
     Optional<String> cached =
@@ -194,24 +193,9 @@ public class FixGenerationAsyncRunner {
           v.getFgColor(),
           v.getBgColor(),
           v.getContrastRatio(),
-          v.getExpectedContrastRatio());
+          v.getExpectedContrastRatio(),
+          null);
     }
-    return new ViolationDto(
-        String.valueOf(v.getId()),
-        v.getSource().name(),
-        v.getRuleId(),
-        v.getImpact().name(),
-        List.of(),
-        "",
-        v.getDescription(),
-        "",
-        v.getTargetSelector() == null ? List.of() : List.of(v.getTargetSelector()),
-        v.getHtmlSnippet(),
-        null,
-        v.getScreenshot(),
-        v.getDetectedLang(),
-        null);
-  }
 
   private String buildLangFix(String htmlSnippet, String detectedLang) {
     if (detectedLang == null || detectedLang.isBlank()) {

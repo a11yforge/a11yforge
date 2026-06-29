@@ -20,5 +20,5 @@ public record ViolationDto(
     String fgColor,
     String bgColor,
     java.math.BigDecimal contrastRatio,
-    String expectedContrastRatio) {}
+    String expectedContrastRatio,
     String langSample) {}

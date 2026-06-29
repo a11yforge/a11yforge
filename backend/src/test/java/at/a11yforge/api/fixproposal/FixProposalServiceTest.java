@@ -55,22 +55,8 @@ public class FixProposalServiceTest {
         null,
         null,
         null,
+        null,
         null);
-        new ViolationDto(
-            "v1",
-            "axe_violation",
-            "image-alt",
-            "critical",
-            List.of(),
-            "",
-            "",
-            "",
-            List.of("img"),
-            "<img>",
-            null,
-            null,
-            null,
-            null);
     //
 
     FixProposal result =
@@ -112,22 +98,8 @@ public class FixProposalServiceTest {
         null,
         null,
         null,
+        null,
         null);
-        new ViolationDto(
-            "v1",
-            "axe_violation",
-            "image-alt",
-            "critical",
-            List.of(),
-            "",
-            "",
-            "",
-            List.of("img"),
-            "<img>",
-            null,
-            null,
-            null,
-            null);
 
     VerifyRequestDTO request =
         new VerifyRequestDTO(
@@ -163,22 +135,8 @@ public class FixProposalServiceTest {
         null,
         null,
         null,
+        null,
         null);
-        new ViolationDto(
-            "v1",
-            "axe_violation",
-            "image-alt",
-            "critical",
-            List.of(),
-            "",
-            "",
-            "",
-            List.of("img"),
-            "<img>",
-            null,
-            null,
-            null,
-            null);
 
     VerifyRequestDTO request =
         new VerifyRequestDTO(

@@ -14,5 +14,5 @@ public record FixGenerationRequestDTO(
     String fgColor,
     String bgColor,
     BigDecimal contrastRatio,
-    String expectedContrastRatio) {}
+    String expectedContrastRatio,
     String language) {}

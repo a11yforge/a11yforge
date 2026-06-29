@@ -126,23 +126,12 @@ public class AnthropicChatProvider implements ChatProvider {
           "contrastRatio",
           request.contrastRatio() == null ? "" : request.contrastRatio().toString());
       variables.put("expectedContrastRatio", request.expectedContrastRatio());
+      variables.put(
+          "language",
+          request.language() == null || request.language().isBlank()
+              ? "the same language as the page content"
+              : "the language with ISO 639-1 code \"" + request.language() + "\"");
       return promptLoader.fill(template, variables);
-    String template =
-        useImage
-            ? promptLoader.loadForRule(PROMPT_NAME, request.wcagRuleId(), promptVersion)
-            : promptLoader.load(PROMPT_NAME, promptVersion);
-    Map<String, String> variables = new LinkedHashMap<>();
-    variables.put("wcagRuleId", request.wcagRuleId());
-    variables.put("impact", request.impact() == null ? "" : request.impact().name());
-    variables.put("description", request.description());
-    variables.put("targetSelector", request.targetSelector());
-    variables.put("htmlSnippet", request.htmlSnippet());
-    variables.put(
-        "language",
-        request.language() == null || request.language().isBlank()
-            ? "the same language as the page content"
-            : "the language with ISO 639-1 code \"" + request.language() + "\"");
-    return promptLoader.fill(template, variables);
   }
 
   private String extractResponseText(Message message) {
