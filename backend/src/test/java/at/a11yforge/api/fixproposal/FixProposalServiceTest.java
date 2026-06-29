@@ -38,21 +38,24 @@ public class FixProposalServiceTest {
             mock(Page.class), "image-alt", ViolationSource.AXE_VIOLATION, Impact.CRITICAL);
 
     ViolationDto target =
-
       new ViolationDto(
-            "v1",
-            "axe_violation",
-            "image-alt",
-            "critical",
-            List.of(),
-            "",
-            "",
-            "",
-            List.of("img"),
-            "<img>",
-            null,
-            null,
-            null);
+        "v1",
+        "axe_violation",
+        "image-alt",
+        "critical",
+        List.of(),
+        "",
+        "",
+        "",
+        List.of("img"),
+        "<img>",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null);
     //
 
     FixProposal result =
@@ -77,20 +80,24 @@ public class FixProposalServiceTest {
     String newSnippet = "<img src=\"logo.png\" alt=\"Logo\">";
 
     ViolationDto target =
-        new ViolationDto(
-            "v1",
-            "axe_violation",
-            "image-alt",
-            "critical",
-            List.of(),
-            "",
-            "",
-            "",
-            List.of("img"),
-            "<img>",
-            null,
-            null,
-            null);
+      new ViolationDto(
+        "v1",
+        "axe_violation",
+        "image-alt",
+        "critical",
+        List.of(),
+        "",
+        "",
+        "",
+        List.of("img"),
+        "<img>",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null);
 
     VerifyRequestDTO request =
         new VerifyRequestDTO(
@@ -109,20 +116,24 @@ public class FixProposalServiceTest {
     String newSnippet = "<img src=\"logo.png\" class=\"x\">";
 
     ViolationDto target =
-        new ViolationDto(
-            "v1",
-            "axe_violation",
-            "image-alt",
-            "critical",
-            List.of(),
-            "",
-            "",
-            "",
-            List.of("img"),
-            "<img>",
-            null,
-            null,
-            null);
+      new ViolationDto(
+        "v1",
+        "axe_violation",
+        "image-alt",
+        "critical",
+        List.of(),
+        "",
+        "",
+        "",
+        List.of("img"),
+        "<img>",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null);
 
     VerifyRequestDTO request =
         new VerifyRequestDTO(
