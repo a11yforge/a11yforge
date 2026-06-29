@@ -41,7 +41,7 @@ public class Violation {
   private String screenshot;
 
   @Column(name = "detected_lang")
-  private String detectedLang;
+  private String detectedLang = "de";
 
   @Column(name = "fg_color", length = 30)
   private String fgColor;
