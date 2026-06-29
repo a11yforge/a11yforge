@@ -14,7 +14,7 @@ Your task:
 1. Look closely at the attached image and identify what it shows: the subject, the relevant detail, and any text that appears inside the image.
 2. Write alt text that conveys both the CONTENT and the FUNCTION of the image in its context. If the image is a link or a button, describe where it leads or what it does, not only what it depicts.
 3. Add the alt text to the existing element. Preserve all other attributes, classes, and structure. Change only what is required to fix the violation.
-4. Write the alt text in the same language as the page content (e.g. German alt text for a German page).
+4. Write the alt text in {{language}}.
 5. Keep it concise — aim for roughly 125 characters or fewer. Do not begin with "image of" or "picture of"; a screen reader already announces the element as an image.
 
 Decorative images:

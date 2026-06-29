@@ -25,6 +25,7 @@ export interface ViolationDto {
   contrastRatio?: number;
   expectedContrastRatio?: string;
   detectedLang?: string;
+  langSample?: string;
 }
 
 export interface PageScanResult {

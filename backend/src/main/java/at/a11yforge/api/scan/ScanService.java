@@ -2,6 +2,7 @@ package at.a11yforge.api.scan;
 
 import at.a11yforge.api.auditevent.AuditEventService;
 import at.a11yforge.api.auditevent.AuditEventType;
+import at.a11yforge.api.llm.ChatProviderFactory;
 import at.a11yforge.api.llm.ProviderType;
 import at.a11yforge.api.page.Page;
 import at.a11yforge.api.page.PageRepository;
@@ -40,6 +41,7 @@ public class ScanService {
   private final ReviewRepository reviewRepository;
   private final ScannerProcessRunner scannerProcessRunner;
   private final AuditEventService auditEventService;
+  private final ChatProviderFactory chatProviderFactory;
 
   private final Executor executor = Executors.newCachedThreadPool();
 
@@ -53,7 +55,8 @@ public class ScanService {
       ViolationRepository violationRepository,
       ReviewRepository reviewRepository,
       ScannerProcessRunner scannerProcessRunner,
-      AuditEventService auditEventService) {
+      AuditEventService auditEventService,
+      ChatProviderFactory chatProviderFactory) {
     this.projectRepository = projectRepository;
     this.scanRepository = scanRepository;
     this.pageRepository = pageRepository;
@@ -61,6 +64,7 @@ public class ScanService {
     this.reviewRepository = reviewRepository;
     this.scannerProcessRunner = scannerProcessRunner;
     this.auditEventService = auditEventService;
+    this.chatProviderFactory = chatProviderFactory;
   }
 
   public ScanResponseDTO startScan(Long userId, Long projectId) {
@@ -123,13 +127,17 @@ public class ScanService {
   }
 
   private ScanResponseDTO toResponse(Scan scan) {
+    long displayNumber =
+        scanRepository.countByProjectIdAndIdLessThanEqual(scan.getProject().getId(), scan.getId());
+
     return new ScanResponseDTO(
         scan.getId(),
         scan.getProject().getId(),
         scan.getStatus().name(),
         scan.getStartedAt(),
         scan.getCompletedAt(),
-        violationRepository.countByPage_Scan_Id(scan.getId()));
+        violationRepository.countByPage_Scan_Id(scan.getId()),
+        displayNumber);
   }
 
   private void persistViolations(Page page, List<ViolationDto> dtos, boolean withScreenshot) {
@@ -154,14 +162,35 @@ public class ScanService {
               violation.setExpectedContrastRatio(v.expectedContrastRatio());
           }
           violationRepository.save(violation);
+    for (ViolationDto v : dtos) {
+      Violation violation =
+          new Violation(
+              page,
+              v.ruleId(),
+              ViolationSource.valueOf(v.source().toUpperCase()),
+              Impact.valueOf(v.impact().toUpperCase()));
+      violation.setHtmlSnippet(v.htmlSnippet());
+      violation.setDescription(v.description());
+      violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
+      String lang = v.detectedLang();
+      if (lang == null && v.langSample() != null) {
+        lang = chatProviderFactory.getProvider(defaultProvider).detectLanguage(v.langSample());
+      }
+      violation.setDetectedLang(lang);
+      if (withScreenshot) {
+        violation.setScreenshot(v.screenshot());
       }
   }
 
   public ScanDetailDTO getScan(Long userId, Long scanId) {
+
     Scan scan =
         scanRepository
             .findByIdAndProjectUserId(scanId, userId)
             .orElseThrow(() -> new ScanNotFoundException(scanId));
+
+    long displayNumber =
+        scanRepository.countByProjectIdAndIdLessThanEqual(scan.getProject().getId(), scan.getId());
 
     List<ViolationResponseDTO> violations =
         violationRepository.findByPage_Scan_Id(scanId).stream()
@@ -184,7 +213,8 @@ public class ScanService {
         scan.getStatus().name(),
         scan.getStartedAt(),
         scan.getCompletedAt(),
-        violations);
+        violations,
+        displayNumber);
   }
 
   public List<ScanResponseDTO> getScansForProject(Long userId, Long projectId) {
@@ -197,7 +227,9 @@ public class ScanService {
                     s.getStatus().name(),
                     s.getStartedAt(),
                     s.getCompletedAt(),
-                    violationRepository.countByPage_Scan_Id(s.getId())))
+                    violationRepository.countByPage_Scan_Id(s.getId()),
+                    scanRepository.countByProjectIdAndIdLessThanEqual(
+                        s.getProject().getId(), s.getId())))
         .toList();
   }
 

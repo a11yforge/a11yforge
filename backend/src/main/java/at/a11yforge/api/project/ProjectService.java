@@ -1,15 +1,19 @@
 package at.a11yforge.api.project;
 
+import at.a11yforge.api.auditevent.AuditEventService;
+import at.a11yforge.api.auditevent.AuditEventType;
+import at.a11yforge.api.scan.Scan;
+import at.a11yforge.api.scan.ScanRepository;
+import at.a11yforge.api.scan.ScanStatus;
 import at.a11yforge.api.user.User;
 import at.a11yforge.api.user.UserNotFoundException;
 import at.a11yforge.api.user.UserRepository;
+import at.a11yforge.api.violation.ViolationRepository;
+import java.time.Instant;
+import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import at.a11yforge.api.auditevent.AuditEventService;
-import at.a11yforge.api.auditevent.AuditEventType;
-
-import java.util.List;
 
 @Service
 public class ProjectService {
@@ -17,13 +21,17 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final AuditEventService auditEventService;
+    private final ScanRepository scanRepository;
+    private final ViolationRepository violationRepository;
 
     public ProjectService(ProjectRepository projectRepository,
                           UserRepository userRepository,
-                          AuditEventService auditEventService) {
+                          AuditEventService auditEventService, ScanRepository scanRepository, ViolationRepository violationRepository) {
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
         this.auditEventService = auditEventService;
+        this.scanRepository = scanRepository;
+        this.violationRepository = violationRepository;
     }
 
     @Transactional
@@ -90,13 +98,23 @@ public class ProjectService {
     }
 
     private ProjectResponseDTO toResponse(Project project) {
+
+      Scan lastScan = scanRepository
+        .findFirstByProjectIdAndStatusOrderByCompletedAtDesc(project.getId(), ScanStatus.COMPLETED)
+        .orElse(null);
+      Instant lastScanAt = lastScan == null ? null : lastScan.getCompletedAt();
+      Long findings = lastScan == null ?  null : violationRepository.countByPage_Scan_Id(lastScan.getId());
+
+
         return new ProjectResponseDTO(
                 project.getId(),
                 project.getName(),
                 project.getBaseUrl(),
                 project.getCrawlMaxPages(),
                 project.getCreatedAt(),
-                project.getUpdatedAt()
+                project.getUpdatedAt(),
+          lastScanAt,
+          findings
         );
     }
 }

@@ -15,7 +15,7 @@ const startedAtFormatted = computed(() =>
 <template>
   <li class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 bg-[var(--surface)] border border-[var(--border)] rounded-[12px] py-[0.85rem] px-[1.1rem]">
     <div class="flex items-center gap-3 sm:contents">
-      <span class="font-bold whitespace-nowrap min-w-[5.5rem]">Scan #{{ scan.id }}</span>
+      <span class="font-bold whitespace-nowrap min-w-[5.5rem]">Scan #{{ scan.projectScanNumber }}</span>
       <ScanStatusBadge :status="scan.status" />
     </div>
 

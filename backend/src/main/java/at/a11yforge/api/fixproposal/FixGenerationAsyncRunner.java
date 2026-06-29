@@ -14,6 +14,8 @@ import at.a11yforge.api.violation.Violation;
 import at.a11yforge.api.violation.ViolationRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -73,7 +75,14 @@ public class FixGenerationAsyncRunner {
       return;
     }
 
+
+
     ChatProvider provider = chatProviderFactory.getProvider(providerType);
+
+    String pageLang = extractPageLanguage(violation.getPage().getRenderedHtml());
+
+
+
 
     FixGenerationRequestDTO request =
         new FixGenerationRequestDTO(
@@ -88,6 +97,7 @@ public class FixGenerationAsyncRunner {
             violation.getContrastRatio(),
             violation.getExpectedContrastRatio()
         );
+            pageLang);
 
     Optional<String> cached =
         fixCacheService.findCachedFix(violation.getRuleId(), violation.getHtmlSnippet());
@@ -156,6 +166,16 @@ public class FixGenerationAsyncRunner {
         status.name());
   }
 
+  private String extractPageLanguage(String renderedHtml) {
+    if (renderedHtml == null) {
+      return null;
+    }
+    Matcher matcher =
+      Pattern.compile("<html[^>]*lang=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE)
+        .matcher(renderedHtml);
+    return matcher.find() ? matcher.group(1) : null;
+  }
+
   private ViolationDto toDto(Violation v) {
       return new ViolationDto(
           String.valueOf(v.getId()),
@@ -176,6 +196,22 @@ public class FixGenerationAsyncRunner {
           v.getContrastRatio(),
           v.getExpectedContrastRatio());
     }
+    return new ViolationDto(
+        String.valueOf(v.getId()),
+        v.getSource().name(),
+        v.getRuleId(),
+        v.getImpact().name(),
+        List.of(),
+        "",
+        v.getDescription(),
+        "",
+        v.getTargetSelector() == null ? List.of() : List.of(v.getTargetSelector()),
+        v.getHtmlSnippet(),
+        null,
+        v.getScreenshot(),
+        v.getDetectedLang(),
+        null);
+  }
 
   private String buildLangFix(String htmlSnippet, String detectedLang) {
     if (detectedLang == null || detectedLang.isBlank()) {

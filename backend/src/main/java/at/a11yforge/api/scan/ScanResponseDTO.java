@@ -8,4 +8,5 @@ public record ScanResponseDTO(
     String status,
     Instant startedAt,
     Instant completedAt,
-    long violationCount) {}
+    long violationCount,
+    long projectScanNumber) {}

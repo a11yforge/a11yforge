@@ -35,36 +35,53 @@ const displayUrl = computed(() => {
       </router-link>
     </h3>
 
-    <a
-      :href="project.baseUrl"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="relative z-10 text-[var(--teal)] no-underline text-[0.9rem] overflow-hidden text-ellipsis whitespace-nowrap hover:underline"
+    <p
+      class="text-[var(--muted)] text-[0.88rem] m-0 overflow-hidden text-ellipsis whitespace-nowrap"
       :title="project.baseUrl"
     >
-      {{ displayUrl }} ↗
-    </a>
-    <p class="text-[var(--muted)] text-[0.85rem] mt-0 mb-[0.4rem]">Max. {{ project.crawlMaxPages }} Seiten / Scan</p>
+      {{ displayUrl }}
+    </p>
+    <p class="text-[var(--muted)] text-[0.74rem] m-0">Max. {{ project.crawlMaxPages }} Seiten / Scan</p>
 
-    <div class="flex items-center justify-end gap-2 mt-auto">
-      <button
-        class="relative z-10 bg-transparent border border-[var(--border)] rounded-[9px] w-[2.1rem] h-[2.1rem] text-[0.95rem] cursor-pointer text-[var(--text)] hover:border-[var(--coral)] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]"
-        type="button"
-        aria-label="Bearbeiten"
-        title="Bearbeiten"
-        @click="emit('edit', project)"
+    <div class="mt-auto pt-[0.9rem] flex items-end justify-between gap-3 border-t border-[var(--border)]">
+      <div class="flex flex-col gap-[0.2rem] min-w-0">
+        <span class="text-[var(--muted)] text-[0.68rem] uppercase tracking-[0.05em]">Letzter Scan</span>
+        <span class="text-[var(--text)] text-[0.85rem] truncate">
+          {{
+            project.lastScanAt
+              ? new Date(project.lastScanAt).toLocaleDateString('de-AT', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                })
+              : '—'
+          }}
+        </span>
+      </div>
+
+      <span
+        class="inline-flex items-center gap-[0.4rem] rounded-full px-[0.7rem] py-[0.3rem] text-[0.8rem] font-semibold border shrink-0"
+        :class="
+          project.findings == null
+            ? 'bg-transparent text-[var(--muted)] border-[var(--border)]'
+            : project.findings > 0
+              ? 'bg-[var(--danger-bg)] text-[var(--coral)] border-[var(--danger-border)]'
+              : 'bg-transparent text-[var(--teal)] border-[var(--teal)]'
+        "
       >
-        ✏
-      </button>
-      <button
-        class="relative z-10 bg-transparent border border-[var(--border)] rounded-[9px] w-[2.1rem] h-[2.1rem] text-[0.95rem] cursor-pointer text-[var(--text)] hover:border-[var(--danger-border)] hover:bg-[var(--danger-bg)] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]"
-        type="button"
-        aria-label="Löschen"
-        title="Löschen"
-        @click="emit('delete', project)"
-      >
-        🗑
-      </button>
+        <span
+          class="w-[0.45rem] h-[0.45rem] rounded-full"
+          :class="
+            project.findings == null
+              ? 'bg-[var(--muted)]'
+              : project.findings > 0
+                ? 'bg-[var(--coral)]'
+                : 'bg-[var(--teal)]'
+          "
+        ></span>
+        <template v-if="project.findings == null">nie gescannt</template>
+        <template v-else>{{ project.findings }} {{ project.findings === 1 ? 'Befund' : 'Befunde' }}</template>
+      </span>
     </div>
   </article>
   <!--<article class="flex flex-col gap-[0.4rem] bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-[1.3rem] py-[1.2rem] shadow-[0_14px_34px_rgba(0,0,0,0.3)]">
@@ -90,7 +107,7 @@ const displayUrl = computed(() => {
         Scannen ▶
       </button>
       <router-link :to="`/projects/${project.id}`" class="border border-[var(--border)] rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer no-underline inline-flex items-center justify-center bg-transparent text-[var(--text)] hover:border-[var(--coral)] hover:text-[var(--coral)] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]">Öffnen</router-link>
-      
+
       <button
         class="bg-transparent border border-[var(--border)] rounded-[9px] w-[2.1rem] h-[2.1rem] text-[0.95rem] cursor-pointer text-[var(--text)] hover:border-[var(--coral)] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]"
         type="button"

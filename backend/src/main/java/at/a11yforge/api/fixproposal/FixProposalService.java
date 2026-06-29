@@ -99,6 +99,7 @@ public class FixProposalService {
             violation.getContrastRatio(),
             violation.getExpectedContrastRatio()
         );
+            null);
 
     FixGenerationResponseDTO response = chatProvider.generateFix(request);
 

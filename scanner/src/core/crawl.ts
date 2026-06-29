@@ -2,7 +2,7 @@ import { AxeBuilder } from "@axe-core/playwright";
 import { chromium } from "playwright";
 import type { PageScanResult } from "./types";
 import { axeResultsToViolationDtos } from "../mapping/axe";
-import { franc } from "franc";
+import { francAll } from "franc";
 import { iso6393 } from "iso-639-3";
 
 const TIMEOUT = 50_000;
@@ -64,10 +64,15 @@ export async function crawl(
         }
         if (v.ruleId === "html-has-lang") {
           const text = await page.locator("body").innerText();
-          const code = franc(text);
+          const results = francAll(text)
+          const code = results[0][0];
+          const runnerUp = results[1]?.[1] ?? 0;
           const lang = TO_ISO1.get(code) ?? (code !== "und" ? code : undefined);
-          if (lang) {
+          if (lang && text.length >= 50 && runnerUp < 0.9) {
             v.detectedLang = lang;
+          }
+          else {
+            v.langSample = text.slice(0, 500);
           }
         }
       }

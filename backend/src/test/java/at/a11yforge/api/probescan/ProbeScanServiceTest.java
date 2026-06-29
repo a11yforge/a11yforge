@@ -40,6 +40,7 @@ public class ProbeScanServiceTest {
       null,
       null,
       null,
+        null,
         null);
   }
 
