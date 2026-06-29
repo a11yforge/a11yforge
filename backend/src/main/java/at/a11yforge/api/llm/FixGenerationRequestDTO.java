@@ -8,4 +8,5 @@ public record FixGenerationRequestDTO(
     String targetSelector,
     String description,
     Impact impact,
-    String screenshot) {}
+    String screenshot,
+    String language) {}

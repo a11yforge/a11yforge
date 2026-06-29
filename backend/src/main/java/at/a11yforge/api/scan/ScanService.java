@@ -2,6 +2,7 @@ package at.a11yforge.api.scan;
 
 import at.a11yforge.api.auditevent.AuditEventService;
 import at.a11yforge.api.auditevent.AuditEventType;
+import at.a11yforge.api.llm.ChatProviderFactory;
 import at.a11yforge.api.llm.ProviderType;
 import at.a11yforge.api.page.Page;
 import at.a11yforge.api.page.PageRepository;
@@ -40,6 +41,7 @@ public class ScanService {
   private final ReviewRepository reviewRepository;
   private final ScannerProcessRunner scannerProcessRunner;
   private final AuditEventService auditEventService;
+  private final ChatProviderFactory chatProviderFactory;
 
   private final Executor executor = Executors.newCachedThreadPool();
 
@@ -53,7 +55,8 @@ public class ScanService {
       ViolationRepository violationRepository,
       ReviewRepository reviewRepository,
       ScannerProcessRunner scannerProcessRunner,
-      AuditEventService auditEventService) {
+      AuditEventService auditEventService,
+      ChatProviderFactory chatProviderFactory) {
     this.projectRepository = projectRepository;
     this.scanRepository = scanRepository;
     this.pageRepository = pageRepository;
@@ -61,6 +64,7 @@ public class ScanService {
     this.reviewRepository = reviewRepository;
     this.scannerProcessRunner = scannerProcessRunner;
     this.auditEventService = auditEventService;
+    this.chatProviderFactory = chatProviderFactory;
   }
 
   public ScanResponseDTO startScan(Long userId, Long projectId) {
@@ -147,7 +151,11 @@ public class ScanService {
       violation.setHtmlSnippet(v.htmlSnippet());
       violation.setDescription(v.description());
       violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
-      violation.setDetectedLang(v.detectedLang());
+      String lang = v.detectedLang();
+      if (lang == null && v.langSample() != null) {
+        lang = chatProviderFactory.getProvider(defaultProvider).detectLanguage(v.langSample());
+      }
+      violation.setDetectedLang(lang);
       if (withScreenshot) {
         violation.setScreenshot(v.screenshot());
       }
