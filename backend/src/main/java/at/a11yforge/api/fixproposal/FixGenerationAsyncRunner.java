@@ -163,8 +163,8 @@ public class FixGenerationAsyncRunner {
         "",
         v.getTargetSelector() == null ? List.of() : List.of(v.getTargetSelector()),
         v.getHtmlSnippet(),
-        v.getScreenshot(),
         null,
+        v.getScreenshot(),
         v.getDetectedLang());
   }
 
