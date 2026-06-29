@@ -36,6 +36,7 @@ public class ProbeScanServiceTest {
         "<img>",
         "",
         null,
+        null,
         null);
   }
 

@@ -35,9 +35,9 @@ public class AnthropicChatProvider implements ChatProvider {
   @Override
   public FixGenerationResponseDTO generateFix(FixGenerationRequestDTO request) {
     boolean useImage =
-      request.screenshot() != null
-        && !request.screenshot().isBlank()
-        && "image-alt".equals(request.wcagRuleId());
+        request.screenshot() != null
+            && !request.screenshot().isBlank()
+            && "image-alt".equals(request.wcagRuleId());
 
     String prompt = buildPrompt(request, useImage);
 
@@ -46,16 +46,16 @@ public class AnthropicChatProvider implements ChatProvider {
 
       if (useImage) {
         builder.addUserMessageOfBlockParams(
-          List.of(
-            ContentBlockParam.ofText(TextBlockParam.builder().text(prompt).build()),
-            ContentBlockParam.ofImage(
-              ImageBlockParam.builder()
-                .source(
-                  Base64ImageSource.builder()
-                    .data(stripDataUrl(request.screenshot()))
-                    .mediaType(Base64ImageSource.MediaType.IMAGE_PNG)
-                    .build())
-                .build())));
+            List.of(
+                ContentBlockParam.ofText(TextBlockParam.builder().text(prompt).build()),
+                ContentBlockParam.ofImage(
+                    ImageBlockParam.builder()
+                        .source(
+                            Base64ImageSource.builder()
+                                .data(stripDataUrl(request.screenshot()))
+                                .mediaType(Base64ImageSource.MediaType.IMAGE_PNG)
+                                .build())
+                        .build())));
       } else {
         builder.addUserMessage(prompt);
       }
@@ -77,6 +77,28 @@ public class AnthropicChatProvider implements ChatProvider {
   }
 
   @Override
+  public String detectLanguage(String text) {
+    try {
+      var params =
+          MessageCreateParams.builder()
+              .model(model)
+              .maxTokens(10L)
+              .addUserMessage(
+                  "Return ONLY the ISO 639-1 two-letter language code "
+                      + "of the following text, nothing else:\n\n"
+                      + text)
+              .build();
+
+      Message message = client.messages().create(params);
+      String code = extractResponseText(message).trim().toLowerCase();
+
+      return code.length() == 2 ? code : null;
+    } catch (AnthropicException e) {
+      return null;
+    }
+  }
+
+  @Override
   public ProviderType getProviderType() {
     return ProviderType.ANTHROPIC;
   }
@@ -88,15 +110,20 @@ public class AnthropicChatProvider implements ChatProvider {
 
   private String buildPrompt(FixGenerationRequestDTO request, boolean useImage) {
     String template =
-      useImage
-        ? promptLoader.loadForRule(PROMPT_NAME, request.wcagRuleId(), promptVersion)
-        : promptLoader.load(PROMPT_NAME, promptVersion);
+        useImage
+            ? promptLoader.loadForRule(PROMPT_NAME, request.wcagRuleId(), promptVersion)
+            : promptLoader.load(PROMPT_NAME, promptVersion);
     Map<String, String> variables = new LinkedHashMap<>();
     variables.put("wcagRuleId", request.wcagRuleId());
     variables.put("impact", request.impact() == null ? "" : request.impact().name());
     variables.put("description", request.description());
     variables.put("targetSelector", request.targetSelector());
     variables.put("htmlSnippet", request.htmlSnippet());
+    variables.put(
+        "language",
+        request.language() == null || request.language().isBlank()
+            ? "the same language as the page content"
+            : "the language with ISO 639-1 code \"" + request.language() + "\"");
     return promptLoader.fill(template, variables);
   }
 

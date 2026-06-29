@@ -21,6 +21,7 @@ export interface ViolationDto {
   domPath?: string;
   screenshot?: string;
   detectedLang?: string;
+  langSample?: string;
 }
 
 export interface PageScanResult {
