@@ -141,6 +141,27 @@ public class ScanService {
   }
 
   private void persistViolations(Page page, List<ViolationDto> dtos, boolean withScreenshot) {
+      for (ViolationDto v : dtos) {
+          Violation violation =
+              new Violation(
+                  page,
+                  v.ruleId(),
+                  ViolationSource.valueOf(v.source().toUpperCase()),
+                  Impact.valueOf(v.impact().toUpperCase()));
+          violation.setHtmlSnippet(v.htmlSnippet());
+          violation.setDescription(v.description());
+          violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
+          violation.setDetectedLang(v.detectedLang());
+          if (withScreenshot) {
+              violation.setScreenshot(v.screenshot());
+          }
+          if ("color-contrast".equals(v.ruleId())) {
+              violation.setFgColor(v.fgColor());
+              violation.setBgColor(v.bgColor());
+              violation.setContrastRatio(v.contrastRatio());
+              violation.setExpectedContrastRatio(v.expectedContrastRatio());
+          }
+          violationRepository.save(violation);
     for (ViolationDto v : dtos) {
       Violation violation =
           new Violation(
@@ -159,8 +180,6 @@ public class ScanService {
       if (withScreenshot) {
         violation.setScreenshot(v.screenshot());
       }
-      violationRepository.save(violation);
-    }
   }
 
   public ScanDetailDTO getScan(Long userId, Long scanId) {

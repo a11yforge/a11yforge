@@ -109,6 +109,24 @@ public class AnthropicChatProvider implements ChatProvider {
   }
 
   private String buildPrompt(FixGenerationRequestDTO request, boolean useImage) {
+      boolean useRuleSpecific = useImage || "color-contrast".equals(request.wcagRuleId());
+      String template =
+          useRuleSpecific
+            ? promptLoader.loadForRule(PROMPT_NAME, request.wcagRuleId(), promptVersion)
+            : promptLoader.load(PROMPT_NAME, promptVersion);
+      Map<String, String> variables = new LinkedHashMap<>();
+      variables.put("wcagRuleId", request.wcagRuleId());
+      variables.put("impact", request.impact() == null ? "" : request.impact().name());
+      variables.put("description", request.description());
+      variables.put("targetSelector", request.targetSelector());
+      variables.put("htmlSnippet", request.htmlSnippet());
+      variables.put("fgColor", request.fgColor());
+      variables.put("bgColor", request.bgColor());
+      variables.put(
+          "contrastRatio",
+          request.contrastRatio() == null ? "" : request.contrastRatio().toString());
+      variables.put("expectedContrastRatio", request.expectedContrastRatio());
+      return promptLoader.fill(template, variables);
     String template =
         useImage
             ? promptLoader.loadForRule(PROMPT_NAME, request.wcagRuleId(), promptVersion)

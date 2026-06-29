@@ -17,4 +17,8 @@ public record ViolationDto(
     String domPath,
     String screenshot,
     String detectedLang,
+    String fgColor,
+    String bgColor,
+    java.math.BigDecimal contrastRatio,
+    String expectedContrastRatio) {}
     String langSample) {}

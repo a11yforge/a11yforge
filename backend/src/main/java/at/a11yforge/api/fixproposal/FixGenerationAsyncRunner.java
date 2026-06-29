@@ -92,6 +92,11 @@ public class FixGenerationAsyncRunner {
             violation.getDescription(),
             violation.getImpact(),
             violation.getScreenshot(),
+            violation.getFgColor(),
+            violation.getBgColor(),
+            violation.getContrastRatio(),
+            violation.getExpectedContrastRatio()
+        );
             pageLang);
 
     Optional<String> cached =
@@ -172,6 +177,25 @@ public class FixGenerationAsyncRunner {
   }
 
   private ViolationDto toDto(Violation v) {
+      return new ViolationDto(
+          String.valueOf(v.getId()),
+          v.getSource().name(),
+          v.getRuleId(),
+          v.getImpact().name(),
+          List.of(),
+          "",
+          v.getDescription(),
+          "",
+          v.getTargetSelector() == null ? List.of() : List.of(v.getTargetSelector()),
+          v.getHtmlSnippet(),
+          v.getScreenshot(),
+          null,
+          v.getDetectedLang(),
+          v.getFgColor(),
+          v.getBgColor(),
+          v.getContrastRatio(),
+          v.getExpectedContrastRatio());
+    }
     return new ViolationDto(
         String.valueOf(v.getId()),
         v.getSource().name(),
