@@ -75,14 +75,17 @@ public class FixGenerationAsyncRunner {
       return;
     }
 
-
-
     ChatProvider provider = chatProviderFactory.getProvider(providerType);
 
     String pageLang = extractPageLanguage(violation.getPage().getRenderedHtml());
-
-
-
+    if (pageLang == null) {
+      pageLang =
+          violationRepository.findByPage_Scan_Id(scan.getId()).stream()
+              .map(Violation::getDetectedLang)
+              .filter(java.util.Objects::nonNull)
+              .findFirst()
+              .orElse(null);
+    }
 
     FixGenerationRequestDTO request =
         new FixGenerationRequestDTO(
@@ -170,8 +173,8 @@ public class FixGenerationAsyncRunner {
       return null;
     }
     Matcher matcher =
-      Pattern.compile("<html[^>]*lang=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE)
-        .matcher(renderedHtml);
+        Pattern.compile("<html[^>]*lang=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE)
+            .matcher(renderedHtml);
     return matcher.find() ? matcher.group(1) : null;
   }
 
