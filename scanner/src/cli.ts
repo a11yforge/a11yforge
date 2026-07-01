@@ -10,13 +10,14 @@ if (!url || !rulesArg || !maxPagesArg) {
 }
 
 const rules = rulesArg.split(",");
+const maxPages = Number(maxPagesArg);
 
 async function main() {
-  const result = await crawl(url, rules, Number(maxPagesArg));
+  const result = await crawl(url, rules, maxPages);
   process.stdout.write(JSON.stringify(result));
 }
 
 main().catch((err) => {
-  console.error("Scan faild:", err);
+  console.error("Scan failed:", err);
   process.exit(1);
 });
