@@ -2,6 +2,8 @@ package at.a11yforge.api.scan;
 
 import at.a11yforge.api.auditevent.AuditEventService;
 import at.a11yforge.api.auditevent.AuditEventType;
+import at.a11yforge.api.fixproposal.FixProposalRepository;
+import at.a11yforge.api.fixproposal.FixProposalStatus;
 import at.a11yforge.api.llm.ChatProviderFactory;
 import at.a11yforge.api.llm.ProviderType;
 import at.a11yforge.api.page.Page;
@@ -9,7 +11,6 @@ import at.a11yforge.api.page.PageRepository;
 import at.a11yforge.api.project.Project;
 import at.a11yforge.api.project.ProjectNotFoundException;
 import at.a11yforge.api.project.ProjectRepository;
-import at.a11yforge.api.review.ReviewDecision;
 import at.a11yforge.api.review.ReviewRepository;
 import at.a11yforge.api.scanner.PageScanResultDto;
 import at.a11yforge.api.scanner.ScannerExecutionException;
@@ -42,6 +43,7 @@ public class ScanService {
   private final ScannerProcessRunner scannerProcessRunner;
   private final AuditEventService auditEventService;
   private final ChatProviderFactory chatProviderFactory;
+  private final FixProposalRepository fixProposalRepository;
 
   private final Executor executor = Executors.newCachedThreadPool();
 
@@ -56,7 +58,8 @@ public class ScanService {
       ReviewRepository reviewRepository,
       ScannerProcessRunner scannerProcessRunner,
       AuditEventService auditEventService,
-      ChatProviderFactory chatProviderFactory) {
+      ChatProviderFactory chatProviderFactory,
+      FixProposalRepository fixProposalRepository) {
     this.projectRepository = projectRepository;
     this.scanRepository = scanRepository;
     this.pageRepository = pageRepository;
@@ -65,6 +68,7 @@ public class ScanService {
     this.scannerProcessRunner = scannerProcessRunner;
     this.auditEventService = auditEventService;
     this.chatProviderFactory = chatProviderFactory;
+    this.fixProposalRepository = fixProposalRepository;
   }
 
   public ScanResponseDTO startScan(Long userId, Long projectId) {
@@ -224,23 +228,24 @@ public class ScanService {
         .toList();
   }
 
-  public List<ExportDTO> exportAcceptedFixes(Long userId, Long scanId) {
+  public List<ExportDTO> exportFixes(Long userId, Long scanId) {
     scanRepository
         .findByIdAndProjectUserId(scanId, userId)
         .orElseThrow(() -> new ScanNotFoundException(scanId)); // Owner-Gate
-    return reviewRepository
-        .findByReviewDecisionAndFixProposal_Violation_Page_Scan_Id(ReviewDecision.ACCEPTED, scanId)
-        .stream()
+    return fixProposalRepository.findAllByViolationPageScanId(scanId).stream()
+        .filter(fp -> fp.getGeneratedHtml() != null)
         .map(
-            r -> {
-              var fp = r.getFixProposal();
+            fp -> {
               var v = fp.getViolation();
               return new ExportDTO(
                   v.getId(),
                   v.getRuleId(),
                   v.getTargetSelector(),
                   v.getHtmlSnippet(),
-                  fp.getGeneratedHtml());
+                  fp.getGeneratedHtml(),
+                  v.getImpact(),
+                  v.getDescription(),
+                  fp.getStatus() == FixProposalStatus.VERIFIED);
             })
         .toList();
   }
