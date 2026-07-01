@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ScanService {
@@ -228,6 +229,7 @@ public class ScanService {
         .toList();
   }
 
+  @Transactional(readOnly = true)
   public List<ExportDTO> exportFixes(Long userId, Long scanId) {
     scanRepository
         .findByIdAndProjectUserId(scanId, userId)
