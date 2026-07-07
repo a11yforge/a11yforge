@@ -8,6 +8,7 @@ import at.a11yforge.api.llm.ChatProviderFactory;
 import at.a11yforge.api.llm.FixGenerationRequestDTO;
 import at.a11yforge.api.llm.FixGenerationResponseDTO;
 import at.a11yforge.api.llm.ProviderType;
+import at.a11yforge.api.review.ReviewRepository;
 import at.a11yforge.api.scan.Scan;
 import at.a11yforge.api.scanner.ViolationDto;
 import at.a11yforge.api.violation.Violation;
@@ -36,20 +37,23 @@ public class FixGenerationAsyncRunner {
   private final ViolationRepository violationRepository;
   private final FixCacheService fixCacheService;
   private final AuditEventService auditEventService;
+  private final ReviewRepository reviewRepository;
 
   public FixGenerationAsyncRunner(
-      FixProposalRepository fixProposalRepository,
-      ChatProviderFactory chatProviderFactory,
-      FixProposalService fixProposalService,
-      ViolationRepository violationRepository,
-      FixCacheService fixCacheService,
-      AuditEventService auditEventService) {
+    FixProposalRepository fixProposalRepository,
+    ChatProviderFactory chatProviderFactory,
+    FixProposalService fixProposalService,
+    ViolationRepository violationRepository,
+    FixCacheService fixCacheService,
+    AuditEventService auditEventService,
+    ReviewRepository reviewRepository) {
     this.fixProposalRepository = fixProposalRepository;
     this.chatProviderFactory = chatProviderFactory;
     this.fixProposalService = fixProposalService;
     this.violationRepository = violationRepository;
     this.fixCacheService = fixCacheService;
     this.auditEventService = auditEventService;
+    this.reviewRepository = reviewRepository;
   }
 
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -58,10 +62,10 @@ public class FixGenerationAsyncRunner {
   public void handle(FixGenerationRequestedEvent event) {
     Long fixProposalId = event.fixProposalId();
     FixProposal proposal =
-        fixProposalRepository
-            .findById(fixProposalId)
-            .orElseThrow(
-                () -> new IllegalStateException("FixProposal not found: " + fixProposalId));
+      fixProposalRepository
+        .findById(fixProposalId)
+        .orElseThrow(
+          () -> new IllegalStateException("FixProposal not found: " + fixProposalId));
 
     String oldStatus = proposal.getStatus().name();
 
@@ -80,29 +84,35 @@ public class FixGenerationAsyncRunner {
     String pageLang = extractPageLanguage(violation.getPage().getRenderedHtml());
     if (pageLang == null) {
       pageLang =
-          violationRepository.findByPage_Scan_Id(scan.getId()).stream()
-              .map(Violation::getDetectedLang)
-              .filter(java.util.Objects::nonNull)
-              .findFirst()
-              .orElse(null);
+        violationRepository.findByPage_Scan_Id(scan.getId()).stream()
+          .map(Violation::getDetectedLang)
+          .filter(java.util.Objects::nonNull)
+          .findFirst()
+          .orElse(null);
     }
 
     FixGenerationRequestDTO request =
-        new FixGenerationRequestDTO(
-            violation.getHtmlSnippet(),
-            violation.getRuleId(),
-            violation.getTargetSelector(),
-            violation.getDescription(),
-            violation.getImpact(),
-            violation.getScreenshot(),
-            violation.getFgColor(),
-            violation.getBgColor(),
-            violation.getContrastRatio(),
-            violation.getExpectedContrastRatio(),
-            pageLang);
+      new FixGenerationRequestDTO(
+        violation.getHtmlSnippet(),
+        violation.getRuleId(),
+        violation.getTargetSelector(),
+        violation.getDescription(),
+        violation.getImpact(),
+        violation.getScreenshot(),
+        violation.getFgColor(),
+        violation.getBgColor(),
+        violation.getContrastRatio(),
+        violation.getExpectedContrastRatio(),
+        pageLang);
+
+    boolean rejectedBefore =
+      reviewRepository.existsRejectedForProjectAndContent(
+        scan.getProject().getId(), violation.getRuleId(), violation.getHtmlSnippet());
 
     Optional<String> cached =
-        fixCacheService.findCachedFix(violation.getRuleId(), violation.getHtmlSnippet());
+      rejectedBefore
+        ? Optional.empty()
+        : fixCacheService.findCachedFix(violation.getRuleId(), violation.getHtmlSnippet());
 
     String generatedHtml;
     String llmModel;
@@ -138,13 +148,13 @@ public class FixGenerationAsyncRunner {
     ViolationDto targetViolation = toDto(violation);
 
     FixProposalStatus status =
-        fixProposalService.verifyFix(
-            pageHtml,
-            violation.getHtmlSnippet(),
-            generatedHtml,
-            pageViolations,
-            rules,
-            targetViolation);
+      fixProposalService.verifyFix(
+        pageHtml,
+        violation.getHtmlSnippet(),
+        generatedHtml,
+        pageViolations,
+        rules,
+        targetViolation);
 
     proposal.setGeneratedHtml(generatedHtml);
     proposal.setLlmModel(llmModel);
@@ -160,12 +170,12 @@ public class FixGenerationAsyncRunner {
 
     Long ownerId = scan.getProject().getUser().getId();
     auditEventService.recordEvent(
-        ownerId,
-        "FixProposal",
-        proposal.getId(),
-        AuditEventType.STATUS_CHANGED,
-        oldStatus,
-        status.name());
+      ownerId,
+      "FixProposal",
+      proposal.getId(),
+      AuditEventType.STATUS_CHANGED,
+      oldStatus,
+      status.name());
   }
 
   private String extractPageLanguage(String renderedHtml) {
@@ -173,32 +183,32 @@ public class FixGenerationAsyncRunner {
       return null;
     }
     Matcher matcher =
-        Pattern.compile("<html[^>]*lang=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE)
-            .matcher(renderedHtml);
+      Pattern.compile("<html[^>]*lang=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE)
+        .matcher(renderedHtml);
     return matcher.find() ? matcher.group(1) : null;
   }
 
   private ViolationDto toDto(Violation v) {
-      return new ViolationDto(
-          String.valueOf(v.getId()),
-          v.getSource().name(),
-          v.getRuleId(),
-          v.getImpact().name(),
-          List.of(),
-          "",
-          v.getDescription(),
-          "",
-          v.getTargetSelector() == null ? List.of() : List.of(v.getTargetSelector()),
-          v.getHtmlSnippet(),
-          v.getScreenshot(),
-          null,
-          v.getDetectedLang(),
-          v.getFgColor(),
-          v.getBgColor(),
-          v.getContrastRatio(),
-          v.getExpectedContrastRatio(),
-          null);
-    }
+    return new ViolationDto(
+      String.valueOf(v.getId()),
+      v.getSource().name(),
+      v.getRuleId(),
+      v.getImpact().name(),
+      List.of(),
+      "",
+      v.getDescription(),
+      "",
+      v.getTargetSelector() == null ? List.of() : List.of(v.getTargetSelector()),
+      v.getHtmlSnippet(),
+      v.getScreenshot(),
+      null,
+      v.getDetectedLang(),
+      v.getFgColor(),
+      v.getBgColor(),
+      v.getContrastRatio(),
+      v.getExpectedContrastRatio(),
+      null);
+  }
 
   private String buildLangFix(String htmlSnippet, String detectedLang) {
     if (detectedLang == null || detectedLang.isBlank()) {
