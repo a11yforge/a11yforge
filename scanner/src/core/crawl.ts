@@ -6,7 +6,6 @@ import { francAll } from "franc";
 import { iso6393 } from "iso-639-3";
 
 const TIMEOUT = 50_000;
-
 const TO_ISO1 = new Map(
   iso6393.filter((e) => e.iso6391).map((e) => [e.iso6393, e.iso6391]),
 );
@@ -33,6 +32,7 @@ export async function crawl(
     const queue: string[] = [normalize(baseUrl)];
     const visited = new Set<string>([normalize(baseUrl)]);
     const context = await browser.newContext();
+    const origin = new URL(baseUrl).origin;
 
     while (queue.length > 0 && results.length < maxPages) {
       const url = queue.shift()!;
@@ -57,8 +57,8 @@ export async function crawl(
             try {
               const buffer = await page.locator(selector).first().screenshot();
               v.screenshot = buffer.toString("base64");
-            } catch (e) {
-              console.error(`Screenshot ${selector}:`, (e as Error).message);
+            } catch {
+              // Screenshot optional
             }
           }
         }
@@ -95,8 +95,6 @@ export async function crawl(
       const links = await page.$$eval("a[href]", (anchors) =>
         anchors.map((a) => (a as HTMLAnchorElement).href),
       );
-      const origin = new URL(baseUrl).origin;
-
       for (const link of links) {
         const clean = normalize(link);
         if (new URL(clean).origin === origin && !visited.has(clean)) {
