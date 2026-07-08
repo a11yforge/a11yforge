@@ -10,6 +10,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
   List<Review> findByReviewDecisionAndFixProposal_Violation_Page_Scan_Id(
     ReviewDecision decision, Long scanId);
 
+  List<Review> findByFixProposal_Violation_Page_Scan_Id(Long scanId);
+
   @Query("""
         select count(r) > 0 from Review r
         where r.reviewDecision = at.a11yforge.api.review.ReviewDecision.REJECTED
