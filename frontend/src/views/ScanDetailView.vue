@@ -23,6 +23,14 @@ function stopPolling() {
 
 async function loadScan() {
   scan.value = await getScan(scanId)
+
+  for (const fix of scan.value.fixes) {
+    fixes.value[fix.violationId] = fix
+    if (fix.decision) {
+      reviewed.value[fix.violationId] = fix.decision
+    }
+  }
+
   if (scan.value.status !== 'RUNNING') {
     stopPolling()
   }

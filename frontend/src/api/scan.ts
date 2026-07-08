@@ -1,4 +1,5 @@
 import client from './client'
+import type { FixProposalDTO } from './fixproposal'
 
 export interface ViolationDTO {
   id: number
@@ -18,6 +19,7 @@ export interface ScanDetailDTO {
   startedAt: string
   completedAt: string | null
   violations: ViolationDTO[]
+  fixes: FixProposalDTO[]
   projectScanNumber: number
 }
 

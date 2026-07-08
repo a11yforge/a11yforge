@@ -10,4 +10,5 @@ public record ScanDetailDTO(Long id,
                             Instant startedAt,
                             Instant completedAt,
                             List<ViolationResponseDTO> violations,
+                            List<ViolationFixDTO> fixes,
                             Long projectScanNumber) {}
