@@ -61,5 +61,4 @@ const groups = computed(() => {
       </details>
     </div>
   </div>
-  </div>
 </template>
