@@ -7,6 +7,7 @@ import type { FixProposalDTO } from '@/api/fixproposal'
 const props = defineProps<{
   violations: ViolationDTO[]
   fixes: Record<number, FixProposalDTO>
+  reviewed: Record<number, 'ACCEPTED' | 'REJECTED'>
 }>()
 
 const emit = defineEmits<{
@@ -35,6 +36,16 @@ const groups = computed(() => {
       <button class="border border-[var(--border)] rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer bg-transparent text-[var(--text)] hover:border-[var(--coral)] hover:text-[var(--coral)] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]" type="button" @click="emit('fix-all')">⚡ Alle mit KI fixen</button>
     </div>
 
+    <div class="flex flex-col gap-[0.9rem]">
+      <ViolationCard
+        v-for="v in violations"
+        :key="v.id"
+        :violation="v"
+        :fix="fixes[v.id]"
+        :decision="reviewed[v.id]"
+        @request-fix="emit('request-fix', $event)"
+        @review="(violationId, fixProposalId, decision) => emit('review', violationId, fixProposalId, decision)"
+      />
     <div class="flex flex-col gap-3">
       <details
         v-for="g in groups"
