@@ -7,6 +7,7 @@ import type { FixProposalDTO } from '@/api/fixproposal'
 const props = defineProps<{
   violation: ViolationDTO
   fix: FixProposalDTO | undefined
+  decision: 'ACCEPTED' | 'REJECTED' | undefined
 }>()
 
 const emit = defineEmits<{
@@ -44,6 +45,6 @@ function onReview(decision: 'ACCEPTED' | 'REJECTED') {
 
     <pre class="mt-[0.8rem] mb-0 bg-[var(--field)] border border-[var(--border)] rounded-lg py-[0.7rem] px-[0.8rem] font-mono text-[0.82rem] text-[var(--muted)] overflow-x-auto whitespace-pre">{{ violation.htmlSnippet }}</pre>
 
-    <FixProposalPanel v-if="fix" :fix="fix" @review="onReview" />
+    <FixProposalPanel v-if="fix" :fix="fix" :decision="decision" @review="onReview" />
   </article>
 </template>

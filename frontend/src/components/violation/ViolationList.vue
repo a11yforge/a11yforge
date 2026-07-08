@@ -6,6 +6,7 @@ import type { FixProposalDTO } from '@/api/fixproposal'
 defineProps<{
   violations: ViolationDTO[]
   fixes: Record<number, FixProposalDTO>
+  reviewed: Record<number, 'ACCEPTED' | 'REJECTED'>
 }>()
 
 const emit = defineEmits<{
@@ -28,6 +29,7 @@ const emit = defineEmits<{
         :key="v.id"
         :violation="v"
         :fix="fixes[v.id]"
+        :decision="reviewed[v.id]"
         @request-fix="emit('request-fix', $event)"
         @review="(violationId, fixProposalId, decision) => emit('review', violationId, fixProposalId, decision)"
       />

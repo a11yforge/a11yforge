@@ -92,6 +92,7 @@ async function handleReview(
       v-else
       :violations="scan.violations"
       :fixes="fixes"
+      :reviewed="reviewed"
       @fix-all="handleFixAll"
       @request-fix="handleRequestFix"
       @review="handleReview"
