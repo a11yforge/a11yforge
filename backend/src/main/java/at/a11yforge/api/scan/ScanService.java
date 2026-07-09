@@ -148,7 +148,8 @@ public class ScanService {
         scan.getStatus().name(),
         scan.getStartedAt(),
         scan.getCompletedAt(),
-        violationRepository.countByPage_Scan_Id(scan.getId()),
+        violationRepository.countByPage_Scan_IdAndSourceNot(
+            scan.getId(), ViolationSource.AXE_INCOMPLETE),
         displayNumber);
   }
 
@@ -272,7 +273,8 @@ public class ScanService {
                     s.getStatus().name(),
                     s.getStartedAt(),
                     s.getCompletedAt(),
-                    violationRepository.countByPage_Scan_Id(s.getId()),
+                    violationRepository.countByPage_Scan_IdAndSourceNot(
+                        s.getId(), ViolationSource.AXE_INCOMPLETE),
                     scanRepository.countByProjectIdAndIdLessThanEqual(
                         s.getProject().getId(), s.getId())))
         .toList();

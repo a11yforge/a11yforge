@@ -43,22 +43,22 @@ async function handleLogout() {
 
 <template>
   <nav
-    class="flex items-center justify-between py-[0.9rem] px-8 border-b border-[#322840]"
+    class="flex items-center justify-between py-[0.9rem] px-8 border-b border-[var(--border)]"
     aria-label="Hauptnavigation"
   >
     <router-link
       to="/projects"
-      class="flex items-center gap-[0.6rem] no-underline text-[#f3e9e2]"
+      class="flex items-center gap-[0.6rem] no-underline text-[var(--text)]"
       aria-label="Zur Startseite"
     >
       <img
-        class="w-[34px] h-[34px] rounded-[9px] object-cover object-[center_18%] border border-[#322840] [image-rendering:pixelated]"
+        class="w-[34px] h-[34px] rounded-[9px] object-cover object-[center_18%] border border-[var(--border)] [image-rendering:pixelated]"
         src="/mole.png"
         alt=""
         aria-hidden="true"
       />
       <span class="font-extrabold text-[1.15rem] tracking-[0.2px]"
-        >a11y<span class="text-[#ff7a52]">forge</span></span
+        >a11y<span class="text-[var(--coral)]">forge</span></span
       >
     </router-link>
 
@@ -66,13 +66,13 @@ async function handleLogout() {
       <template v-if="isAuthenticated">
         <router-link
           to="/projects"
-          class="text-[#a99cb0] no-underline text-[0.95rem] transition-colors duration-[150ms] ease hover:text-[#f3e9e2]"
-          active-class="!text-[#ff7a52]"
+          class="text-[var(--muted)] no-underline text-[0.95rem] transition-colors duration-[150ms] ease hover:text-[var(--text)]"
+          active-class="!text-[var(--coral)]"
           >Projekte</router-link
         >
         <button
           type="button"
-          class="inline-flex items-center gap-[0.5rem] bg-transparent border border-[#322840] text-[#f3e9e2] rounded-[9px] py-[0.45rem] px-[0.85rem] text-[0.9rem] font-semibold cursor-pointer transition-[border-color,color] duration-[150ms] ease hover:border-[#ff7a52] hover:text-[#ff7a52] focus-visible:[outline:2px_solid_#5bbeb2] focus-visible:[outline-offset:2px]"
+          class="inline-flex items-center gap-[0.5rem] bg-transparent border border-[var(--border)] text-[var(--text)] rounded-[9px] py-[0.45rem] px-[0.85rem] text-[0.9rem] font-semibold cursor-pointer transition-[border-color,color] duration-[150ms] ease hover:border-[var(--coral)] hover:text-[var(--coral)] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]"
           aria-haspopup="true"
           aria-controls="user-menu"
           @click="toggleMenu"
@@ -87,14 +87,14 @@ async function handleLogout() {
       <template v-else>
         <router-link
           to="/login"
-          class="text-[#a99cb0] no-underline text-[0.95rem] transition-colors duration-[150ms] ease hover:text-[#f3e9e2]"
-          active-class="!text-[#ff7a52]"
+          class="text-[var(--muted)] no-underline text-[0.95rem] transition-colors duration-[150ms] ease hover:text-[var(--text)]"
+          active-class="!text-[var(--coral)]"
           >Login</router-link
         >
         <router-link
           to="/register"
-          class="text-[#a99cb0] no-underline text-[0.95rem] transition-colors duration-[150ms] ease hover:text-[#f3e9e2]"
-          active-class="!text-[#ff7a52]"
+          class="text-[var(--muted)] no-underline text-[0.95rem] transition-colors duration-[150ms] ease hover:text-[var(--text)]"
+          active-class="!text-[var(--coral)]"
           >Registrieren</router-link
         >
       </template>

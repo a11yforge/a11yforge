@@ -18,7 +18,7 @@ const tabs: { key: Tab; label: string }[] = [
 <template>
   <div class="flex justify-center px-4 py-10">
     <div
-      class="w-full max-w-[460px] bg-[#1e1a29] border border-[#322840] rounded-[16px] px-[1.9rem] pt-8 pb-[1.8rem] shadow-[0_24px_60px_rgba(0,0,0,0.45)]"
+      class="w-full max-w-[460px] bg-[var(--surface)] border border-[var(--border)] rounded-[16px] px-[1.9rem] pt-8 pb-[1.8rem] shadow-[0_24px_60px_rgba(0,0,0,0.45)]"
     >
       <h1 class="text-xl font-bold mb-6 text-[var(--text)]">Account</h1>
 
@@ -108,7 +108,7 @@ const tabs: { key: Tab; label: string }[] = [
 :deep(.p-button) {
   background: var(--coral);
   border: 1px solid var(--coral);
-  color: #2a1410;
+  color: var(--on-coral);
   font-weight: 600;
   border-radius: 10px;
   padding: 0.7rem 1.1rem;
