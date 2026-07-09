@@ -1,4 +1,3 @@
-// npm install axe-core --save gibt fehler mit @axe-core/playwright
 
 import type { AxeResults, Result, NodeResult } from "axe-core";
 import type { ViolationDto, ViolationSource, Impact } from "../core/types";
