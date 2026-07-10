@@ -13,6 +13,7 @@ import at.a11yforge.api.scan.Scan;
 import at.a11yforge.api.scanner.ViolationDto;
 import at.a11yforge.api.violation.Violation;
 import at.a11yforge.api.violation.ViolationRepository;
+import at.a11yforge.api.violation.ViolationSource;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -85,6 +86,7 @@ public class FixGenerationAsyncRunner {
     if (pageLang == null) {
       pageLang =
         violationRepository.findByPage_Scan_Id(scan.getId()).stream()
+          .filter(v -> v.getSource() != ViolationSource.AXE_INCOMPLETE)
           .map(Violation::getDetectedLang)
           .filter(java.util.Objects::nonNull)
           .findFirst()
@@ -142,7 +144,10 @@ public class FixGenerationAsyncRunner {
     }
 
     String pageHtml = violation.getPage().getRenderedHtml();
-    List<Violation> pageEntities = violationRepository.findByPage_Scan_Id(scan.getId());
+    List<Violation> pageEntities =
+        violationRepository.findByPage_Scan_Id(scan.getId()).stream()
+            .filter(v -> v.getSource() != ViolationSource.AXE_INCOMPLETE)
+            .toList();
     List<ViolationDto> pageViolations = pageEntities.stream().map(this::toDto).toList();
     List<String> rules = pageEntities.stream().map(Violation::getRuleId).distinct().toList();
     ViolationDto targetViolation = toDto(violation);

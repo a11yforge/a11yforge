@@ -199,6 +199,8 @@ public class ScanService {
 
     List<ViolationResponseDTO> violations =
       violationRepository.findByPage_Scan_Id(scanId).stream()
+        // axe "incomplete" (cantTell) sind keine Verstöße -> nicht listen
+        .filter(v -> v.getSource() != ViolationSource.AXE_INCOMPLETE)
         .map(
           v ->
             new ViolationResponseDTO(
