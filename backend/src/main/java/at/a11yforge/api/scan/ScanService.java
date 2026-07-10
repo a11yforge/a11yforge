@@ -2,6 +2,7 @@ package at.a11yforge.api.scan;
 
 import at.a11yforge.api.auditevent.AuditEventService;
 import at.a11yforge.api.auditevent.AuditEventType;
+import at.a11yforge.api.fixproposal.FixProposal;
 import at.a11yforge.api.fixproposal.FixProposalRepository;
 import at.a11yforge.api.fixproposal.FixProposalStatus;
 import at.a11yforge.api.llm.ChatProviderFactory;
@@ -11,6 +12,7 @@ import at.a11yforge.api.page.PageRepository;
 import at.a11yforge.api.project.Project;
 import at.a11yforge.api.project.ProjectNotFoundException;
 import at.a11yforge.api.project.ProjectRepository;
+import at.a11yforge.api.review.ReviewDecision;
 import at.a11yforge.api.review.ReviewRepository;
 import at.a11yforge.api.scanner.PageScanResultDto;
 import at.a11yforge.api.scanner.ScannerExecutionException;
@@ -23,20 +25,16 @@ import at.a11yforge.api.violation.ViolationResponseDTO;
 import at.a11yforge.api.violation.ViolationSource;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import at.a11yforge.api.fixproposal.FixProposal;
-import at.a11yforge.api.review.Review;
-import at.a11yforge.api.review.ReviewDecision;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class ScanService {
@@ -263,7 +261,7 @@ public class ScanService {
   }
 
   public List<ScanResponseDTO> getScansForProject(Long userId, Long projectId) {
-    return scanRepository.findAllByProjectIdAndProjectUserId(projectId, userId).stream()
+    return scanRepository.findAllByProjectIdAndProjectUserIdOrderByIdDesc(projectId, userId).stream()
         .map(
             s ->
                 new ScanResponseDTO(
