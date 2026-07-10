@@ -8,7 +8,7 @@ public interface ScanRepository extends JpaRepository<Scan, Long> {
 
   Optional<Scan> findByIdAndProjectUserId(Long id, Long userId);
 
-  List<Scan> findAllByProjectIdAndProjectUserId(Long projectId, Long userId);
+  List<Scan> findAllByProjectIdAndProjectUserIdOrderByIdDesc(Long projectId, Long userId);
 
   Optional<Scan> findFirstByProjectIdAndStatusOrderByCompletedAtDesc(
       Long projectId, ScanStatus status);
