@@ -2,6 +2,7 @@ package at.a11yforge.api.scan;
 
 import at.a11yforge.api.auditevent.AuditEventService;
 import at.a11yforge.api.auditevent.AuditEventType;
+import at.a11yforge.api.fixproposal.FixProposal;
 import at.a11yforge.api.fixproposal.FixProposalRepository;
 import at.a11yforge.api.fixproposal.FixProposalStatus;
 import at.a11yforge.api.llm.ChatProviderFactory;
@@ -11,6 +12,7 @@ import at.a11yforge.api.page.PageRepository;
 import at.a11yforge.api.project.Project;
 import at.a11yforge.api.project.ProjectNotFoundException;
 import at.a11yforge.api.project.ProjectRepository;
+import at.a11yforge.api.review.ReviewDecision;
 import at.a11yforge.api.review.ReviewRepository;
 import at.a11yforge.api.scanner.PageScanResultDto;
 import at.a11yforge.api.scanner.ScannerExecutionException;
@@ -23,20 +25,16 @@ import at.a11yforge.api.violation.ViolationResponseDTO;
 import at.a11yforge.api.violation.ViolationSource;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import at.a11yforge.api.fixproposal.FixProposal;
-import at.a11yforge.api.review.Review;
-import at.a11yforge.api.review.ReviewDecision;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class ScanService {
@@ -190,12 +188,12 @@ public class ScanService {
   public ScanDetailDTO getScan(Long userId, Long scanId) {
 
     Scan scan =
-      scanRepository
-        .findByIdAndProjectUserId(scanId, userId)
-        .orElseThrow(() -> new ScanNotFoundException(scanId));
+        scanRepository
+            .findByIdAndProjectUserId(scanId, userId)
+            .orElseThrow(() -> new ScanNotFoundException(scanId));
 
     long displayNumber =
-      scanRepository.countByProjectIdAndIdLessThanEqual(scan.getProject().getId(), scan.getId());
+        scanRepository.countByProjectIdAndIdLessThanEqual(scan.getProject().getId(), scan.getId());
 
     List<ViolationResponseDTO> violations =
       violationRepository.findByPage_Scan_Id(scanId).stream()
@@ -216,49 +214,47 @@ public class ScanService {
 
     // Neueste Review-Decision je FixProposal (max id gewinnt)
     Map<Long, ReviewDecision> decisionByProposalId =
-      reviewRepository.findByFixProposal_Violation_Page_Scan_Id(scanId).stream()
-        .collect(
-          Collectors.toMap(
-            r -> r.getFixProposal().getId(),
-            Function.identity(),
-            (a, b) -> a.getId() >= b.getId() ? a : b))
-        .entrySet().stream()
-        .collect(
-          Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getReviewDecision()));
+        reviewRepository.findByFixProposal_Violation_Page_Scan_Id(scanId).stream()
+            .collect(
+                Collectors.toMap(
+                    r -> r.getFixProposal().getId(),
+                    Function.identity(),
+                    (a, b) -> a.getId() >= b.getId() ? a : b))
+            .entrySet()
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getReviewDecision()));
 
     // Neuester FixProposal je Violation (max id gewinnt)
     Map<Long, FixProposal> latestProposalByViolationId =
-      fixProposalRepository.findAllByViolationPageScanId(scanId).stream()
-        .collect(
-          Collectors.toMap(
-            fp -> fp.getViolation().getId(),
-            Function.identity(),
-            BinaryOperatorLatest()));
+        fixProposalRepository.findAllByViolationPageScanId(scanId).stream()
+            .collect(
+                Collectors.toMap(
+                    fp -> fp.getViolation().getId(), Function.identity(), BinaryOperatorLatest()));
 
     List<ViolationFixDTO> fixes =
-      latestProposalByViolationId.values().stream()
-        .map(
-          fp ->
-            new ViolationFixDTO(
-              fp.getId(),
-              fp.getViolation().getId(),
-              fp.getStatus().name(),
-              fp.getGeneratedHtml(),
-              fp.getLlmProvider(),
-              fp.getLlmModel(),
-              fp.getPromptVersion(),
-              decisionByProposalId.get(fp.getId())))
-        .toList();
+        latestProposalByViolationId.values().stream()
+            .map(
+                fp ->
+                    new ViolationFixDTO(
+                        fp.getId(),
+                        fp.getViolation().getId(),
+                        fp.getStatus().name(),
+                        fp.getGeneratedHtml(),
+                        fp.getLlmProvider(),
+                        fp.getLlmModel(),
+                        fp.getPromptVersion(),
+                        decisionByProposalId.get(fp.getId())))
+            .toList();
 
     return new ScanDetailDTO(
-      scan.getId(),
-      scan.getProject().getId(),
-      scan.getStatus().name(),
-      scan.getStartedAt(),
-      scan.getCompletedAt(),
-      violations,
-      fixes,
-      displayNumber);
+        scan.getId(),
+        scan.getProject().getId(),
+        scan.getStatus().name(),
+        scan.getStartedAt(),
+        scan.getCompletedAt(),
+        violations,
+        fixes,
+        displayNumber);
   }
 
   private static java.util.function.BinaryOperator<FixProposal> BinaryOperatorLatest() {
@@ -266,7 +262,9 @@ public class ScanService {
   }
 
   public List<ScanResponseDTO> getScansForProject(Long userId, Long projectId) {
-    return scanRepository.findAllByProjectIdAndProjectUserId(projectId, userId).stream()
+    return scanRepository
+        .findAllByProjectIdAndProjectUserIdOrderByIdDesc(projectId, userId)
+        .stream()
         .map(
             s ->
                 new ScanResponseDTO(
@@ -283,14 +281,21 @@ public class ScanService {
   }
 
   @Transactional(readOnly = true)
-  public List<ExportDTO> exportFixes(Long userId, Long scanId) {
+  public List<ExportDTO> exportReviewedFixes(Long userId, Long scanId) {
     scanRepository
         .findByIdAndProjectUserId(scanId, userId)
         .orElseThrow(() -> new ScanNotFoundException(scanId)); // Owner-Gate
-    return fixProposalRepository.findAllByViolationPageScanId(scanId).stream()
-        .filter(fp -> fp.getGeneratedHtml() != null)
+    return reviewRepository.findByFixProposal_Violation_Page_Scan_Id(scanId).stream()
+        .collect(
+            Collectors.toMap(
+                r -> r.getFixProposal().getId(),
+                Function.identity(),
+                (a, b) -> a.getId() >= b.getId() ? a : b))
+        .values()
+        .stream()
         .map(
-            fp -> {
+            r -> {
+              var fp = r.getFixProposal();
               var v = fp.getViolation();
               return new ExportDTO(
                   v.getId(),
@@ -300,7 +305,8 @@ public class ScanService {
                   fp.getGeneratedHtml(),
                   v.getImpact(),
                   v.getDescription(),
-                  fp.getStatus() == FixProposalStatus.VERIFIED);
+                  fp.getStatus() == FixProposalStatus.VERIFIED,
+                  r.getReviewDecision());
             })
         .toList();
   }
