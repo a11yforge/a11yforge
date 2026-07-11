@@ -9,6 +9,7 @@ import at.a11yforge.api.user.User;
 import at.a11yforge.api.user.UserNotFoundException;
 import at.a11yforge.api.user.UserRepository;
 import at.a11yforge.api.violation.ViolationRepository;
+import at.a11yforge.api.violation.ViolationSource;
 import java.time.Instant;
 import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -103,7 +104,9 @@ public class ProjectService {
         .findFirstByProjectIdAndStatusOrderByCompletedAtDesc(project.getId(), ScanStatus.COMPLETED)
         .orElse(null);
       Instant lastScanAt = lastScan == null ? null : lastScan.getCompletedAt();
-      Long findings = lastScan == null ?  null : violationRepository.countByPage_Scan_Id(lastScan.getId());
+      Long findings = lastScan == null ? null
+          : violationRepository.countByPage_Scan_IdAndSourceNot(
+              lastScan.getId(), ViolationSource.AXE_INCOMPLETE);
 
 
         return new ProjectResponseDTO(

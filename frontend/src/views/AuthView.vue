@@ -1,10 +1,10 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="w-full max-w-[420px] bg-[#1e1a29] border border-[#322840] rounded-[16px] px-[1.9rem] pt-8 pb-[1.8rem] shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
-    <router-link to="/" class="flex items-center justify-center gap-[0.6rem] mb-[1.6rem] no-underline text-[#f3e9e2]" aria-label="Zur Startseite">
-      <img class="w-10 h-10 rounded-[11px] object-cover object-[center_18%] border border-[#322840] [image-rendering:pixelated]" src="/mole.png" alt="" aria-hidden="true" />
-      <span class="font-extrabold text-xl tracking-[0.2px]">a11y<span class="text-[#ff7a52]">forge</span></span>
+  <div class="w-full max-w-[420px] bg-[var(--surface)] border border-[var(--border)] rounded-[16px] px-[1.9rem] pt-8 pb-[1.8rem] shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+    <router-link to="/" class="flex items-center justify-center gap-[0.6rem] mb-[1.6rem] no-underline text-[var(--text)]" aria-label="Zur Startseite">
+      <img class="w-10 h-10 rounded-[11px] object-cover object-[center_18%] border border-[var(--border)] [image-rendering:pixelated]" src="/mole.png" alt="" aria-hidden="true" />
+      <span class="font-extrabold text-xl tracking-[0.2px]">a11y<span class="text-[var(--coral)]">forge</span></span>
     </router-link>
 
     <router-view />
@@ -47,7 +47,7 @@
 :deep(.p-button) {
   background: var(--coral);
   border: 1px solid var(--coral);
-  color: #2a1410;
+  color: var(--on-coral);
   font-weight: 600;
   border-radius: 10px;
   padding: 0.7rem 1.1rem;

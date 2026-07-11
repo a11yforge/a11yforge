@@ -146,7 +146,8 @@ public class ScanService {
         scan.getStatus().name(),
         scan.getStartedAt(),
         scan.getCompletedAt(),
-        violationRepository.countByPage_Scan_Id(scan.getId()),
+        violationRepository.countByPage_Scan_IdAndSourceNot(
+            scan.getId(), ViolationSource.AXE_INCOMPLETE),
         displayNumber);
   }
 
@@ -195,19 +196,21 @@ public class ScanService {
         scanRepository.countByProjectIdAndIdLessThanEqual(scan.getProject().getId(), scan.getId());
 
     List<ViolationResponseDTO> violations =
-        violationRepository.findByPage_Scan_Id(scanId).stream()
-            .map(
-                v ->
-                    new ViolationResponseDTO(
-                        v.getId(),
-                        v.getPage().getId(),
-                        v.getRuleId(),
-                        v.getSource(),
-                        v.getImpact(),
-                        v.getHtmlSnippet(),
-                        v.getTargetSelector(),
-                        v.getDescription()))
-            .toList();
+      violationRepository.findByPage_Scan_Id(scanId).stream()
+        // axe "incomplete" (cantTell) sind keine Verstöße -> nicht listen
+        .filter(v -> v.getSource() != ViolationSource.AXE_INCOMPLETE)
+        .map(
+          v ->
+            new ViolationResponseDTO(
+              v.getId(),
+              v.getPage().getId(),
+              v.getRuleId(),
+              v.getSource(),
+              v.getImpact(),
+              v.getHtmlSnippet(),
+              v.getTargetSelector(),
+              v.getDescription()))
+        .toList();
 
     // Neueste Review-Decision je FixProposal (max id gewinnt)
     Map<Long, ReviewDecision> decisionByProposalId =
@@ -270,7 +273,8 @@ public class ScanService {
                     s.getStatus().name(),
                     s.getStartedAt(),
                     s.getCompletedAt(),
-                    violationRepository.countByPage_Scan_Id(s.getId()),
+                    violationRepository.countByPage_Scan_IdAndSourceNot(
+                        s.getId(), ViolationSource.AXE_INCOMPLETE),
                     scanRepository.countByProjectIdAndIdLessThanEqual(
                         s.getProject().getId(), s.getId())))
         .toList();

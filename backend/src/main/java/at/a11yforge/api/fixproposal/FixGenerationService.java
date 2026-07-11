@@ -4,6 +4,7 @@ import at.a11yforge.api.scan.Scan;
 import at.a11yforge.api.violation.Violation;
 import at.a11yforge.api.violation.ViolationNotFoundException;
 import at.a11yforge.api.violation.ViolationRepository;
+import at.a11yforge.api.violation.ViolationSource;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,11 @@ public class FixGenerationService {
         Long ownerId = scan.getProject().getUser().getId();
         if (!ownerId.equals(userId)) {
             throw new ViolationNotFoundException(violationId);
+        }
+
+        // axe "incomplete" (cantTell) sind keine echten Verstöße -> kein LLM-Fix.
+        if (violation.getSource() == ViolationSource.AXE_INCOMPLETE) {
+            throw new ViolationNotFixableException(violationId);
         }
 
         String providerName = scan.getLlmProvider().name();
