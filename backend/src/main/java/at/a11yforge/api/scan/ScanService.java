@@ -187,73 +187,71 @@ public class ScanService {
   public ScanDetailDTO getScan(Long userId, Long scanId) {
 
     Scan scan =
-      scanRepository
-        .findByIdAndProjectUserId(scanId, userId)
-        .orElseThrow(() -> new ScanNotFoundException(scanId));
+        scanRepository
+            .findByIdAndProjectUserId(scanId, userId)
+            .orElseThrow(() -> new ScanNotFoundException(scanId));
 
     long displayNumber =
-      scanRepository.countByProjectIdAndIdLessThanEqual(scan.getProject().getId(), scan.getId());
+        scanRepository.countByProjectIdAndIdLessThanEqual(scan.getProject().getId(), scan.getId());
 
     List<ViolationResponseDTO> violations =
-      violationRepository.findByPage_Scan_Id(scanId).stream()
-        .map(
-          v ->
-            new ViolationResponseDTO(
-              v.getId(),
-              v.getPage().getId(),
-              v.getRuleId(),
-              v.getSource(),
-              v.getImpact(),
-              v.getHtmlSnippet(),
-              v.getTargetSelector(),
-              v.getDescription()))
-        .toList();
+        violationRepository.findByPage_Scan_Id(scanId).stream()
+            .map(
+                v ->
+                    new ViolationResponseDTO(
+                        v.getId(),
+                        v.getPage().getId(),
+                        v.getRuleId(),
+                        v.getSource(),
+                        v.getImpact(),
+                        v.getHtmlSnippet(),
+                        v.getTargetSelector(),
+                        v.getDescription()))
+            .toList();
 
     // Neueste Review-Decision je FixProposal (max id gewinnt)
     Map<Long, ReviewDecision> decisionByProposalId =
-      reviewRepository.findByFixProposal_Violation_Page_Scan_Id(scanId).stream()
-        .collect(
-          Collectors.toMap(
-            r -> r.getFixProposal().getId(),
-            Function.identity(),
-            (a, b) -> a.getId() >= b.getId() ? a : b))
-        .entrySet().stream()
-        .collect(
-          Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getReviewDecision()));
+        reviewRepository.findByFixProposal_Violation_Page_Scan_Id(scanId).stream()
+            .collect(
+                Collectors.toMap(
+                    r -> r.getFixProposal().getId(),
+                    Function.identity(),
+                    (a, b) -> a.getId() >= b.getId() ? a : b))
+            .entrySet()
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getReviewDecision()));
 
     // Neuester FixProposal je Violation (max id gewinnt)
     Map<Long, FixProposal> latestProposalByViolationId =
-      fixProposalRepository.findAllByViolationPageScanId(scanId).stream()
-        .collect(
-          Collectors.toMap(
-            fp -> fp.getViolation().getId(),
-            Function.identity(),
-            BinaryOperatorLatest()));
+        fixProposalRepository.findAllByViolationPageScanId(scanId).stream()
+            .collect(
+                Collectors.toMap(
+                    fp -> fp.getViolation().getId(), Function.identity(), BinaryOperatorLatest()));
 
     List<ViolationFixDTO> fixes =
-      latestProposalByViolationId.values().stream()
-        .map(
-          fp ->
-            new ViolationFixDTO(
-              fp.getId(),
-              fp.getViolation().getId(),
-              fp.getStatus().name(),
-              fp.getGeneratedHtml(),
-              fp.getLlmProvider(),
-              fp.getLlmModel(),
-              fp.getPromptVersion(),
-              decisionByProposalId.get(fp.getId())))
-        .toList();
+        latestProposalByViolationId.values().stream()
+            .map(
+                fp ->
+                    new ViolationFixDTO(
+                        fp.getId(),
+                        fp.getViolation().getId(),
+                        fp.getStatus().name(),
+                        fp.getGeneratedHtml(),
+                        fp.getLlmProvider(),
+                        fp.getLlmModel(),
+                        fp.getPromptVersion(),
+                        decisionByProposalId.get(fp.getId())))
+            .toList();
 
     return new ScanDetailDTO(
-      scan.getId(),
-      scan.getProject().getId(),
-      scan.getStatus().name(),
-      scan.getStartedAt(),
-      scan.getCompletedAt(),
-      violations,
-      fixes,
-      displayNumber);
+        scan.getId(),
+        scan.getProject().getId(),
+        scan.getStatus().name(),
+        scan.getStartedAt(),
+        scan.getCompletedAt(),
+        violations,
+        fixes,
+        displayNumber);
   }
 
   private static java.util.function.BinaryOperator<FixProposal> BinaryOperatorLatest() {
@@ -261,7 +259,9 @@ public class ScanService {
   }
 
   public List<ScanResponseDTO> getScansForProject(Long userId, Long projectId) {
-    return scanRepository.findAllByProjectIdAndProjectUserIdOrderByIdDesc(projectId, userId).stream()
+    return scanRepository
+        .findAllByProjectIdAndProjectUserIdOrderByIdDesc(projectId, userId)
+        .stream()
         .map(
             s ->
                 new ScanResponseDTO(
@@ -277,14 +277,21 @@ public class ScanService {
   }
 
   @Transactional(readOnly = true)
-  public List<ExportDTO> exportFixes(Long userId, Long scanId) {
+  public List<ExportDTO> exportReviewedFixes(Long userId, Long scanId) {
     scanRepository
         .findByIdAndProjectUserId(scanId, userId)
         .orElseThrow(() -> new ScanNotFoundException(scanId)); // Owner-Gate
-    return fixProposalRepository.findAllByViolationPageScanId(scanId).stream()
-        .filter(fp -> fp.getGeneratedHtml() != null)
+    return reviewRepository.findByFixProposal_Violation_Page_Scan_Id(scanId).stream()
+        .collect(
+            Collectors.toMap(
+                r -> r.getFixProposal().getId(),
+                Function.identity(),
+                (a, b) -> a.getId() >= b.getId() ? a : b))
+        .values()
+        .stream()
         .map(
-            fp -> {
+            r -> {
+              var fp = r.getFixProposal();
               var v = fp.getViolation();
               return new ExportDTO(
                   v.getId(),
@@ -294,7 +301,8 @@ public class ScanService {
                   fp.getGeneratedHtml(),
                   v.getImpact(),
                   v.getDescription(),
-                  fp.getStatus() == FixProposalStatus.VERIFIED);
+                  fp.getStatus() == FixProposalStatus.VERIFIED,
+                  r.getReviewDecision());
             })
         .toList();
   }

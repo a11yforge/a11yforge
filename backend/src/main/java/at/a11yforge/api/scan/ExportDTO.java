@@ -1,5 +1,6 @@
 package at.a11yforge.api.scan;
 
+import at.a11yforge.api.review.ReviewDecision;
 import at.a11yforge.api.violation.Impact;
 
 public record ExportDTO(
@@ -10,4 +11,5 @@ public record ExportDTO(
     String fixedHtml,
     Impact impact,
     String description,
-    boolean verified) {}
+    boolean verified,
+    ReviewDecision reviewDecision) {}
