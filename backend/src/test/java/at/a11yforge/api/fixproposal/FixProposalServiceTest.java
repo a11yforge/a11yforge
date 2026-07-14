@@ -38,25 +38,25 @@ public class FixProposalServiceTest {
             mock(Page.class), "image-alt", ViolationSource.AXE_VIOLATION, Impact.CRITICAL);
 
     ViolationDto target =
-      new ViolationDto(
-        "v1",
-        "axe_violation",
-        "image-alt",
-        "critical",
-        List.of(),
-        "",
-        "",
-        "",
-        List.of("img"),
-        "<img>",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null);
+        new ViolationDto(
+            "v1",
+            "axe_violation",
+            "image-alt",
+            "critical",
+            List.of(),
+            "",
+            "",
+            "",
+            List.of("img"),
+            "<img>",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
     //
 
     FixProposal result =
@@ -77,33 +77,32 @@ public class FixProposalServiceTest {
     VerifierProcessRunner runner = new VerifierProcessRunner("../scanner/dist/cli-verify.js", 120);
 
     String originalHtml = "<html><body><img src=\"logo.png\"></body></html>";
-    String oldSnippet = "<img src=\"logo.png\">";
     String newSnippet = "<img src=\"logo.png\" alt=\"Logo\">";
 
     ViolationDto target =
-      new ViolationDto(
-        "v1",
-        "axe_violation",
-        "image-alt",
-        "critical",
-        List.of(),
-        "",
-        "",
-        "",
-        List.of("img"),
-        "<img>",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null);
+        new ViolationDto(
+            "v1",
+            "axe_violation",
+            "image-alt",
+            "critical",
+            List.of(),
+            "",
+            "",
+            "",
+            List.of("img"),
+            "<img>",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
 
     VerifyRequestDTO request =
         new VerifyRequestDTO(
-            originalHtml, oldSnippet, newSnippet, List.of(target), List.of("image-alt"), target);
+            originalHtml, newSnippet, List.of(target), List.of("image-alt"), target);
 
     VerifyResultDTO result = runner.run(request);
     assertEquals("verified", result.status());
@@ -114,33 +113,32 @@ public class FixProposalServiceTest {
     VerifierProcessRunner runner = new VerifierProcessRunner("../scanner/dist/cli-verify.js", 120);
 
     String originalHtml = "<html><body><img src=\"logo.png\"></body></html>";
-    String oldSnippet = "<img src=\"logo.png\">";
     String newSnippet = "<img src=\"logo.png\" class=\"x\">";
 
     ViolationDto target =
-      new ViolationDto(
-        "v1",
-        "axe_violation",
-        "image-alt",
-        "critical",
-        List.of(),
-        "",
-        "",
-        "",
-        List.of("img"),
-        "<img>",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null);
+        new ViolationDto(
+            "v1",
+            "axe_violation",
+            "image-alt",
+            "critical",
+            List.of(),
+            "",
+            "",
+            "",
+            List.of("img"),
+            "<img>",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
 
     VerifyRequestDTO request =
         new VerifyRequestDTO(
-            originalHtml, oldSnippet, newSnippet, List.of(target), List.of("image-alt"), target);
+            originalHtml, newSnippet, List.of(target), List.of("image-alt"), target);
 
     VerifyResultDTO result = runner.run(request);
     assertEquals("discarded", result.status());
