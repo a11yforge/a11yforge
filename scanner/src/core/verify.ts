@@ -20,7 +20,6 @@ function isSameViolation(a: ViolationDto, b: ViolationDto): boolean {
 
 export async function verify(
   originalHtml: string,
-  oldSnippet: string,
   newSnippet: string,
   originalViolations: ViolationDto[],
   rules: string[],

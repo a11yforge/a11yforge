@@ -3,7 +3,6 @@ import type { ViolationDto } from "./core/types";
 
 interface VerifyInput {
   originalHtml: string;
-  oldSnippet: string;
   newSnippet: string;
   originalViolations: ViolationDto[];
   rules: string[];
@@ -21,7 +20,6 @@ async function main() {
 
   const result = await verify(
     input.originalHtml,
-    input.oldSnippet,
     input.newSnippet,
     input.originalViolations,
     input.rules,

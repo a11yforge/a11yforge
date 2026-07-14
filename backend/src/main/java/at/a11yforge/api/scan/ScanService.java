@@ -103,87 +103,6 @@ public class ScanService {
     return toResponse(scan);
   }
 
-  private void runFullScan(Scan scan, Project project, Long userId) {
-    try {
-      List<String> rules =
-          List.of("image-alt", "color-contrast", "label", "html-has-lang", "heading-order");
-      List<PageScanResultDto> results =
-          scannerProcessRunner.run(project.getBaseUrl(), rules, project.getCrawlMaxPages());
-
-      for (PageScanResultDto result : results) {
-        Page page = new Page(scan, result.finalUrl());
-        page.setHttpStatus(result.httpStatus());
-        page.setRenderedHtml(result.renderedHtml());
-        page = pageRepository.save(page);
-
-        persistViolations(page, result.violations(), true);
-        persistViolations(page, result.incomplete(), false);
-      }
-
-      scan.setStatus(ScanStatus.COMPLETED);
-      scan.setCompletedAt(Instant.now());
-      scanRepository.save(scan);
-
-      auditEventService.recordEvent(
-          userId, "Scan", scan.getId(), AuditEventType.CREATED, null, scan.getStatus().name());
-
-    } catch (ScannerExecutionException e) {
-      scan.setStatus(ScanStatus.FAILED);
-      scan.setErrorMessage(e.getMessage());
-      scan.setCompletedAt(Instant.now());
-      scanRepository.save(scan);
-      log.error("Scan {} fehlgeschlagen", scan.getId(), e);
-    }
-  }
-
-  private ScanResponseDTO toResponse(Scan scan) {
-    long displayNumber =
-        scanRepository.countByProjectIdAndIdLessThanEqual(scan.getProject().getId(), scan.getId());
-
-    return new ScanResponseDTO(
-        scan.getId(),
-        scan.getProject().getId(),
-        scan.getStatus().name(),
-        scan.getStartedAt(),
-        scan.getCompletedAt(),
-        violationRepository.countByPage_Scan_IdAndSourceNot(
-            scan.getId(), ViolationSource.AXE_INCOMPLETE),
-        displayNumber);
-  }
-
-  private void persistViolations(Page page, List<ViolationDto> dtos, boolean withScreenshot) {
-    for (ViolationDto v : dtos) {
-      Violation violation =
-          new Violation(
-              page,
-              v.ruleId(),
-              ViolationSource.valueOf(v.source().toUpperCase()),
-              Impact.valueOf(v.impact().toUpperCase()));
-      violation.setHtmlSnippet(v.htmlSnippet());
-      violation.setDescription(v.description());
-      violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
-
-      String lang = v.detectedLang();
-      if (lang == null && v.langSample() != null) {
-        lang = chatProviderFactory.getProvider(defaultProvider).detectLanguage(v.langSample());
-      }
-      violation.setDetectedLang(lang);
-
-      if (withScreenshot) {
-        violation.setScreenshot(v.screenshot());
-      }
-
-      if ("color-contrast".equals(v.ruleId())) {
-        violation.setFgColor(v.fgColor());
-        violation.setBgColor(v.bgColor());
-        violation.setContrastRatio(v.contrastRatio());
-        violation.setExpectedContrastRatio(v.expectedContrastRatio());
-      }
-
-      violationRepository.save(violation);
-    }
-  }
-
   @Transactional(readOnly = true)
   public ScanDetailDTO getScan(Long userId, Long scanId) {
 
@@ -196,23 +115,21 @@ public class ScanService {
         scanRepository.countByProjectIdAndIdLessThanEqual(scan.getProject().getId(), scan.getId());
 
     List<ViolationResponseDTO> violations =
-      violationRepository.findByPage_Scan_Id(scanId).stream()
-        // axe "incomplete" (cantTell) sind keine Verstöße -> nicht listen
-        .filter(v -> v.getSource() != ViolationSource.AXE_INCOMPLETE)
-        .map(
-          v ->
-            new ViolationResponseDTO(
-              v.getId(),
-              v.getPage().getId(),
-              v.getRuleId(),
-              v.getSource(),
-              v.getImpact(),
-              v.getHtmlSnippet(),
-              v.getTargetSelector(),
-              v.getDescription()))
-        .toList();
+        violationRepository.findByPage_Scan_Id(scanId).stream()
+            .filter(v -> v.getSource() != ViolationSource.AXE_INCOMPLETE)
+            .map(
+                v ->
+                    new ViolationResponseDTO(
+                        v.getId(),
+                        v.getPage().getId(),
+                        v.getRuleId(),
+                        v.getSource(),
+                        v.getImpact(),
+                        v.getHtmlSnippet(),
+                        v.getTargetSelector(),
+                        v.getDescription()))
+            .toList();
 
-    // Neueste Review-Decision je FixProposal (max id gewinnt)
     Map<Long, ReviewDecision> decisionByProposalId =
         reviewRepository.findByFixProposal_Violation_Page_Scan_Id(scanId).stream()
             .collect(
@@ -224,7 +141,6 @@ public class ScanService {
             .stream()
             .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getReviewDecision()));
 
-    // Neuester FixProposal je Violation (max id gewinnt)
     Map<Long, FixProposal> latestProposalByViolationId =
         fixProposalRepository.findAllByViolationPageScanId(scanId).stream()
             .collect(
@@ -255,10 +171,6 @@ public class ScanService {
         violations,
         fixes,
         displayNumber);
-  }
-
-  private static java.util.function.BinaryOperator<FixProposal> BinaryOperatorLatest() {
-    return (a, b) -> a.getId() >= b.getId() ? a : b;
   }
 
   public List<ScanResponseDTO> getScansForProject(Long userId, Long projectId) {
@@ -309,5 +221,90 @@ public class ScanService {
                   r.getReviewDecision());
             })
         .toList();
+  }
+
+  private void runFullScan(Scan scan, Project project, Long userId) {
+    try {
+      List<String> rules =
+          List.of("image-alt", "color-contrast", "label", "html-has-lang", "heading-order");
+      List<PageScanResultDto> results =
+          scannerProcessRunner.run(project.getBaseUrl(), rules, project.getCrawlMaxPages());
+
+      for (PageScanResultDto result : results) {
+        Page page = new Page(scan, result.finalUrl());
+        page.setHttpStatus(result.httpStatus());
+        page.setRenderedHtml(result.renderedHtml());
+        page = pageRepository.save(page);
+
+        persistViolations(page, result.violations(), true);
+        persistViolations(page, result.incomplete(), false);
+      }
+
+      scan.setStatus(ScanStatus.COMPLETED);
+      scan.setCompletedAt(Instant.now());
+      scanRepository.save(scan);
+
+      auditEventService.recordEvent(
+          userId, "Scan", scan.getId(), AuditEventType.CREATED, null, scan.getStatus().name());
+
+    } catch (ScannerExecutionException e) {
+      scan.setStatus(ScanStatus.FAILED);
+      scan.setErrorMessage(e.getMessage());
+      scan.setCompletedAt(Instant.now());
+      scanRepository.save(scan);
+      log.error("Scan {} fehlgeschlagen", scan.getId(), e);
+    }
+  }
+
+  private void persistViolations(Page page, List<ViolationDto> dtos, boolean withScreenshot) {
+    for (ViolationDto v : dtos) {
+      Violation violation =
+          new Violation(
+              page,
+              v.ruleId(),
+              ViolationSource.valueOf(v.source().toUpperCase()),
+              Impact.valueOf(v.impact().toUpperCase()));
+      violation.setHtmlSnippet(v.htmlSnippet());
+      violation.setDescription(v.description());
+      violation.setTargetSelector(v.target().isEmpty() ? null : v.target().get(0));
+
+      String lang = v.detectedLang();
+      if (lang == null && v.langSample() != null) {
+        lang = chatProviderFactory.getProvider(defaultProvider).detectLanguage(v.langSample());
+      }
+      violation.setDetectedLang(lang);
+
+      if (withScreenshot) {
+        violation.setScreenshot(v.screenshot());
+      }
+
+      if ("color-contrast".equals(v.ruleId())) {
+        violation.setFgColor(v.fgColor());
+        violation.setBgColor(v.bgColor());
+        violation.setContrastRatio(v.contrastRatio());
+        violation.setExpectedContrastRatio(v.expectedContrastRatio());
+      }
+
+      violationRepository.save(violation);
+    }
+  }
+
+  private ScanResponseDTO toResponse(Scan scan) {
+    long displayNumber =
+        scanRepository.countByProjectIdAndIdLessThanEqual(scan.getProject().getId(), scan.getId());
+
+    return new ScanResponseDTO(
+        scan.getId(),
+        scan.getProject().getId(),
+        scan.getStatus().name(),
+        scan.getStartedAt(),
+        scan.getCompletedAt(),
+        violationRepository.countByPage_Scan_IdAndSourceNot(
+            scan.getId(), ViolationSource.AXE_INCOMPLETE),
+        displayNumber);
+  }
+
+  private static java.util.function.BinaryOperator<FixProposal> BinaryOperatorLatest() {
+    return (a, b) -> a.getId() >= b.getId() ? a : b;
   }
 }

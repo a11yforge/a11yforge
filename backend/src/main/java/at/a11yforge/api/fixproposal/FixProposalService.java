@@ -8,8 +8,6 @@ import at.a11yforge.api.verifier.VerifierProcessRunner;
 import at.a11yforge.api.verifier.VerifyRequestDTO;
 import at.a11yforge.api.verifier.VerifyResultDTO;
 import at.a11yforge.api.violation.Violation;
-
-import java.math.BigDecimal;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,15 +30,13 @@ public class FixProposalService {
 
   public FixProposalStatus verifyFix(
       String originalHtml,
-      String oldSnippet,
       String newSnippet,
       List<ViolationDto> originalViolations,
       List<String> rules,
       ViolationDto targetViolation) {
 
     VerifyRequestDTO request =
-        new VerifyRequestDTO(
-            originalHtml, oldSnippet, newSnippet, originalViolations, rules, targetViolation);
+        new VerifyRequestDTO(originalHtml, newSnippet, originalViolations, rules, targetViolation);
 
     VerifyResultDTO result = verifierProcessRunner.run(request);
     log.info("Verify {} -> {}", targetViolation.ruleId(), result.status());
@@ -110,13 +106,7 @@ public class FixProposalService {
     }
 
     FixProposalStatus status =
-        verifyFix(
-            pageHtml,
-            violation.getHtmlSnippet(),
-            response.generatedHtml(),
-            pageViolations,
-            rules,
-            targetViolation);
+        verifyFix(pageHtml, response.generatedHtml(), pageViolations, rules, targetViolation);
 
     fixProposal.setStatus(status);
     fixProposal.setGeneratedHtml(response.generatedHtml());
