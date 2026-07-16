@@ -64,17 +64,6 @@ public class FixProposalService {
     return toResponse(fixProposal);
   }
 
-  private FixProposalResponseDTO toResponse(FixProposal fixProposal) {
-    return new FixProposalResponseDTO(
-        fixProposal.getId(),
-        fixProposal.getViolation().getId(),
-        fixProposal.getStatus(),
-        fixProposal.getGeneratedHtml(),
-        fixProposal.getLlmProvider(),
-        fixProposal.getLlmModel(),
-        fixProposal.getPromptVersion());
-  }
-
   public FixProposal generateAndVerify(
       Violation violation,
       String pageHtml,
@@ -114,5 +103,16 @@ public class FixProposalService {
     fixProposal.setPromptVersion(response.promptVersion());
 
     return fixProposalRepository.save(fixProposal);
+  }
+
+  private FixProposalResponseDTO toResponse(FixProposal fixProposal) {
+    return new FixProposalResponseDTO(
+        fixProposal.getId(),
+        fixProposal.getViolation().getId(),
+        fixProposal.getStatus(),
+        fixProposal.getGeneratedHtml(),
+        fixProposal.getLlmProvider(),
+        fixProposal.getLlmModel(),
+        fixProposal.getPromptVersion());
   }
 }
