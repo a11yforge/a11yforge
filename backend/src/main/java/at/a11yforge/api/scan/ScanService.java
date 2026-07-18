@@ -177,18 +177,7 @@ public class ScanService {
     return scanRepository
         .findAllByProjectIdAndProjectUserIdOrderByIdDesc(projectId, userId)
         .stream()
-        .map(
-            s ->
-                new ScanResponseDTO(
-                    s.getId(),
-                    s.getProject().getId(),
-                    s.getStatus().name(),
-                    s.getStartedAt(),
-                    s.getCompletedAt(),
-                    violationRepository.countByPage_Scan_IdAndSourceNot(
-                        s.getId(), ViolationSource.AXE_INCOMPLETE),
-                    scanRepository.countByProjectIdAndIdLessThanEqual(
-                        s.getProject().getId(), s.getId())))
+        .map(this::toResponse)
         .toList();
   }
 
