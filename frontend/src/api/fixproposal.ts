@@ -1,4 +1,3 @@
-
 import client from './client'
 export interface FixGenerationStartDTO {
   fixProposalId: number
@@ -17,6 +16,7 @@ export interface FixProposalDTO {
   llmProvider: string
   llmModel: string | null
   promptVersion: string | null
+  decision?: 'ACCEPTED' | 'REJECTED' | null
 }
 
 export async function getFixProposal(id: number): Promise<FixProposalDTO> {

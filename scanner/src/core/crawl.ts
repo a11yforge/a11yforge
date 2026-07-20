@@ -2,8 +2,13 @@ import { AxeBuilder } from "@axe-core/playwright";
 import { chromium } from "playwright";
 import type { PageScanResult } from "./types";
 import { axeResultsToViolationDtos } from "../mapping/axe";
+import { francAll } from "franc";
+import { iso6393 } from "iso-639-3";
 
 const TIMEOUT = 50_000;
+const TO_ISO1 = new Map(
+  iso6393.filter((e) => e.iso6391).map((e) => [e.iso6393, e.iso6391]),
+);
 
 function normalize(u: string): string {
   const url = new URL(u);
@@ -27,14 +32,18 @@ export async function crawl(
     const queue: string[] = [normalize(baseUrl)];
     const visited = new Set<string>([normalize(baseUrl)]);
     const context = await browser.newContext();
+    const origin = new URL(baseUrl).origin;
 
     while (queue.length > 0 && results.length < maxPages) {
-      const url = queue.shift()!;
 
+      const url = queue.shift()!;
       const page = await context.newPage();
       const start = Date.now();
-      const response = await page.goto(url, { timeout: TIMEOUT });
-      const axeResults = await new AxeBuilder({ page })
+
+
+      try {
+      const response = await page.goto(url, {timeout: TIMEOUT});
+      const axeResults = await new AxeBuilder({page})
         .withRules(rules)
         .analyze();
       const renderedHtml = await page.content();
@@ -51,9 +60,21 @@ export async function crawl(
             try {
               const buffer = await page.locator(selector).first().screenshot();
               v.screenshot = buffer.toString("base64");
-            } catch (e) {
-              console.error(`Screenshot ${selector}:`, (e as Error).message);
+            } catch {
+              // Screenshot optional
             }
+          }
+        }
+        if (v.ruleId === "html-has-lang") {
+          const text = await page.locator("body").innerText();
+          const results = francAll(text)
+          const code = results[0][0];
+          const runnerUp = results[1]?.[1] ?? 0;
+          const lang = TO_ISO1.get(code) ?? (code !== "und" ? code : undefined);
+          if (lang && text.length >= 50 && runnerUp < 0.9) {
+            v.detectedLang = lang;
+          } else {
+            v.langSample = text.slice(0, 500);
           }
         }
       }
@@ -65,7 +86,7 @@ export async function crawl(
         scannedAt: new Date().toISOString(),
         durationMs: Date.now() - start,
         pageStatus: "scanned",
-        ...(httpStatus !== undefined && { httpStatus }),
+        ...(httpStatus !== undefined && {httpStatus}),
         pageTitle,
         ruleSet: rules,
         renderedHtml,
@@ -73,19 +94,41 @@ export async function crawl(
         incomplete: axeResultsToViolationDtos(axeResults, "axe_incomplete"),
       });
 
-      const links = await page.$$eval("a[href]", (anchors) =>
-        anchors.map((a) => (a as HTMLAnchorElement).href),
-      );
-      const origin = new URL(baseUrl).origin;
-
-      for (const link of links) {
-        const clean = normalize(link);
-        if (new URL(clean).origin === origin && !visited.has(clean)) {
-          visited.add(clean);
-          queue.push(clean);
+        const links = await page.$$eval("a[href]", (anchors) =>
+          anchors.map((a) => (a as HTMLAnchorElement).href),
+        );
+        for (const link of links) {
+          const clean = normalize(link);
+          if (new URL(clean).origin === origin && !visited.has(clean)) {
+            visited.add(clean);
+            queue.push(clean);
+          }
         }
+    }
+
+    catch(e) {
+      results.push({
+        scannerVersion: "a11yforge-scanner@0.1.0",
+        url,
+        finalUrl: url,
+        scannedAt: new Date().toISOString(),
+        durationMs: Date.now() - start,
+        pageStatus: "failed",
+        failureReason: String(e),
+        httpStatus: 0,
+        pageTitle: "",
+        ruleSet: rules,
+        renderedHtml: "",
+        violations: [],
+        incomplete: []
+      });
+      continue
+    }
+    finally{
+        await page.close();
       }
-      await page.close();
+
+
     }
 
     return results;

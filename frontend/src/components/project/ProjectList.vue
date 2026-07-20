@@ -7,32 +7,41 @@ defineProps<{
   loading: boolean
   error: string | null
   emptyMessage?: string
-  compact?: boolean
+  //compact?: boolean
 }>()
 
 const emit = defineEmits<{
   edit: [project: ProjectResponseDTO]
   delete: [project: ProjectResponseDTO]
-  scan: [project: ProjectResponseDTO, selectedProvider: string]
+  //scan: [project: ProjectResponseDTO]
   create: []
 }>()
 </script>
 
 <template>
   <div>
-    <div v-if="loading" class="state">Projekte werden geladen…</div>
+    <div v-if="loading" class="bg-[var(--surface)] border border-[var(--border)] rounded-[14px] py-10 px-8 text-center text-[var(--muted)]">Projekte werden geladen…</div>
 
-    <div v-else-if="error" class="state state--error">{{ error }}</div>
+    <div v-else-if="error" class="bg-[var(--surface)] border border-[var(--error-border)] rounded-[14px] py-10 px-8 text-center text-[var(--error-text)]">{{ error }}</div>
 
-    <div v-else-if="projects.length === 0" class="state state--empty">
-      <img src="/mole.png" alt="" aria-hidden="true" class="state__mole" />
+    <div v-else-if="projects.length === 0" class="bg-[var(--surface)] border border-[var(--border)] rounded-[14px] py-10 px-8 text-center text-[var(--muted)] flex flex-col items-center gap-[0.9rem]">
+      <img src="/mole.png" alt="" aria-hidden="true" class="w-[80px] [image-rendering:pixelated] opacity-85" />
       <p>{{ emptyMessage ?? 'Noch keine Projekte — leg dein erstes an.' }}</p>
-      <button class="btn btn--primary" type="button" @click="emit('create')">
+      <button class="border border-transparent rounded-[10px] py-[0.6rem] px-[1.1rem] font-semibold text-[0.9rem] cursor-pointer bg-[var(--coral)] text-[var(--on-coral)] hover:brightness-[1.07] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]" type="button" @click="emit('create')">
         + Neues Projekt
       </button>
     </div>
 
-    <div v-else class="grid">
+    <div v-else class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
+      <ProjectCard
+        v-for="project in projects"
+        :key="project.id"
+        :project="project"
+        @edit="emit('edit', $event)"
+        @delete="emit('delete', $event)"
+      />
+    </div>
+    <!--<div v-else class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
       <ProjectCard
         v-for="project in projects"
         :key="project.id"
@@ -40,60 +49,8 @@ const emit = defineEmits<{
         :compact="compact"
         @edit="emit('edit', $event)"
         @delete="emit('delete', $event)"
-        @scan="(p, provider) => emit('scan', p, provider)"
+        @scan="(p) => emit('scan', p)"
       />
-    </div>
+    </div>-->
   </div>
 </template>
-
-<style scoped>
-.grid {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-}
-
-.state {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 2.5rem 2rem;
-  text-align: center;
-  color: var(--muted);
-}
-.state--error {
-  color: #f6a3a3;
-  border-color: #5a2a2a;
-}
-.state--empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.9rem;
-}
-.state__mole {
-  width: 80px;
-  image-rendering: pixelated;
-  opacity: 0.85;
-}
-
-.btn {
-  border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 0.6rem 1.1rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-.btn--primary {
-  background: var(--coral);
-  color: #2a1410;
-}
-.btn--primary:hover {
-  filter: brightness(1.07);
-}
-.btn:focus-visible {
-  outline: 2px solid var(--teal);
-  outline-offset: 2px;
-}
-</style>

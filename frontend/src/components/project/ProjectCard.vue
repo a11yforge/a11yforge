@@ -1,25 +1,16 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import Select from 'primevue/select'
+import { computed } from 'vue'
 import type { ProjectResponseDTO } from '@/api/projects'
-
-const providerOptions = [
-  { label: 'Ohne KI', value: 'NONE' },
-  { label: 'Anthropic', value: 'ANTHROPIC' },
-  { label: 'Ollama (lokal)', value: 'OLLAMA' },
-]
-
-const selectedProvider = ref<string>('NONE')
 
 const props = defineProps<{
   project: ProjectResponseDTO
-  compact?: boolean
+  //compact?: boolean
 }>()
 
 const emit = defineEmits<{
   edit: [project: ProjectResponseDTO]
   delete: [project: ProjectResponseDTO]
-  scan: [project: ProjectResponseDTO, selectedProvider: string]
+  //scan: [project: ProjectResponseDTO]
 }>()
 
 const displayUrl = computed(() => {
@@ -33,42 +24,92 @@ const displayUrl = computed(() => {
 </script>
 
 <template>
-  <article class="card">
-    <h3 class="card__name" :title="project.name">{{ project.name }}</h3>
+  <article class="relative flex flex-col gap-[0.4rem] bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-[1.3rem] py-[1.2rem] shadow-[0_14px_34px_rgba(0,0,0,0.3)] transition duration-150 hover:-translate-y-0.5 hover:border-[var(--coral)] hover:shadow-[0_18px_42px_rgba(0,0,0,0.4)]">
+    <h3 class="m-0">
+      <router-link
+        :to="`/projects/${project.id}`"
+        :title="project.name"
+        class="block text-[1.1rem] font-bold text-[var(--text)] no-underline overflow-hidden text-ellipsis whitespace-nowrap focus-visible:outline-none after:content-[''] after:absolute after:inset-0 after:rounded-[14px] focus-visible:after:[outline:2px_solid_var(--teal)] focus-visible:after:[outline-offset:2px]"
+      >
+        {{ project.name }}
+      </router-link>
+    </h3>
+
+    <p
+      class="text-[var(--muted)] text-[0.88rem] m-0 overflow-hidden text-ellipsis whitespace-nowrap"
+      :title="project.baseUrl"
+    >
+      {{ displayUrl }}
+    </p>
+    <p class="text-[var(--muted)] text-[0.74rem] m-0">Max. {{ project.crawlMaxPages }} Seiten / Scan</p>
+
+    <div class="mt-auto pt-[0.9rem] flex items-end justify-between gap-3 border-t border-[var(--border)]">
+      <div class="flex flex-col gap-[0.2rem] min-w-0">
+        <span class="text-[var(--muted)] text-[0.68rem] uppercase tracking-[0.05em]">Letzter Scan</span>
+        <span class="text-[var(--text)] text-[0.85rem] truncate">
+          {{
+            project.lastScanAt
+              ? new Date(project.lastScanAt).toLocaleDateString('de-AT', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                })
+              : '—'
+          }}
+        </span>
+      </div>
+
+      <span
+        class="inline-flex items-center gap-[0.4rem] rounded-full px-[0.7rem] py-[0.3rem] text-[0.8rem] font-semibold border shrink-0"
+        :class="
+          project.findings == null
+            ? 'bg-transparent text-[var(--muted)] border-[var(--border)]'
+            : project.findings > 0
+              ? 'bg-[var(--danger-bg)] text-[var(--coral)] border-[var(--danger-border)]'
+              : 'bg-transparent text-[var(--teal)] border-[var(--teal)]'
+        "
+      >
+        <span
+          class="w-[0.45rem] h-[0.45rem] rounded-full"
+          :class="
+            project.findings == null
+              ? 'bg-[var(--muted)]'
+              : project.findings > 0
+                ? 'bg-[var(--coral)]'
+                : 'bg-[var(--teal)]'
+          "
+        ></span>
+        <template v-if="project.findings == null">nie gescannt</template>
+        <template v-else>{{ project.findings }} {{ project.findings === 1 ? 'Befund' : 'Befunde' }}</template>
+      </span>
+    </div>
+  </article>
+  <!--<article class="flex flex-col gap-[0.4rem] bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-[1.3rem] py-[1.2rem] shadow-[0_14px_34px_rgba(0,0,0,0.3)]">
+    <h3 class="text-[1.1rem] font-bold text-[var(--text)] m-0 overflow-hidden text-ellipsis whitespace-nowrap" :title="project.name">{{ project.name }}</h3>
 
     <a
       :href="project.baseUrl"
       target="_blank"
       rel="noopener noreferrer"
-      class="card__url"
+      class="text-[var(--teal)] no-underline text-[0.9rem] overflow-hidden text-ellipsis whitespace-nowrap hover:underline"
       :title="project.baseUrl"
     >
       {{ displayUrl }} ↗
     </a>
-    <p class="card__meta">Max. {{ project.crawlMaxPages }} Seiten / Scan</p>
+    <p class="text-[var(--muted)] text-[0.85rem] mt-0 mb-[0.4rem]">Max. {{ project.crawlMaxPages }} Seiten / Scan</p>
 
-    <div class="card__scan">
-      <Select
-        v-model="selectedProvider"
-        :options="providerOptions"
-        option-label="label"
-        option-value="value"
-        aria-label="LLM-Provider auswählen"
-        class="card__select"
-      />
+    <div class="flex items-center gap-2 mt-auto">
       <button
-        class="btn btn--primary"
+        class="mr-auto border border-transparent rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer inline-flex items-center justify-center bg-[var(--coral)] text-[var(--on-coral)] hover:brightness-[1.07] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]"
         type="button"
-        @click="emit('scan', project, selectedProvider)"
+        @click="emit('scan', project)"
       >
         Scannen ▶
       </button>
-    </div>
+      <router-link :to="`/projects/${project.id}`" class="border border-[var(--border)] rounded-[10px] py-[0.55rem] px-4 font-semibold text-[0.88rem] cursor-pointer no-underline inline-flex items-center justify-center bg-transparent text-[var(--text)] hover:border-[var(--coral)] hover:text-[var(--coral)] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]">Öffnen</router-link>
 
-    <div class="card__actions">
-      <router-link :to="`/projects/${project.id}`" class="btn btn--ghost">Öffnen</router-link>
       <button
-        class="icon-btn"
+        class="bg-transparent border border-[var(--border)] rounded-[9px] w-[2.1rem] h-[2.1rem] text-[0.95rem] cursor-pointer text-[var(--text)] hover:border-[var(--coral)] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]"
         type="button"
         aria-label="Bearbeiten"
         title="Bearbeiten"
@@ -77,7 +118,7 @@ const displayUrl = computed(() => {
         ✏
       </button>
       <button
-        class="icon-btn icon-btn--danger"
+        class="bg-transparent border border-[var(--border)] rounded-[9px] w-[2.1rem] h-[2.1rem] text-[0.95rem] cursor-pointer text-[var(--text)] hover:border-[var(--danger-border)] hover:bg-[var(--danger-bg)] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]"
         type="button"
         aria-label="Löschen"
         title="Löschen"
@@ -87,133 +128,5 @@ const displayUrl = computed(() => {
       </button>
     </div>
   </article>
+  -->
 </template>
-
-<style scoped>
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 1.2rem 1.3rem;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
-}
-.card__name {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text);
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.card__url {
-  color: var(--teal);
-  text-decoration: none;
-  font-size: 0.9rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.card__url:hover {
-  text-decoration: underline;
-}
-.card__meta {
-  color: var(--muted);
-  font-size: 0.85rem;
-  margin: 0 0 0.4rem;
-}
-
-.card__scan {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: auto;
-}
-.card__select {
-  flex: 1;
-  min-width: 0;
-}
-
-.card__actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.6rem;
-}
-
-.btn {
-  border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 0.55rem 1rem;
-  font-weight: 600;
-  font-size: 0.88rem;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.btn:focus-visible {
-  outline: 2px solid var(--teal);
-  outline-offset: 2px;
-}
-.btn--primary {
-  background: var(--coral);
-  color: #2a1410;
-}
-.btn--primary:hover {
-  filter: brightness(1.07);
-}
-.btn--ghost {
-  background: transparent;
-  color: var(--text);
-  border-color: var(--border);
-  margin-right: auto;
-}
-.btn--ghost:hover {
-  border-color: var(--coral);
-  color: var(--coral);
-}
-
-.icon-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  width: 2.1rem;
-  height: 2.1rem;
-  font-size: 0.95rem;
-  cursor: pointer;
-  color: var(--text);
-}
-.icon-btn:hover {
-  border-color: var(--coral);
-}
-.icon-btn:focus-visible {
-  outline: 2px solid var(--teal);
-  outline-offset: 2px;
-}
-.icon-btn--danger:hover {
-  border-color: #a14444;
-  background: #3a1a1a;
-}
-
-/* PrimeVue Select an die Palette angleichen */
-:deep(.p-select) {
-  background: var(--field);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  width: 100%;
-}
-:deep(.p-select-label) {
-  color: var(--text);
-  padding: 0.55rem 0.7rem;
-}
-:deep(.p-select:not(.p-disabled).p-focus) {
-  outline: 2px solid var(--teal);
-  outline-offset: 2px;
-  border-color: var(--teal);
-  box-shadow: none;
-}
-</style>

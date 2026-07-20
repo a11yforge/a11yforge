@@ -1,4 +1,5 @@
 import client from './client'
+import type { FixProposalDTO } from './fixproposal'
 
 export interface ViolationDTO {
   id: number
@@ -18,6 +19,8 @@ export interface ScanDetailDTO {
   startedAt: string
   completedAt: string | null
   violations: ViolationDTO[]
+  fixes: FixProposalDTO[]
+  projectScanNumber: number
 }
 
 export interface ScanResponseDTO {
@@ -26,6 +29,8 @@ export interface ScanResponseDTO {
   status: string
   startedAt: string
   completedAt: string | null
+  violationCount: number
+  projectScanNumber: number
 }
 
 export async function getScan(id: number): Promise<ScanDetailDTO> {
@@ -38,8 +43,8 @@ export async function getScanFromProject(projectId: number): Promise<ScanRespons
   return scan.data
 }
 
-export async function startScan(projectId: number, llmProvider: string = "NONE"): Promise<ScanResponseDTO> {
-  const scan = await client.post<ScanResponseDTO>('/scan', { projectId, llmProvider })
+export async function startScan(projectId: number): Promise<ScanResponseDTO> {
+  const scan = await client.post<ScanResponseDTO>('/scan', { projectId })
   return scan.data
 }
 

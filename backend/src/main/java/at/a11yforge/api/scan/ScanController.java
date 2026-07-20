@@ -18,13 +18,13 @@ public class ScanController {
   @PostMapping
   public ScanResponseDTO startScan(
       @AuthenticationPrincipal CustomUserDetails principal, @RequestBody ScanRequestDTO dto) {
-    return scanService.createAndRunScan(principal.getId(), dto.projectId(), dto.llmProvider());
+    return scanService.startScan(principal.getId(), dto.projectId());
   }
 
   @GetMapping("/{id}")
   public ScanDetailDTO getScan(
       @AuthenticationPrincipal CustomUserDetails principal, @PathVariable Long id) {
-    return scanService.getScan(id, principal.getId());
+    return scanService.getScan(principal.getId(), id);
   }
 
   @GetMapping
@@ -34,8 +34,8 @@ public class ScanController {
   }
 
   @GetMapping("/{id}/export")
-  public List<ExportDTO> export(
+  public List<ExportDTO> exportFixes(
       @AuthenticationPrincipal CustomUserDetails principal, @PathVariable Long id) {
-    return scanService.exportAcceptedFixes(principal.getId(), id);
+    return scanService.exportReviewedFixes(principal.getId(), id);
   }
 }

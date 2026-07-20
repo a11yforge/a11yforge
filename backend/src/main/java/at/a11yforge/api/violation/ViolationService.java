@@ -16,7 +16,10 @@ public class ViolationService {
 
     @Transactional(readOnly = true)
     public List<ViolationResponseDTO> getViolationsForUser(Long userId, Long scanId) {
-        return violationRepository.findAllByPageScanIdAndPageScanProjectUserId(scanId, userId).stream()
+        return violationRepository
+                .findAllByPageScanIdAndPageScanProjectUserIdAndSourceNot(
+                        scanId, userId, ViolationSource.AXE_INCOMPLETE)
+                .stream()
                 .map(this::toResponse)
                 .toList();
     }

@@ -2,6 +2,7 @@ package at.a11yforge.api.exception;
 
 import at.a11yforge.api.auth.InvalidRefreshTokenException;
 import at.a11yforge.api.fixproposal.FixProposalNotFoundException;
+import at.a11yforge.api.fixproposal.ViolationNotFixableException;
 import at.a11yforge.api.page.PageNotFoundException;
 import at.a11yforge.api.project.DuplicateProjectNameException;
 import at.a11yforge.api.project.ProjectNotFoundException;
@@ -60,6 +61,15 @@ public class GlobalExceptionHandler {
   public ProblemDetail handleFixProposalNotFound(FixProposalNotFoundException ex) {
     ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     problem.setTitle("FixProposal not found");
+    return problem;
+  }
+
+  // HTTP 400 Bad Request
+  @ExceptionHandler(ViolationNotFixableException.class)
+  public ProblemDetail handleViolationNotFixable(ViolationNotFixableException ex) {
+    ProblemDetail problem =
+        ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    problem.setTitle("Violation not fixable");
     return problem;
   }
 

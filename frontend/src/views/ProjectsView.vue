@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, useTemplateRef, computed } from 'vue'
+import { ref, computed, onMounted, useTemplateRef } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
@@ -7,10 +7,10 @@ import { useProjectsStore } from '@/stores/projects'
 import ProjectList from '@/components/project/ProjectList.vue'
 import ProjectFormDialog from '@/components/project/ProjectFormDialog.vue'
 import type { ProjectRequestDTO, ProjectResponseDTO } from '@/api/projects'
-import { startScan } from '@/api/scan'
-import { useRouter } from 'vue-router'
+//import { startScan } from '@/api/scan'
+//import { useRouter } from 'vue-router'
 
-const router = useRouter()
+//const router = useRouter()
 
 const projectsStore = useProjectsStore()
 const { projects, loading, error } = storeToRefs(projectsStore)
@@ -27,9 +27,7 @@ const filteredProjects = computed(() => {
   return projects.value.filter((p) => {
     const projectName = p.name.toLowerCase()
     const searchInput = search.value.toLowerCase()
-    if(projectName.includes(searchInput)) {
-      return true
-    }
+    return projectName.includes(searchInput)
   })
 })
 
@@ -142,10 +140,10 @@ async function handleDelete(project: ProjectResponseDTO) {
     })
   }
 }
-
-async function handleScan(project: ProjectResponseDTO, provider: string) {
+/*
+async function handleScan(project: ProjectResponseDTO) {
   try {
-    const scan = await startScan(project.id, provider)
+    const scan = await startScan(project.id)
     router.push('/scans/' + scan.id)
   } catch {
     toast.add({
@@ -156,13 +154,14 @@ async function handleScan(project: ProjectResponseDTO, provider: string) {
     })
   }
 }
+*/
 </script>
 
 <template>
-  <div class="page">
-    <div class="page__head">
-      <h1 class="page__title">Meine Projekte</h1>
-      <button class="btn btn--primary" type="button" @click="openCreateDialog">
+  <div class="max-w-[1040px] mx-auto px-6 pt-8 pb-12 text-[var(--text)] font-sans">
+    <div class="flex items-center justify-between gap-4 mb-[1.2rem]">
+      <h1 class="text-[1.7rem] font-extrabold text-[var(--text)] m-0">Meine Projekte</h1>
+      <button class="border border-transparent rounded-[10px] py-[0.6rem] px-[1.1rem] font-semibold text-[0.9rem] cursor-pointer bg-[var(--coral)] text-[var(--on-coral)] hover:brightness-[1.07] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]" type="button" @click="openCreateDialog">
         + Neues Projekt
       </button>
     </div>
@@ -170,7 +169,7 @@ async function handleScan(project: ProjectResponseDTO, provider: string) {
     <input
       v-model="search"
       type="search"
-      class="search"
+      class="w-full bg-[var(--field)] border border-[var(--border)] rounded-[10px] py-[0.65rem] px-[0.9rem] text-[var(--text)] mb-6 placeholder:text-[var(--muted)] focus-visible:[outline:2px_solid_var(--teal)] focus-visible:[outline-offset:2px]"
       placeholder="🔍 Projekt suchen …"
       aria-label="Projekt suchen"
     />
@@ -182,10 +181,8 @@ async function handleScan(project: ProjectResponseDTO, provider: string) {
       empty-message="Noch keine Projekte — leg dein erstes an."
       @edit="openEditDialog"
       @delete="confirmDelete"
-      @scan="handleScan"
       @create="openCreateDialog"
     />
-
     <ProjectFormDialog
       ref="dialogRef"
       v-model:visible="dialogVisible"
@@ -194,63 +191,3 @@ async function handleScan(project: ProjectResponseDTO, provider: string) {
     />
   </div>
 </template>
-
-<style scoped>
-.page {
-  max-width: 1040px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 3rem;
-  color: var(--text);
-  font-family: ui-sans-serif, system-ui, sans-serif;
-}
-.page__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.2rem;
-}
-.page__title {
-  font-size: 1.7rem;
-  font-weight: 800;
-  color: var(--text);
-  margin: 0;
-}
-
-.search {
-  width: 100%;
-  background: var(--field);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.65rem 0.9rem;
-  color: var(--text);
-  margin-bottom: 1.5rem;
-}
-.search::placeholder {
-  color: var(--muted);
-}
-.search:focus-visible {
-  outline: 2px solid var(--teal);
-  outline-offset: 2px;
-}
-
-.btn {
-  border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 0.6rem 1.1rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-.btn--primary {
-  background: var(--coral);
-  color: #2a1410;
-}
-.btn--primary:hover {
-  filter: brightness(1.07);
-}
-.btn:focus-visible {
-  outline: 2px solid var(--teal);
-  outline-offset: 2px;
-}
-</style>

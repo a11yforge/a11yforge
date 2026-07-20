@@ -20,6 +20,12 @@ export interface ViolationDto {
   htmlSnippet: string;
   domPath?: string;
   screenshot?: string;
+  fgColor?: string;
+  bgColor?: string;
+  contrastRatio?: number;
+  expectedContrastRatio?: string;
+  detectedLang?: string;
+  langSample?: string;
 }
 
 export interface PageScanResult {

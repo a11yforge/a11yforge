@@ -1,95 +1,126 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import ChangeUserNameForm from '@/components/account/ChangeUserNameForm.vue'
 import ChangeEmailForm from '@/components/account/ChangeEmailForm.vue'
 import ChangePasswordForm from '@/components/account/ChangePasswordForm.vue'
-import { useAuthStore } from '@/stores/auth'
 
-const authStore = useAuthStore()
+type Tab = 'username' | 'email' | 'password'
 
-async function handleLogout() {
-  await authStore.logout()
-}
+const activeTab = ref<Tab>('username')
+
+const tabs: { key: Tab; label: string }[] = [
+  { key: 'username', label: 'Username' },
+  { key: 'email', label: 'E-Mail' },
+  { key: 'password', label: 'Passwort' },
+]
 </script>
 
 <template>
-  <div class="page">
-    <h1 class="title">Account / Einstellungen</h1>
+  <div class="flex justify-center px-4 py-10">
+    <div
+      class="w-full max-w-[460px] bg-[var(--surface)] border border-[var(--border)] rounded-[16px] px-[1.9rem] pt-8 pb-[1.8rem] shadow-[0_24px_60px_rgba(0,0,0,0.45)]"
+    >
+      <h1 class="text-xl font-bold mb-6 text-[var(--text)]">Account</h1>
 
-    <div class="grid">
-      <div class="card"><ChangeUserNameForm /></div>
-      <div class="card"><ChangeEmailForm /></div>
-      <div class="card"><ChangePasswordForm /></div>
+      <div class="tab-bar" role="tablist" aria-label="Account-Einstellungen">
+        <button
+          v-for="tab in tabs"
+          :key="tab.key"
+          type="button"
+          role="tab"
+          :aria-selected="activeTab === tab.key"
+          :class="['tab', { 'tab--active': activeTab === tab.key }]"
+          @click="activeTab = tab.key"
+        >
+          {{ tab.label }}
+        </button>
+      </div>
+
+      <div class="mt-6">
+        <ChangeUserNameForm v-if="activeTab === 'username'" />
+        <ChangeEmailForm v-else-if="activeTab === 'email'" />
+        <ChangePasswordForm v-else />
+      </div>
     </div>
-
-    <button class="btn btn--danger logout" type="button" @click="handleLogout">Logout</button>
   </div>
 </template>
 
 <style scoped>
-.page {
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 1.5rem 1.5rem 2rem;
-  color: var(--text);
-  font-family: ui-sans-serif, system-ui, sans-serif;
+.tab-bar {
+  display: flex;
+  gap: 0.4rem;
+  border-bottom: 1px solid var(--border);
 }
-.title {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--text);
-  margin: 0 0 1.2rem;
-}
-
-.grid {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: 1fr;
-}
-@media (min-width: 760px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 1.2rem 1.3rem;
-}
-
-.btn {
-  border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 0.6rem 1.2rem;
+.tab {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
   font-weight: 600;
   font-size: 0.9rem;
+  padding: 0.6rem 0.4rem;
   cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
-.btn:focus-visible {
+.tab:hover {
+  color: var(--text);
+}
+.tab--active {
+  color: var(--coral);
+  border-bottom-color: var(--coral);
+}
+.tab:focus-visible {
   outline: 2px solid var(--teal);
   outline-offset: 2px;
 }
-.btn--danger {
-  background: transparent;
-  color: #f6a3a3;
-  border-color: #5a2a2a;
-}
-.btn--danger:hover {
-  background: #3a1a1a;
-}
-.logout {
-  margin-top: 1.2rem;
-}
 
-/* Philipps Form-Komponenten an den Sunset-Look angleichen */
-.card :deep(h2) {
-  font-size: 1rem;
+:deep(h2) {
+  font-size: 1.1rem;
   font-weight: 700;
+  margin-bottom: 1rem;
   color: var(--text);
 }
-.card :deep(.p-inputtext),
-.card :deep(.p-password) {
+:deep(.p-inputtext),
+:deep(.p-password),
+:deep(.p-password-input) {
   width: 100%;
+}
+:deep(.p-inputtext),
+:deep(.p-password-input) {
+  background: var(--field);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+}
+:deep(.p-inputtext::placeholder),
+:deep(.p-password-input::placeholder) {
+  color: var(--muted);
+}
+:deep(.p-inputtext:enabled:focus),
+:deep(.p-password-input:enabled:focus) {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+  border-color: var(--teal);
+  box-shadow: none;
+}
+:deep(.p-button) {
+  background: var(--coral);
+  border: 1px solid var(--coral);
+  color: var(--on-coral);
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.7rem 1.1rem;
+  justify-content: center;
+}
+:deep(.p-button:enabled:hover) {
+  background: var(--coral);
+  border-color: var(--coral);
+  filter: brightness(1.07);
+}
+:deep(.p-button:focus-visible) {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
 }
 </style>

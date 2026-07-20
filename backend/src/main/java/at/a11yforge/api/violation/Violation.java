@@ -3,6 +3,8 @@ package at.a11yforge.api.violation;
 import at.a11yforge.api.page.Page;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "violation")
 public class Violation {
@@ -37,6 +39,21 @@ public class Violation {
 
   @Column(name = "screenshot", columnDefinition = "TEXT")
   private String screenshot;
+
+  @Column(name = "detected_lang")
+  private String detectedLang = "de";
+
+  @Column(name = "fg_color", length = 30)
+  private String fgColor;
+
+  @Column(name = "bg_color", length = 30)
+  private String bgColor;
+
+  @Column(name = "contrast_ratio", precision = 5, scale = 2)
+  private java.math.BigDecimal contrastRatio;
+
+  @Column(name = "expected_contrast_ratio", length = 15)
+  private String expectedContrastRatio;
 
   protected Violation() {}
 
@@ -99,4 +116,45 @@ public class Violation {
   public void setScreenshot(String screenshot) {
     this.screenshot = screenshot;
   }
+
+  public String getDetectedLang() {
+    return detectedLang;
+  }
+
+  public void setDetectedLang(String detectedLang) {
+    this.detectedLang = detectedLang;
+  }
+
+  public String getFgColor() {
+    return fgColor;
+  }
+
+  public void setFgColor(String fgColor) {
+    this.fgColor = fgColor;
+  }
+
+  public String getBgColor() {
+    return bgColor;
+  }
+
+  public void setBgColor(String bgColor) {
+    this.bgColor = bgColor;
+  }
+
+  public BigDecimal getContrastRatio() {
+    return contrastRatio;
+  }
+
+  public void setContrastRatio(BigDecimal contrastRatio) {
+    this.contrastRatio = contrastRatio;
+  }
+
+  public String getExpectedContrastRatio() {
+    return expectedContrastRatio;
+  }
+
+  public void setExpectedContrastRatio(String expectedContrastRatio) {
+    this.expectedContrastRatio = expectedContrastRatio;
+  }
+
 }

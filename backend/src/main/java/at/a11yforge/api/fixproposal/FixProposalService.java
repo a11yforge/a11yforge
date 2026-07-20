@@ -8,6 +8,8 @@ import at.a11yforge.api.verifier.VerifierProcessRunner;
 import at.a11yforge.api.verifier.VerifyRequestDTO;
 import at.a11yforge.api.verifier.VerifyResultDTO;
 import at.a11yforge.api.violation.Violation;
+
+import java.math.BigDecimal;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +92,13 @@ public class FixProposalService {
             violation.getRuleId(),
             violation.getTargetSelector(),
             violation.getDescription(),
-            violation.getImpact());
+            violation.getImpact(),
+            violation.getScreenshot(),
+            violation.getFgColor(),
+            violation.getBgColor(),
+            violation.getContrastRatio(),
+            violation.getExpectedContrastRatio(),
+            null);
 
     FixGenerationResponseDTO response = chatProvider.generateFix(request);
 

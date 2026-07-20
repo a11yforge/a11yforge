@@ -3,7 +3,6 @@ package at.a11yforge.api.scan;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-import at.a11yforge.api.llm.ProviderType;
 import at.a11yforge.api.project.Project;
 import at.a11yforge.api.project.ProjectRepository;
 import at.a11yforge.api.user.User;
@@ -34,10 +33,9 @@ class ScanServiceTest {
                 "Test",
                 "file:///Users/maxmayer/dev/a11yforge/scanner/src/tests/missing-alt.html"));
 
-    ScanResponseDTO result =
-        scanService.createAndRunScan(user.getId(), project.getId(), ProviderType.NONE);
+    ScanResponseDTO result = scanService.createAndRunScan(user.getId(), project.getId());
     Long scanId = result.id();
-    ScanDetailDTO detail = scanService.getScan(scanId, user.getId());
+    ScanDetailDTO detail = scanService.getScan(user.getId(), scanId);
 
     assertThat(result.status()).isEqualTo("COMPLETED");
     assertThat(detail.violations()).hasSize(3);
@@ -59,11 +57,10 @@ class ScanServiceTest {
                 "Test",
                 "file:///Users/maxmayer/dev/a11yforge/scanner/src/tests/missing-alt.html"));
 
-    ScanResponseDTO result =
-        scanService.createAndRunScan(userA.getId(), project.getId(), ProviderType.NONE);
+    ScanResponseDTO result = scanService.createAndRunScan(userA.getId(), project.getId());
     Long scanId = result.id();
 
-    assertThatThrownBy(() -> scanService.getScan(scanId, userB.getId()))
+    assertThatThrownBy(() -> scanService.getScan(userB.getId(), scanId))
         .isInstanceOf(ScanNotFoundException.class);
   }
 }
