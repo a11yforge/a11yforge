@@ -185,7 +185,7 @@ public class ScanService {
   public List<ExportDTO> exportReviewedFixes(Long userId, Long scanId) {
     scanRepository
         .findByIdAndProjectUserId(scanId, userId)
-        .orElseThrow(() -> new ScanNotFoundException(scanId)); // Owner-Gate
+        .orElseThrow(() -> new ScanNotFoundException(scanId));
     return reviewRepository.findByFixProposal_Violation_Page_Scan_Id(scanId).stream()
         .collect(
             Collectors.toMap(
