@@ -1,0 +1,269 @@
+<!doctype html>
+<!-- html-has-lang VERSTOSS: dem <html>-Element fehlt das lang-Attribut. -->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zum Goldenen Maulwurf – Wiener Kaffeehaus in Neubau</title>
+    <meta
+      name="description"
+      content="Zum Goldenen Maulwurf – ein Wiener Kaffeehaus mit modernem Einschlag in der Neubaugasse. Kaffee, Mehlspeisen und Frühstück im 7. Bezirk."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container site-header__inner">
+        <a class="wordmark" href="index.html">
+          <span class="wordmark__mark" aria-hidden="true">☕</span>
+          Zum Goldenen Maulwurf
+        </a>
+        <nav class="main-nav" aria-label="Hauptnavigation">
+          <a href="index.html" aria-current="page">Startseite</a>
+          <a href="speisekarte.html">Speisekarte</a>
+          <a href="team.html">Team</a>
+          <a href="kontakt.html">Kontakt</a>
+        </nav>
+        <!-- button-name VERSTOSS: Icon-Button ohne zugänglichen Namen. -->
+        <button class="nav-toggle" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- HERO: Text links auf solider Fläche, Bild rechts. -->
+      <section class="hero">
+        <div class="container hero__grid">
+          <div class="hero__content">
+            <p class="eyebrow">Neubaugasse 12 · 1070 Wien</p>
+            <h1>Ein Kaffeehaus, das sich Zeit nimmt.</h1>
+            <!-- color-contrast VERSTOSS: Untertitel in #A9A9A9 auf --color-cream. -->
+            <p class="hero__subtitle" style="color: #a9a9a9">
+              Melange am Marmortisch, frische Mehlspeisen aus der eigenen
+              Backstube und ein Platz am Fenster, an dem der Vormittag ruhig
+              vergeht.
+            </p>
+            <div class="hero__actions">
+              <a class="btn btn--primary" href="speisekarte.html">Zur Speisekarte</a>
+              <a class="btn btn--outline" href="kontakt.html">Tisch reservieren</a>
+            </div>
+          </div>
+          <div class="hero__media">
+            <img
+              src="assets/cafe-interior-dining-room.jpg"
+              alt="Gastraum mit Holztischen und Fensterfront"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- KURZVORSTELLUNG -->
+      <section class="section container">
+        <div class="section-head">
+          <p class="eyebrow">Willkommen</p>
+          <h2>Kaffeehauskultur, unaufgeregt neu gedacht</h2>
+        </div>
+        <p class="measure section-lead">
+          Seit 2016 rösten wir in kleinen Chargen, backen jeden Morgen selbst
+          und servieren den Kaffee so, wie er in Wien seit jeher dazugehört: in
+          Ruhe, mit einem Glas Wasser und ohne Eile. Wer hereinkommt, darf
+          bleiben – ob für die schnelle Melange oder den langen Nachmittag mit
+          Buch.
+        </p>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- SEKTION: Unser Haus -->
+      <section class="section container">
+        <div class="split">
+          <div class="split__content">
+            <p class="eyebrow">Unser Haus</p>
+            <h2>Zwischen Ringstraßen-Charme und Werkstattlicht</h2>
+            <p class="measure">
+              Der Gastraum verbindet altes Wien mit klaren Linien: geölte
+              Eichentische, Messingdetails und eine offene Theke, an der man dem
+              Handwerk zusehen kann. Die Vitrine wird über den Tag hinweg immer
+              wieder neu bestückt – was ausgeht, geht aus.
+            </p>
+            <p class="measure">
+              Im hinteren Teil finden sich ruhige Nischen für zwei, vorne am
+              Fenster die großen Tische für alle, die gerne gemeinsam
+              frühstücken.
+            </p>
+          </div>
+          <div class="split__media">
+            <!-- image-alt VERSTOSS 1: <img> ohne alt-Attribut. -->
+            <img src="assets/cafe-counter-display.jpg" />
+          </div>
+        </div>
+      </section>
+
+      <!-- SEKTION: Handwerk -->
+      <section class="section container">
+        <div class="split split--reverse">
+          <div class="split__content">
+            <p class="eyebrow">Handwerk</p>
+            <h2>Jede Tasse ist Handarbeit</h2>
+            <p class="measure">
+              Unsere Baristi ziehen jeden Espresso frisch, wiegen das Mehl für
+              die Kipferl auf das Gramm und schäumen die Milch, bis sie
+              seidig glänzt. Der Unterschied liegt nicht im Geheimnis, sondern
+              in der Sorgfalt – und in der Zeit, die wir uns dafür nehmen.
+            </p>
+            <a class="btn btn--outline" href="team.html">Das Team kennenlernen</a>
+          </div>
+          <div class="split__media">
+            <img
+              src="assets/barista-latte-art.jpg"
+              alt="Barista gießt Milchschaum zu einem Blattmuster in eine Tasse"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- HIGHLIGHTS AUS DER KARTE -->
+      <section class="section container">
+        <div class="section-head">
+          <p class="eyebrow">Aus der Karte</p>
+          <h2>Drei, die man probiert haben sollte</h2>
+          <p class="section-lead">
+            Ein kleiner Vorgeschmack – die ganze Auswahl steht auf der
+            Speisekarte.
+          </p>
+        </div>
+        <div class="card-grid">
+          <article class="card">
+            <img
+              class="card__media"
+              src="assets/cappuccino-cup.jpg"
+              alt="Cappuccino mit Milchschaumherz in blauer Tasse"
+            />
+            <div class="card__body">
+              <h3 class="card__title">Cappuccino</h3>
+              <p class="card__text">
+                Doppelter Espresso, seidig geschäumte Milch, ein Hauch Kakao.
+              </p>
+              <p class="card__price">4,20 €</p>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              class="card__media"
+              src="assets/chocolate-cake-slice.jpg"
+              alt="Stück dunkle Schokoladentorte auf einem Teller"
+            />
+            <div class="card__body">
+              <h3 class="card__title">Schokoladentorte</h3>
+              <p class="card__text">
+                Dicht, dunkel, wenig süß – nach einem alten Hausrezept.
+              </p>
+              <p class="card__price">5,40 €</p>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              class="card__media"
+              src="assets/croissant-filled-close-up.jpg"
+              alt="Aufgeschnittenes Marillenkipferl mit Fruchtfüllung"
+            />
+            <div class="card__body">
+              <h3 class="card__title">Marillenkipferl</h3>
+              <p class="card__text">
+                Butterteig mit Marillenfülle aus dem Wachauer Sommer.
+              </p>
+              <p class="card__price">3,80 €</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ÖFFNUNGSZEITEN -->
+      <section class="section container">
+        <div class="hours-block">
+          <div class="split" style="gap: 40px">
+            <div class="split__content">
+              <p class="eyebrow" style="color: var(--color-cream)">Öffnungszeiten</p>
+              <h2>Wir haben für Sie geöffnet</h2>
+              <p class="section-lead">
+                Kommen Sie ohne Reservierung vorbei – oder sichern Sie sich für
+                größere Runden vorab einen Tisch.
+              </p>
+              <a class="btn btn--outline" href="kontakt.html"
+                style="border-color: var(--color-cream); color: var(--color-cream)"
+                >Kontakt &amp; Anfahrt</a
+              >
+            </div>
+            <div class="split__content">
+              <table class="hours-table">
+                <caption class="sr-only" style="position:absolute;left:-9999px">Öffnungszeiten</caption>
+                <tbody>
+                  <tr><th scope="row">Montag&nbsp;–&nbsp;Freitag</th><td>7:30 – 19:00</td></tr>
+                  <tr><th scope="row">Samstag</th><td>8:00 – 18:00</td></tr>
+                  <tr><th scope="row">Sonntag</th><td>Ruhetag</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__grid">
+        <div>
+          <h2>Zum Goldenen Maulwurf</h2>
+          <address>
+            Neubaugasse 12<br />
+            1070 Wien<br />
+            Österreich
+          </address>
+        </div>
+        <div>
+          <h2>Öffnungszeiten</h2>
+          <ul class="footer-hours">
+            <li><span>Mo – Fr</span><span>7:30 – 19:00</span></li>
+            <li><span>Sa</span><span>8:00 – 18:00</span></li>
+            <li><span>So</span><span>Ruhetag</span></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Kontakt</h2>
+          <!-- color-contrast VERSTOSS: Footer-Links in #8F9A92 auf --color-sage. -->
+          <ul class="footer-links">
+            <li><a href="tel:+4315234567">+43 1 523 45 67</a></li>
+            <li><a href="mailto:hallo@goldener-maulwurf.at">hallo@goldener-maulwurf.at</a></li>
+            <li><a href="kontakt.html">Anfahrt &amp; Reservierung</a></li>
+          </ul>
+          <!-- link-name VERSTOSS: Social-Links nur mit Icon, ohne Text/aria-label. -->
+          <div class="footer-social">
+            <a href="https://instagram.com">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16Zm0 1.62c-3.15 0-3.5.01-4.74.07-.9.04-1.38.19-1.71.32-.43.17-.74.37-1.06.69-.32.32-.52.63-.69 1.06-.13.33-.28.81-.32 1.71-.06 1.24-.07 1.59-.07 4.74s.01 3.5.07 4.74c.04.9.19 1.38.32 1.71.17.43.37.74.69 1.06.32.32.63.52 1.06.69.33.13.81.28 1.71.32 1.24.06 1.59.07 4.74.07s3.5-.01 4.74-.07c.9-.04 1.38-.19 1.71-.32.43-.17.74-.37 1.06-.69.32-.32.52-.63.69-1.06.13-.33.28-.81.32-1.71.06-1.24.07-1.59.07-4.74s-.01-3.5-.07-4.74c-.04-.9-.19-1.38-.32-1.71a2.85 2.85 0 0 0-.69-1.06 2.85 2.85 0 0 0-1.06-.69c-.33-.13-.81-.28-1.71-.32-1.24-.06-1.59-.07-4.74-.07Zm0 2.76a5.3 5.3 0 1 1 0 10.6 5.3 5.3 0 0 1 0-10.6Zm0 1.62a3.68 3.68 0 1 0 0 7.36 3.68 3.68 0 0 0 0-7.36Zm5.48-.29a1.24 1.24 0 1 1-2.48 0 1.24 1.24 0 0 1 2.48 0Z"/>
+              </svg>
+            </a>
+            <a href="https://facebook.com">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12Z"/>
+              </svg>
+            </a>
+            <a href="https://maps.google.com">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="container site-footer__bottom">
+        <span>© 2026 Zum Goldenen Maulwurf</span>
+        <span>Neubaugasse 12, 1070 Wien</span>
+      </div>
+    </footer>
+  </body>
+</html>

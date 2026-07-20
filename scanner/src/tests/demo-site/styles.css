@@ -1,0 +1,772 @@
+/* =========================================================================
+   Zum Goldenen Maulwurf – Wiener Kaffeehaus
+   Gemeinsames Stylesheet für alle Seiten der Demo-Website.
+   Nur Systemfonts, keine externen Ressourcen.
+   ========================================================================= */
+
+:root {
+  --color-sage: #6F8577;
+  --color-sage-dark: #4A5B50;
+  --color-terracotta: #B5613C; /* Flächen, Badges, Trenner */
+  --color-terracotta-ink: #9C4F2F; /* dieselbe Terracotta, als lesbarer Text */
+  --color-cream: #FAF7F2;
+  --color-surface: #FFFFFF;
+  --color-ink: #2B2A28;
+  --color-ink-muted: #5C594F;
+  --color-border: #E3DDD2;
+
+  --font-heading: Georgia, 'Times New Roman', serif;
+  --font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --container: 1100px;
+  --pad-x: 24px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --section-gap: 80px;
+}
+
+/* ---- Reset / Grundlagen ------------------------------------------------ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  color: var(--color-ink);
+  line-height: 1.2;
+  margin: 0 0 0.5em;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+
+h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+h3 {
+  font-size: 1.4rem;
+}
+
+h4 {
+  font-size: 1.15rem;
+}
+
+h5 {
+  font-size: 1rem;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+a {
+  color: var(--color-sage-dark);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  color: var(--color-terracotta);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* ---- Layout-Hilfen ----------------------------------------------------- */
+
+.container {
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
+}
+
+.section {
+  padding-block: var(--section-gap);
+}
+
+.section--tight {
+  padding-block: calc(var(--section-gap) * 0.6);
+}
+
+.measure {
+  max-width: 68ch;
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-terracotta-ink);
+  margin: 0 0 0.75rem;
+}
+
+.section-lead {
+  color: var(--color-ink-muted);
+  font-size: 1.1rem;
+  max-width: 60ch;
+}
+
+/* ---- Kopfzeile / Navigation ------------------------------------------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--color-sage-dark);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 68px;
+  flex-wrap: wrap;
+}
+
+.wordmark {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-surface);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wordmark__mark {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.wordmark:hover {
+  color: var(--color-cream);
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.main-nav a {
+  color: var(--color-surface);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.98rem;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+}
+
+.main-nav a:hover,
+.main-nav a[aria-current='page'] {
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--color-surface);
+}
+
+/* Mobiler Menü-Umschalter: liegt latent im Kopf, für die Optik unsichtbar. */
+.nav-toggle {
+  position: absolute;
+  top: 18px;
+  right: var(--pad-x);
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-surface);
+  opacity: 0;
+  pointer-events: none;
+  cursor: pointer;
+}
+
+.nav-toggle svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- Buttons ----------------------------------------------------------- */
+
+.btn {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 14px 26px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn--primary {
+  background: var(--color-sage-dark);
+  color: var(--color-surface);
+}
+
+.btn--primary:hover {
+  background: #3b4a41;
+  color: var(--color-surface);
+}
+
+.btn--outline {
+  background: transparent;
+  border-color: var(--color-sage);
+  color: var(--color-sage-dark);
+}
+
+.btn--outline:hover {
+  background: var(--color-sage);
+  color: var(--color-surface);
+}
+
+/* ---- Hero -------------------------------------------------------------- */
+
+.hero {
+  background: var(--color-cream);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.hero__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 48px;
+  align-items: center;
+  padding-block: clamp(48px, 8vw, 88px);
+}
+
+.hero__content {
+  max-width: 34rem;
+}
+
+.hero h1 {
+  margin-bottom: 0.4em;
+}
+
+.hero__subtitle {
+  font-size: 1.2rem;
+  color: var(--color-ink-muted);
+  margin-bottom: 1.6em;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.hero__media img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(43, 42, 40, 0.14);
+}
+
+/* ---- Feature-/Bild-Textblöcke ----------------------------------------- */
+
+.split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 48px;
+  align-items: center;
+}
+
+.split__media img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow);
+}
+
+.split--reverse .split__media {
+  order: -1;
+}
+
+@media (min-width: 720px) {
+  .split--reverse .split__media {
+    order: 0;
+  }
+  .split--reverse .split__content {
+    order: -1;
+  }
+}
+
+/* ---- Karten-Grid ------------------------------------------------------- */
+
+.section-head {
+  margin-bottom: 40px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 28px;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.card__media {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.card__body {
+  padding: 20px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.card__title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-ink);
+  font-size: 1.2rem;
+}
+
+.card__text {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: 0.98rem;
+}
+
+.card__price {
+  margin-top: auto;
+  padding-top: 10px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-terracotta-ink);
+  font-size: 1.1rem;
+}
+
+/* ---- Speisekarte ------------------------------------------------------- */
+
+.menu-category {
+  margin-bottom: 64px;
+}
+
+.menu-category__head {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  border-bottom: 2px solid var(--color-terracotta);
+  padding-bottom: 10px;
+  margin-bottom: 28px;
+}
+
+.menu-category__head h2,
+.menu-category__head h3 {
+  margin: 0;
+}
+
+.menu-subhead {
+  margin: 28px 0 14px;
+  color: var(--color-sage-dark);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.menu-row:last-child {
+  border-bottom: none;
+}
+
+.menu-row__name {
+  font-weight: 600;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+.menu-row__dots {
+  flex: 1;
+  border-bottom: 1px dotted var(--color-border);
+  transform: translateY(-4px);
+}
+
+.menu-row__desc {
+  display: block;
+  color: var(--color-ink-muted);
+  font-size: 0.94rem;
+  font-weight: 400;
+  white-space: normal;
+}
+
+.menu-row__price {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-terracotta-ink);
+  white-space: nowrap;
+}
+
+/* ---- Team -------------------------------------------------------------- */
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.team-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 26px 24px;
+}
+
+.team-card h4 {
+  margin: 0 0 2px;
+  font-size: 1.25rem;
+}
+
+.team-card__role {
+  color: var(--color-terracotta-ink);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 12px;
+}
+
+.team-card__text {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: 0.98rem;
+}
+
+/* ---- Öffnungszeiten / Info-Block -------------------------------------- */
+
+.hours-block {
+  background: var(--color-sage-dark);
+  color: var(--color-surface);
+  border-radius: var(--radius);
+  padding: 40px clamp(24px, 5vw, 56px);
+}
+
+.hours-block h2 {
+  color: var(--color-surface);
+}
+
+.hours-block .section-lead {
+  color: var(--color-cream);
+}
+
+.hours-table {
+  width: 100%;
+  border-collapse: collapse;
+  max-width: 420px;
+}
+
+.hours-table th,
+.hours-table td {
+  text-align: left;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  font-variant-numeric: tabular-nums;
+}
+
+.hours-table th {
+  font-weight: 500;
+  font-family: var(--font-body);
+}
+
+.hours-table td {
+  text-align: right;
+  color: var(--color-cream);
+}
+
+/* ---- Formular ---------------------------------------------------------- */
+
+.form-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(24px, 4vw, 40px);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px 24px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field--full {
+  grid-column: 1 / -1;
+}
+
+.field label,
+.field .field__label {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--color-ink);
+}
+
+.field input,
+.field select,
+.field textarea {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 11px 13px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-cream);
+  color: var(--color-ink);
+  width: 100%;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 1px;
+  border-color: var(--color-sage);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Absende-Button der Reservierung. */
+.btn--reserve {
+  background: var(--color-terracotta);
+  color: #E8D9CE;
+  border: none;
+}
+
+.btn--reserve:hover {
+  background: #9c4f2f;
+  color: #E8D9CE;
+}
+
+/* ---- Info-Karten (Kontakt) -------------------------------------------- */
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.info-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 26px 24px;
+}
+
+.info-card h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+
+.info-card p {
+  margin: 0;
+  color: var(--color-ink-muted);
+}
+
+.info-card address {
+  font-style: normal;
+  color: var(--color-ink-muted);
+  line-height: 1.7;
+}
+
+/* ---- Fußzeile ---------------------------------------------------------- */
+
+.site-footer {
+  background: var(--color-sage-dark);
+  color: var(--color-cream);
+  margin-top: var(--section-gap);
+}
+
+.site-footer__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 40px;
+  padding-block: 56px;
+}
+
+.site-footer h2 {
+  font-size: 1.05rem;
+  color: var(--color-surface);
+  margin-bottom: 14px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.site-footer address,
+.site-footer p {
+  font-style: normal;
+  color: var(--color-cream);
+  line-height: 1.8;
+  margin: 0;
+}
+
+.footer-hours {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-hours li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3px 0;
+  color: var(--color-cream);
+}
+
+/* Fußzeilen-Links (Kontakt-Spalte). */
+.footer-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-links li {
+  padding: 3px 0;
+}
+
+.footer-links a {
+  color: #8F9A92;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: var(--color-surface);
+  text-decoration: underline;
+}
+
+.footer-social {
+  display: flex;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--color-sage);
+  color: var(--color-surface);
+}
+
+.footer-social a:hover {
+  background: var(--color-terracotta);
+}
+
+.footer-social svg {
+  width: 19px;
+  height: 19px;
+}
+
+.site-footer__bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  padding-block: 20px;
+  font-size: 0.85rem;
+  color: var(--color-cream);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* ---- Diverses ---------------------------------------------------------- */
+
+.pill {
+  display: inline-block;
+  background: var(--color-terracotta);
+  color: var(--color-surface);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.divider {
+  height: 1px;
+  background: var(--color-border);
+  border: none;
+  margin: 0;
+}
