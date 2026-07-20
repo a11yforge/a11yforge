@@ -23,7 +23,6 @@ const editingProject = ref<ProjectResponseDTO | null>(null)
 const dialogRef = useTemplateRef<InstanceType<typeof ProjectFormDialog>>('dialogRef')
 
 const search = ref('')
-
 const filteredProjects = computed(() => {
   return projects.value.filter((p) => {
     const projectName = p.name.toLowerCase()
@@ -184,18 +183,6 @@ async function handleScan(project: ProjectResponseDTO) {
       @delete="confirmDelete"
       @create="openCreateDialog"
     />
-<!--
-    <ProjectList
-      :projects="filteredProjects"
-      :loading="loading"
-      :error="error"
-      empty-message="Noch keine Projekte — leg dein erstes an."
-      @edit="openEditDialog"
-      @delete="confirmDelete"
-      @scan="handleScan"
-      @create="openCreateDialog"
-    />
--->
     <ProjectFormDialog
       ref="dialogRef"
       v-model:visible="dialogVisible"
