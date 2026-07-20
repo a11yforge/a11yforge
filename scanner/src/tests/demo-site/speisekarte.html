@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Speisekarte – Zum Goldenen Maulwurf</title>
+    <meta
+      name="description"
+      content="Kaffee, Mehlspeisen, Frühstück und Herzhaftes im Zum Goldenen Maulwurf – die vollständige Karte des Wiener Kaffeehauses."
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* Einheitliche Preisfarbe der Speisekarte. */
+      .card__price,
+      .menu-row__price {
+        color: #c9a28c;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container site-header__inner">
+        <a class="wordmark" href="index.html">
+          <span class="wordmark__mark" aria-hidden="true">☕</span>
+          Zum Goldenen Maulwurf
+        </a>
+        <nav class="main-nav" aria-label="Hauptnavigation">
+          <a href="index.html">Startseite</a>
+          <a href="speisekarte.html" aria-current="page">Speisekarte</a>
+          <a href="team.html">Team</a>
+          <a href="kontakt.html">Kontakt</a>
+        </nav>
+        <!-- button-name VERSTOSS: Icon-Button ohne zugänglichen Namen. -->
+        <button class="nav-toggle" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="container section">
+      <div class="section-head measure">
+        <p class="eyebrow">Speisekarte</p>
+        <h1>Was bei uns auf den Tisch kommt</h1>
+        <p class="section-lead">
+          Alle Preise in Euro, inklusive Bedienung. Mehlspeisen wechseln mit der
+          Saison – fragen Sie gern nach der Tageskarte an der Theke.
+        </p>
+      </div>
+
+      <!-- KATEGORIE: Kaffee & Getränke -->
+      <!-- heading-order VERSTOSS: erste Kategorie als h3 direkt nach der h1. -->
+      <section class="menu-category">
+        <div class="menu-category__head">
+          <h3>Kaffee &amp; Getränke</h3>
+        </div>
+
+        <div class="card-grid" style="margin-bottom: 28px">
+          <article class="card">
+            <img
+              class="card__media"
+              src="assets/cappuccino-cup.jpg"
+              alt="Cappuccino mit Milchschaumherz in blauer Tasse"
+            />
+            <div class="card__body">
+              <p class="card__title">Cappuccino</p>
+              <p class="card__text">
+                Doppelter Espresso mit seidig geschäumter Milch.
+              </p>
+              <p class="card__price">4,20 €</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="form-card">
+          <ul class="menu-list">
+            <li class="menu-row">
+              <span class="menu-row__name">Kleiner Brauner
+                <span class="menu-row__desc">Espresso mit einem Schuss Obers.</span>
+              </span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">2,90 €</span>
+            </li>
+            <li class="menu-row">
+              <span class="menu-row__name">Wiener Melange
+                <span class="menu-row__desc">Mokka mit heißer Milch und Milchschaumhaube.</span>
+              </span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">4,10 €</span>
+            </li>
+            <li class="menu-row">
+              <span class="menu-row__name">Verlängerter
+                <span class="menu-row__desc">Espresso mit heißem Wasser gestreckt.</span>
+              </span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">3,40 €</span>
+            </li>
+          </ul>
+
+          <!-- heading-order VERSTOSS: Sprung von h3 (Kategorie) auf h5. -->
+          <h5 class="menu-subhead">Kalt &amp; erfrischend</h5>
+          <ul class="menu-list">
+            <li class="menu-row">
+              <span class="menu-row__name">Wiener Eiskaffee
+                <span class="menu-row__desc">Kalter Kaffee, Vanilleeis, Schlagobers.</span>
+              </span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">5,90 €</span>
+            </li>
+            <li class="menu-row">
+              <span class="menu-row__name">Hausgemachte Limonade
+                <span class="menu-row__desc">Zitrone-Minze oder Holunder, je nach Saison.</span>
+              </span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">4,50 €</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- KATEGORIE: Mehlspeisen -->
+      <section class="menu-category">
+        <div class="menu-category__head">
+          <h2>Mehlspeisen</h2>
+        </div>
+
+        <div class="card-grid" style="margin-bottom: 28px">
+          <article class="card">
+            <!-- image-alt VERSTOSS: alt="IMG_4821.jpg" (Dateiname statt Beschreibung). -->
+            <img
+              class="card__media"
+              src="assets/chocolate-cake-slice.jpg"
+              alt="IMG_4821.jpg"
+            />
+            <div class="card__body">
+              <p class="card__title">Schokoladentorte</p>
+              <p class="card__text">
+                Dichte, dunkle Torte nach altem Hausrezept, wenig süß.
+              </p>
+              <p class="card__price">5,40 €</p>
+            </div>
+          </article>
+          <article class="card">
+            <!-- image-alt VERSTOSS: <img> ohne alt-Attribut. -->
+            <img class="card__media" src="assets/croissant-pastry.jpg" />
+            <div class="card__body">
+              <p class="card__title">Butterkipferl</p>
+              <p class="card__text">
+                Frisch gebacken, außen blättrig, innen zart. Solange der Vorrat
+                reicht.
+              </p>
+              <p class="card__price">2,60 €</p>
+            </div>
+          </article>
+          <article class="card">
+            <img
+              class="card__media"
+              src="assets/croissant-filled-close-up.jpg"
+              alt="Aufgeschnittenes Marillenkipferl mit Fruchtfüllung"
+            />
+            <div class="card__body">
+              <p class="card__title">Marillenkipferl</p>
+              <p class="card__text">
+                Butterteig mit Marillenfülle aus dem Wachauer Sommer.
+              </p>
+              <p class="card__price">3,80 €</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="form-card">
+          <ul class="menu-list">
+            <li class="menu-row">
+              <span class="menu-row__name">Apfelstrudel
+                <span class="menu-row__desc">Warm, mit Vanillesauce oder Schlagobers.</span>
+              </span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">4,80 €</span>
+            </li>
+            <li class="menu-row">
+              <span class="menu-row__name">Topfengolatsche
+                <span class="menu-row__desc">Plundergebäck mit Topfenfülle.</span>
+              </span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">3,60 €</span>
+            </li>
+            <li class="menu-row">
+              <span class="menu-row__name">Sachertorte
+                <span class="menu-row__desc">Mit einem Klecks ungesüßtem Schlagobers.</span>
+              </span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">5,20 €</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- KATEGORIE: Frühstück -->
+      <section class="menu-category">
+        <div class="menu-category__head">
+          <h2>Frühstück</h2>
+        </div>
+
+        <div class="card-grid" style="margin-bottom: 28px">
+          <article class="card">
+            <!-- image-alt VERSTOSS: alt="bild" (nichtssagend). Karte mit sichtbarer Border. -->
+            <img
+              class="card__media"
+              src="assets/breakfast-coffee-croissant.jpg"
+              alt="bild"
+              style="border-bottom: 1px solid var(--color-border)"
+            />
+            <div class="card__body">
+              <p class="card__title">Kleines Frühstück</p>
+              <p class="card__text">
+                Kaffee nach Wahl, ein Butterkipferl, Butter und
+                hausgemachte Marmelade.
+              </p>
+              <p class="card__price">8,90 €</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="form-card">
+          <ul class="menu-list">
+            <li class="menu-row">
+              <span class="menu-row__name">Wiener Frühstück
+                <span class="menu-row__desc">Weiches Ei, Semmel, Butter, Marmelade, Kaffee.</span>
+              </span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">11,50 €</span>
+            </li>
+            <li class="menu-row">
+              <span class="menu-row__name">Bauernfrühstück
+                <span class="menu-row__desc">Rührei mit Speck, Schnittlauch, dunkles Brot.</span>
+              </span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">12,80 €</span>
+            </li>
+            <li class="menu-row">
+              <span class="menu-row__name">Porridge mit Obst
+                <span class="menu-row__desc">Haferbrei mit saisonalem Obst und Honig.</span>
+              </span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">7,40 €</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- KATEGORIE: Herzhaftes -->
+      <section class="menu-category">
+        <div class="menu-category__head">
+          <h2>Herzhaftes</h2>
+        </div>
+
+        <div class="form-card">
+          <!-- list VERSTOSS: zwei <li> direkt im <div>, kein umschließendes <ul>. -->
+          <div class="menu-list">
+            <li class="menu-row">
+              <span class="menu-row__name">Frittatensuppe
+                <span class="menu-row__desc">Klare Rindsuppe mit fein geschnittenen Palatschinken.</span>
+              </span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">5,80 €</span>
+            </li>
+            <li class="menu-row">
+              <span class="menu-row__name">Wiener Wurstsalat
+                <span class="menu-row__desc">Mit Essiggurkerl, Zwiebel und dunklem Brot.</span>
+              </span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">9,20 €</span>
+            </li>
+          </div>
+
+          <ul class="menu-list">
+            <li class="menu-row">
+              <span class="menu-row__name">Aufstrichbrote
+                <span class="menu-row__desc">Drei Sorten: Liptauer, Eiaufstrich, Kürbiskern.</span>
+              </span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">8,40 €</span>
+            </li>
+            <li class="menu-row">
+              <span class="menu-row__name">Käseteller</span>
+              <span class="menu-row__dots"></span>
+              <span class="menu-row__price">10,90 €</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__grid">
+        <div>
+          <h2>Zum Goldenen Maulwurf</h2>
+          <address>
+            Neubaugasse 12<br />
+            1070 Wien<br />
+            Österreich
+          </address>
+        </div>
+        <div>
+          <h2>Öffnungszeiten</h2>
+          <ul class="footer-hours">
+            <li><span>Mo – Fr</span><span>7:30 – 19:00</span></li>
+            <li><span>Sa</span><span>8:00 – 18:00</span></li>
+            <li><span>So</span><span>Ruhetag</span></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Kontakt</h2>
+          <!-- color-contrast VERSTOSS: Footer-Links in #8F9A92 auf --color-sage. -->
+          <ul class="footer-links">
+            <li><a href="tel:+4315234567">+43 1 523 45 67</a></li>
+            <li><a href="mailto:hallo@goldener-maulwurf.at">hallo@goldener-maulwurf.at</a></li>
+            <li><a href="kontakt.html">Anfahrt &amp; Reservierung</a></li>
+          </ul>
+          <!-- link-name VERSTOSS: Social-Links nur mit Icon, ohne Text/aria-label. -->
+          <div class="footer-social">
+            <a href="https://instagram.com">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16Zm0 1.62c-3.15 0-3.5.01-4.74.07-.9.04-1.38.19-1.71.32-.43.17-.74.37-1.06.69-.32.32-.52.63-.69 1.06-.13.33-.28.81-.32 1.71-.06 1.24-.07 1.59-.07 4.74s.01 3.5.07 4.74c.04.9.19 1.38.32 1.71.17.43.37.74.69 1.06.32.32.63.52 1.06.69.33.13.81.28 1.71.32 1.24.06 1.59.07 4.74.07s3.5-.01 4.74-.07c.9-.04 1.38-.19 1.71-.32.43-.17.74-.37 1.06-.69.32-.32.52-.63.69-1.06.13-.33.28-.81.32-1.71.06-1.24.07-1.59.07-4.74s-.01-3.5-.07-4.74c-.04-.9-.19-1.38-.32-1.71a2.85 2.85 0 0 0-.69-1.06 2.85 2.85 0 0 0-1.06-.69c-.33-.13-.81-.28-1.71-.32-1.24-.06-1.59-.07-4.74-.07Zm0 2.76a5.3 5.3 0 1 1 0 10.6 5.3 5.3 0 0 1 0-10.6Zm0 1.62a3.68 3.68 0 1 0 0 7.36 3.68 3.68 0 0 0 0-7.36Zm5.48-.29a1.24 1.24 0 1 1-2.48 0 1.24 1.24 0 0 1 2.48 0Z"/>
+              </svg>
+            </a>
+            <a href="https://facebook.com">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12Z"/>
+              </svg>
+            </a>
+            <a href="https://maps.google.com">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="container site-footer__bottom">
+        <span>© 2026 Zum Goldenen Maulwurf</span>
+        <span>Neubaugasse 12, 1070 Wien</span>
+      </div>
+    </footer>
+  </body>
+</html>
