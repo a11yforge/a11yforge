@@ -72,9 +72,7 @@ export const useAuthStore = defineStore('auth', () => {
         await apiLogout(refreshToken.value)
       }
     } catch {
-      // Backend-Call ist best effort — Logout muss immer lokal durchgehen,
-      // auch wenn das Backend nicht erreichbar ist oder der Token bereits
-      // revoked/abgelaufen ist.
+      
     }
 
     clearAuth()

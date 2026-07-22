@@ -8,7 +8,6 @@ const client = axios.create({
   },
 })
 
-// Pfade, die niemals einen Token-Refresh auslösen dürfen
 const AUTH_PATHS = ['/auth/login', '/auth/register', '/auth/refresh', '/auth/logout']
 
 function isAuthPath(url: string | undefined): boolean {
@@ -24,7 +23,6 @@ client.interceptors.request.use((config) => {
   return config
 })
 
-// Bündelung: läuft gerade ein Refresh, warten alle weiteren 401s auf dasselbe Promise
 let refreshPromise: Promise<string> | null = null
 
 client.interceptors.response.use(
@@ -32,7 +30,6 @@ client.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
 
-    // Nur auf 401 reagieren, und nicht auf Auth-Pfaden, und nur einmal pro Request
     if (
       error.response?.status !== 401 ||
       isAuthPath(originalRequest?.url) ||
@@ -45,19 +42,17 @@ client.interceptors.response.use(
     const authStore = useAuthStore()
 
     try {
-      // Nur ein Refresh gleichzeitig — parallele 401s teilen sich das Promise
       if (!refreshPromise) {
         refreshPromise = authStore.refreshTokens()
       }
       const newAccessToken = await refreshPromise
       refreshPromise = null
 
-      // Original-Request mit neuem Token wiederholen
       originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
       return client(originalRequest)
     } catch (refreshError) {
       refreshPromise = null
-      // Refresh gescheitert -> Session ist endgültig vorbei
+      
       authStore.clearAuth()
       window.location.href = '/login'
       return Promise.reject(refreshError)
