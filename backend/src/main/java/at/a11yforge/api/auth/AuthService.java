@@ -66,7 +66,6 @@ public class AuthService {
         RefreshToken stored = refreshTokenRepository.findByTokenHash(tokenHash)
                 .orElseThrow(() -> new InvalidRefreshTokenException("Invalid refresh token"));
 
-        // Reuse-Detection: bereits revokter Token wird erneut benutzt -> Diebstahlverdacht
         if (stored.getRevokedAt() != null) {
             refreshTokenRepository.revokeAllActiveByUserId(stored.getUserId(), Instant.now());
             throw new InvalidRefreshTokenException("Refresh token reuse detected");
@@ -76,7 +75,6 @@ public class AuthService {
             throw new InvalidRefreshTokenException("Refresh token expired");
         }
 
-        // Rotation: alten Token revoken, neuen ausstellen
         stored.setRevokedAt(Instant.now());
         refreshTokenRepository.save(stored);
 
