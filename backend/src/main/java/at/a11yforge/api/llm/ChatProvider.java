@@ -2,9 +2,9 @@ package at.a11yforge.api.llm;
 
 public interface ChatProvider {
 
-  FixGenerationResponseDTO generateFix(FixGenerationRequestDTO request);
+    FixGenerationResponseDTO generateFix(FixGenerationRequestDTO request);
 
-  ProviderType getProviderType();
+    ProviderType getProviderType();
 
-  String detectLanguage(String text);
+    String detectLanguage(String text);
 }
