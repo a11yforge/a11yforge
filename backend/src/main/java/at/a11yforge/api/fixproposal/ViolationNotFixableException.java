@@ -6,7 +6,7 @@ package at.a11yforge.api.fixproposal;
  * a real violation and therefore has no meaningful LLM fix.
  */
 public class ViolationNotFixableException extends RuntimeException {
-  public ViolationNotFixableException(Long violationId) {
-    super("Violation " + violationId + " is not fixable (axe incomplete / needs-review).");
-  }
+    public ViolationNotFixableException(Long violationId) {
+        super("Violation " + violationId + " is not fixable (axe incomplete / needs-review).");
+    }
 }
