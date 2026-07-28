@@ -119,8 +119,6 @@ with a pluggable local Ollama provider as an alternative
 Node scanner as a subprocess through `ScannerProcessRunner` and consumes its JSON result.
 Playwright and axe-core stay the single source of truth for what counts as a violation.
 
-<!-- TODO(Max): verify the exact CLI argument signature against scanner/src/cli.ts before submission -->
-
 **Fix generation is asynchronous and event-driven.** `POST /api/fix-proposals` only persists a
 `PENDING` row and publishes a `FixGenerationRequestedEvent`; the HTTP call returns `202` with the
 proposal id. `FixGenerationAsyncRunner` picks the event up `AFTER_COMMIT` on a dedicated executor,
@@ -148,36 +146,78 @@ so the pipeline is testable without any network access.
 detected during the scan — no API call, no verification round-trip, no cost. Reaching for an LLM
 where a rule suffices would be the wrong default.
 
-## My Role
+## Team & Roles
 
-This is a two-person graduation project developed with Maximilian Mayer at CodersBay Vienna.
-Rather than splitting along frontend/backend lines, we divided the system by vertical: Maximilian
-owns finding and proving violations (Java↔Node bridge, crawling, scan orchestration, the
-verifier), I own the platform and the fix pipeline.
+This is a two-person graduation project by Philipp Reischer and Maximilian Mayer
+at CodersBay Vienna. Rather than splitting along frontend/backend lines, we divided
+the system by vertical: Maximilian owns finding and proving violations — the
+Java↔Node bridge, crawling, scan orchestration and the verifier — while Philipp
+owns the platform, security and the AI fix pipeline.
 
-My contributions:
+### Maximilian Mayer
+
+**Scan orchestration and the Java↔Node bridge**
+- `ScannerProcessRunner`: spawns the Node scanner as a subprocess from Spring Boot
+  and consumes its JSON result over a strict stdout contract — only the result is
+  written to stdout, while stderr is redirected and merged into a temp file so a
+  full pipe can never deadlock the process
+- `ScanService.runFullScan` as the conductor: drives crawl → axe-core scan →
+  persistence and maps the scanner's JSON output into the backend DTOs
+- Asynchronous scans: `POST /api/scans` returns a `RUNNING` scan immediately, the
+  crawl runs on a background thread, and the frontend polls until the scan settles
+
+**Crawling and violation capture**
+- Multi-page breadth-first crawl (`crawl.ts`): Playwright renders each page and
+  follows same-origin links, and the rendered HTML is stored alongside every
+  violation so the verifier can later replay the exact DOM
+- Language detection with `franc` over the crawled text, guarded by a minimum text
+  length and a runner-up margin — the detected language feeds both the deterministic
+  `html-has-lang` repair and the per-rule fix prompts
+- Element screenshot capture via Playwright for the `image-alt` vision flow
+
+**The verifier**
+- The entire verification path, deliberately isolated from the AI code:
+  `VerifierProcessRunner` → `scanner/dist/cli-verify.js`, which receives nothing but
+  HTML and has no knowledge of which provider produced the snippet
+- `verify.ts`: loads the original frozen page into Chromium, replaces the target
+  element's `outerHTML` with the proposed patch, re-runs axe-core against the
+  modified DOM, and returns a machine-readable verdict — `verified`,
+  `original_persists` or `new_violation`
+- Malformed-patch handling: a patch that matches no selector is rejected rather than
+  trusted, so a broken model output can never be recorded as a passing fix
+- `targetSelector` resolution so verification acts on the exact offending element
+
+**Testing**
+- Integration tests for the scan orchestration and ownership filtering on scans
+  (foreign-owned and missing scans return 404 rather than 403)
+
+### Philipp Reischer
 
 **AI fix pipeline**
-- LLM provider abstraction (`ChatProvider`, factory, Anthropic / Ollama / NoOp implementations)
+- LLM provider abstraction (`ChatProvider`, factory, Anthropic / Ollama / NoOp
+  implementations)
 - Asynchronous, event-driven fix generation with `AFTER_COMMIT` dispatch
 - Rule-specific versioned prompt templates with per-rule fallback resolution
 - Tag-based extraction and rejection of malformed model output
-- Vision input for `image-alt`: element screenshots passed to Claude as a second content block
-- Extraction of measured contrast data (`fgColor`, `bgColor`, ratio, threshold) from axe results
-  and injection into the contrast prompt
-- Fix cache with SHA-256 content hashing, including the reject-bypass rule that keeps previously
-  rejected fixes from being served from cache
+- Vision input for `image-alt`: element screenshots passed to Claude as a second
+  content block
+- Extraction of measured contrast data (`fgColor`, `bgColor`, ratio, threshold) from
+  axe results and injection into the contrast prompt
+- Fix cache with SHA-256 content hashing, including the reject-bypass rule that keeps
+  previously rejected fixes from being served from cache
 
 **Platform and security**
 - REST endpoint design across projects, scans, violations, fix proposals and reviews
-- Spring Security with JWT, refresh-token rotation and reuse detection, password reset flow
-- Ownership filtering on every resource; missing and foreign-owned records return 404 rather
-  than 403 to prevent ID enumeration
+- Spring Security with JWT, refresh-token rotation and reuse detection, password
+  reset flow
+- Ownership filtering on every resource; missing and foreign-owned records return 404
+  rather than 403 to prevent ID enumeration
 - RFC 7807 error responses via a global exception handler
 - Flyway schema and migrations
 
 **Frontend**
-- Scan detail view with grouped violations, the before/after diff panel and review flow
+- Scan detail view with grouped violations, the before/after diff panel and review
+  flow
 - Project management, scan history with filtering, sorting and trend chart
 - Account management and the nested auth routes
 - Design system: CSS custom properties, layout system, landing page
@@ -284,7 +324,10 @@ close accessibility gaps without hiring specialist consultants for every fix.
 
 ## License
 
-Released under the MIT License — see [LICENSE](./LICENSE).
+No license is granted — all rights reserved by the authors. This repository is
+public so the project can be read and evaluated; it does not permit reuse,
+modification or redistribution of the source. An open-source license may follow;
+until then, please get in touch if you would like to use any part of it.
 
 Demo site photographs are licensed separately under the
 [Pexels License](https://www.pexels.com/license/); see
@@ -295,4 +338,5 @@ Demo site photographs are licensed separately under the
 **Authors:** Philipp Reischer, Maximilian Mayer
 **Institution:** CodersBay Vienna, Graduation Project 2026
 
-**Portfolio (Philipp):** https://philippreischer.github.io
+**Portfolio (Philipp Reischer):** https://philippreischer.github.io
+**Portfolio (Maximilian Mayer):** https://maximilianmayer.netlify.app/
