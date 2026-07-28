@@ -14,7 +14,7 @@ Thumbs.db
 .env.local
 *.local
 *.env.*
-
+!.env.prod.example
 # Java / Gradle / Maven
 target/
 build/
@@ -28,6 +28,7 @@ hs_err_pid*
 # Spring Boot
 application-local.properties
 application-local.yml
+application-prod.prop
 
 # Node
 node_modules/
