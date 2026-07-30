@@ -4,10 +4,13 @@ import at.a11yforge.api.auth.InvalidRefreshTokenException;
 import at.a11yforge.api.fixproposal.FixProposalNotFoundException;
 import at.a11yforge.api.fixproposal.ViolationNotFixableException;
 import at.a11yforge.api.page.PageNotFoundException;
+import at.a11yforge.api.passwordreset.InvalidPasswordResetTokenException;
 import at.a11yforge.api.project.DuplicateProjectNameException;
 import at.a11yforge.api.project.ProjectNotFoundException;
 import at.a11yforge.api.scan.ScanNotFoundException;
+import at.a11yforge.api.scanner.UnsafeUrlException;
 import at.a11yforge.api.user.InvalidCredentialsException;
+import at.a11yforge.api.user.PasswordMismatchException;
 import at.a11yforge.api.user.UserAlreadyExistsException;
 import at.a11yforge.api.user.UserNotFoundException;
 import at.a11yforge.api.violation.ViolationNotFoundException;
@@ -18,8 +21,6 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import at.a11yforge.api.user.PasswordMismatchException;
-import at.a11yforge.api.passwordreset.InvalidPasswordResetTokenException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -152,6 +153,13 @@ public class GlobalExceptionHandler {
   public ProblemDetail handleScanNotFound(ScanNotFoundException ex) {
     ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     problem.setTitle("Scan not found");
+    return problem;
+  }
+
+  @ExceptionHandler(UnsafeUrlException.class)
+  public ProblemDetail handleUnsafeUrl(UnsafeUrlException ex) {
+    ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    problem.setTitle("Unsafe URL");
     return problem;
   }
 }
