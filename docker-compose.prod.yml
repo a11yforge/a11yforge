@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: a11yforge
+      POSTGRES_USER: a11yforge
+      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    image: a11yforge-backend
+    env_file:
+      - .env.prod
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+  frontend:
+    image: a11yforge-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8081:80"
+
+volumes:
+  postgres_data:
+
+
