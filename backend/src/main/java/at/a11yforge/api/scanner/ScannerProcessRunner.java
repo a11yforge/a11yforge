@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -37,8 +41,31 @@ public class ScannerProcessRunner {
     return "https://" + trimmed;
   }
 
+  private void assertPublicUrl(String url) {
+    try {
+      URI uri = new URI(url);
+
+      String scheme = uri.getScheme();
+      if (scheme == null || !(scheme.equals("http") || scheme.equals("https"))) {
+        throw new UnsafeUrlException("Nur http/https erlaubt: " + url);
+      }
+
+      String host = uri.getHost();
+      InetAddress adresse = InetAddress.getByName(host);
+      if (adresse.isLoopbackAddress()
+          || adresse.isSiteLocalAddress()
+          || adresse.isLinkLocalAddress()
+          || adresse.isAnyLocalAddress()) {
+        throw new UnsafeUrlException("URL zeigt auf eine interne Adresse: " + host);
+      }
+    } catch (URISyntaxException | UnknownHostException e) {
+      throw new UnsafeUrlException("Ungültige oder nicht auflösbare URL: " + url, e);
+    }
+  }
+
   public List<PageScanResultDto> run(String url, List<String> rules, int maxPages) {
     url = normalizeUrl(url);
+    assertPublicUrl(url);
     File tempFile = null;
     try {
       List<String> command =
