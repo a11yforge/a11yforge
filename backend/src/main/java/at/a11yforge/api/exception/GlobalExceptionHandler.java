@@ -7,6 +7,7 @@ import at.a11yforge.api.page.PageNotFoundException;
 import at.a11yforge.api.passwordreset.InvalidPasswordResetTokenException;
 import at.a11yforge.api.project.DuplicateProjectNameException;
 import at.a11yforge.api.project.ProjectNotFoundException;
+import at.a11yforge.api.ratelimit.RateLimitExceededException;
 import at.a11yforge.api.scan.ScanNotFoundException;
 import at.a11yforge.api.scanner.UnsafeUrlException;
 import at.a11yforge.api.user.InvalidCredentialsException;
@@ -119,7 +120,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(InvalidRefreshTokenException.class)
   public ProblemDetail handleInvalidRefreshToken(InvalidRefreshTokenException ex) {
     ProblemDetail problem =
-            ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
     problem.setTitle("Invalid refresh token");
     return problem;
   }
@@ -128,7 +129,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(PasswordMismatchException.class)
   public ProblemDetail handlePasswordMismatch(PasswordMismatchException ex) {
     ProblemDetail problem =
-            ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     problem.setTitle("Password mismatch");
     return problem;
   }
@@ -137,7 +138,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(InvalidPasswordResetTokenException.class)
   public ProblemDetail handleInvalidPasswordResetToken(InvalidPasswordResetTokenException ex) {
     ProblemDetail problem =
-            ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     problem.setTitle("Invalid password reset token");
     return problem;
   }
@@ -158,8 +159,17 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(UnsafeUrlException.class)
   public ProblemDetail handleUnsafeUrl(UnsafeUrlException ex) {
-    ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    ProblemDetail problem =
+        ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     problem.setTitle("Unsafe URL");
+    return problem;
+  }
+
+  @ExceptionHandler(RateLimitExceededException.class)
+  public ProblemDetail handleRateLimitExceeded(RateLimitExceededException ex) {
+    ProblemDetail problem =
+        ProblemDetail.forStatusAndDetail(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage());
+    problem.setTitle("Rate limit exceeded");
     return problem;
   }
 }
