@@ -50,8 +50,7 @@ public class ScanService {
   private final AuditEventService auditEventService;
   private final ChatProviderFactory chatProviderFactory;
   private final FixProposalRepository fixProposalRepository;
-
-  private final Executor executor = Executors.newCachedThreadPool();
+  private final Executor executor;
 
   @Value("${a11yforge.llm.default-provider}")
   private ProviderType defaultProvider;
@@ -65,7 +64,8 @@ public class ScanService {
       ScannerProcessRunner scannerProcessRunner,
       AuditEventService auditEventService,
       ChatProviderFactory chatProviderFactory,
-      FixProposalRepository fixProposalRepository) {
+      FixProposalRepository fixProposalRepository,
+      @Value("${a11yforge.scan.max-concurrent}") int maxConcurrent) {
     this.projectRepository = projectRepository;
     this.scanRepository = scanRepository;
     this.pageRepository = pageRepository;
@@ -75,6 +75,7 @@ public class ScanService {
     this.auditEventService = auditEventService;
     this.chatProviderFactory = chatProviderFactory;
     this.fixProposalRepository = fixProposalRepository;
+    this.executor = Executors.newFixedThreadPool(maxConcurrent);
   }
 
   public ScanResponseDTO startScan(Long userId, Long projectId) {
