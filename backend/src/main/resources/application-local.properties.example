@@ -8,12 +8,6 @@ spring.datasource.password=YOUR_DB_PASSWORD_HERE
 # --- JWT ---
 # WARNING: Development only. Use a randomly generated secret in production.
 jwt.secret=YOUR_JWT_SECRET_AT_LEAST_32_CHARS
-jwt.access-expiration-ms=900000
-jwt.refresh-expiration-ms=604800000
-
-# --- Verifier ---
-verifier.cli.path=../verifier/dist/cli.js
-verifier.timeout.seconds=30
 
 # --- LLM ---
 a11yforge.llm.anthropic.api-key=YOUR_ANTHROPIC_API_KEY_HERE
