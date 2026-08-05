@@ -47,6 +47,12 @@ function onReview(decision: 'ACCEPTED' | 'REJECTED') {
 
     <pre class="mt-[0.8rem] mb-0 bg-[var(--field)] border border-[var(--border)] rounded-lg py-[0.7rem] px-[0.8rem] font-mono text-[0.82rem] text-[var(--muted)] overflow-x-auto whitespace-pre">{{ violation.htmlSnippet }}</pre>
 
+    <div v-if="violation.targetSelector" class="mt-[0.6rem] text-[0.82rem]">
+      <span class="text-[var(--muted)]">Im Code finden:</span>
+      <code class="ml-2 font-mono bg-[var(--field)] border border-[var(--border)] rounded px-[0.4rem] py-[0.15rem] text-[var(--text)] break-all">{{ violation.targetSelector }}</code>
+      <p class="mt-[0.35rem] mb-0 text-[0.72rem] text-[var(--muted)] italic">Gerenderter Selektor, kann bei scoped oder Utility-CSS im Quellcode abweichen.</p>
+    </div>
+
     <FixProposalPanel v-if="fix" :fix="fix" :decision="decision" @review="onReview" />
   </article>
 </template>
